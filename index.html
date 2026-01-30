@@ -2,50 +2,202 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <title>SportX - Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SportX - Premium Store</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { --main-color: #27ae60; --dark-bg: #2c3e50; }
-        body { font-family: sans-serif; margin: 0; background: #f4f7f6; }
-        nav { background: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .hero { text-align: center; padding: 50px 20px; background: white; }
-        .auth-box { background: white; padding: 20px; border-radius: 10px; max-width: 350px; margin: 20px auto; border: 1px solid #ddd; }
-        input { width: 100%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 5px; }
-        .btn { width: 100%; padding: 12px; background: var(--main-color); color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: bold; }
-        .google-btn { background: #fff; border: 1px solid #ddd; color: #444; margin-top: 10px; }
-        .three-dots { cursor: pointer; font-size: 20px; position: relative; }
-        .dropdown { display: none; position: absolute; right: 0; background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.2); border-radius: 5px; z-index: 100; }
-        .dropdown a { display: block; padding: 10px 20px; text-decoration: none; color: black; }
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --success: #27ae60;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            background: radial-gradient(circle at top right, #1e293b, #0f172a);
+            color: white;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* প্রফেশনাল নেভিগেশন */
+        nav {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(15px);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .logo {
+            font-size: 26px;
+            font-weight: 700;
+            background: linear-gradient(to right, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: 1px;
+        }
+
+        /* হিরো সেকশন এনিমেশন */
+        .hero {
+            text-align: center;
+            padding: 80px 20px;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 10px;
+            background: linear-gradient(white, #cbd5e1);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* অথ বক্স - Glassmorphism */
+        .auth-box {
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            padding: 30px;
+            border-radius: 24px;
+            max-width: 380px;
+            margin: 0 auto 50px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        h2 { text-align: center; font-weight: 600; margin-bottom: 25px; }
+
+        input {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 16px;
+            margin-top: 15px;
+            transition: 0.3s;
+            text-transform: uppercase;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
+        }
+
+        .google-btn {
+            background: white;
+            color: #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .google-btn img { width: 20px; }
+
+        /* ড্রপডাউন ডিজাইন */
+        .dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 30px;
+            background: #1e293b;
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            width: 150px;
+        }
+
+        .dropdown a {
+            display: block;
+            padding: 12px 20px;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+        .dropdown a:hover { background: var(--primary); }
+
         .three-dots:hover .dropdown { display: block; }
+
+        /* এনিমেশন কি-ফ্রেম */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { 
+            from { opacity: 0; transform: translateY(30px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
     </style>
 </head>
 <body>
 
 <nav>
-    <div style="font-size: 24px; font-weight: bold; color: var(--main-color);">SportX</div>
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <div class="three-dots">
-            <i class="fa fa-ellipsis-v"></i>
-            <div class="dropdown">
-                <a href="admin_login.html">Admin Login</a>
-            </div>
+    <div class="logo">SportX</div>
+    <div style="position: relative;" class="three-dots">
+        <i class="fa fa-ellipsis-v" style="cursor: pointer; padding: 5px 10px;"></i>
+        <div class="dropdown">
+            <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
         </div>
     </div>
 </nav>
 
 <div class="hero">
-    <h1>Welcome to SportX Store</h1>
-    <p>সেরা দামে সেরা স্পোর্টস পণ্য পান আমাদের এখানে।</p>
+    <h1>Elevate Your Game</h1>
+    <p style="color: #94a3b8;">সেরা দামে সেরা স্পোর্টস পণ্য পান SportX-এ।</p>
 </div>
 
 <div class="auth-box">
     <h2 id="auth-title">ইউজার লগইন</h2>
-    <input type="text" id="user-name" placeholder="আপনার নাম (শুধু রেজিস্ট্রেশনের জন্য)" style="display: none;">
-    <input type="email" id="user-email" placeholder="ইমেইল">
+    <input type="text" id="user-name" placeholder="আপনার পূর্ণ নাম" style="display: none;">
+    <input type="email" id="user-email" placeholder="ইমেইল এড্রেস">
     <input type="password" id="user-pass" placeholder="পাসওয়ার্ড">
+    
     <button class="btn" onclick="handleAuth()" id="auth-btn">লগইন করুন</button>
-    <button class="btn google-btn" onclick="googleLogin()">Login with Google</button>
-    <p style="text-align: center; cursor: pointer; color: blue;" onclick="toggleAuth()" id="toggle-text">অ্যাকাউন্ট নেই? রেজিস্ট্রেশন করুন</p>
+    
+    <button class="btn google-btn" onclick="googleLogin()">
+        <img src="https://img.icons8.com/color/48/000000/google-logo.png"/>
+        Google দিয়ে প্রবেশ করুন
+    </button>
+    
+    <p id="toggle-text" style="text-align: center; margin-top: 20px; font-size: 14px; color: #94a3b8; cursor: pointer;" onclick="toggleAuth()">
+        অ্যাকাউন্ট নেই? <span style="color: var(--primary);">রেজিস্ট্রেশন করুন</span>
+    </p>
 </div>
 
 <script type="module">
@@ -53,7 +205,6 @@
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
-        // এখানে আপনার ফায়ারবেস কনফিগারেশন বসান
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
         authDomain: "ms-sp-97f78.firebaseapp.com",
         projectId: "ms-sp-97f78",
@@ -68,20 +219,22 @@
 
     let isRegisterMode = false;
 
-    // লগইন ও রেজিস্ট্রেশন পাল্টানোর ফাংশন
     window.toggleAuth = () => {
         isRegisterMode = !isRegisterMode;
-        document.getElementById('auth-title').innerText = isRegisterMode ? "রেজিস্ট্রেশন করুন" : "ইউজার লগইন";
+        document.getElementById('auth-title').innerText = isRegisterMode ? "নতুন অ্যাকাউন্ট" : "ইউজার লগইন";
         document.getElementById('user-name').style.display = isRegisterMode ? "block" : "none";
-        document.getElementById('auth-btn').innerText = isRegisterMode ? "রেজিস্ট্রেশন করুন" : "লগইন করুন";
-        document.getElementById('toggle-text').innerText = isRegisterMode ? "অ্যাকাউন্ট আছে? লগইন করুন" : "অ্যাকাউন্ট নেই? রেজিস্ট্রেশন করুন";
+        document.getElementById('auth-btn').innerText = isRegisterMode ? "রেজিস্ট্রেশন" : "লগইন";
+        document.getElementById('toggle-text').innerHTML = isRegisterMode ? 
+            "অ্যাকাউন্ট আছে? <span style='color: var(--primary);'>লগইন করুন</span>" : 
+            "অ্যাকাউন্ট নেই? <span style='color: var(--primary);'>রেজিস্ট্রেশন করুন</span>";
     };
 
-    // ইমেইল পাসওয়ার্ড অথেন্টিকেশন
     window.handleAuth = () => {
         const email = document.getElementById('user-email').value;
         const pass = document.getElementById('user-pass').value;
         const name = document.getElementById('user-name').value;
+
+        if(!email || !pass) return alert("সব ঘর পূরণ করুন");
 
         if(isRegisterMode) {
             createUserWithEmailAndPassword(auth, email, pass).then((res) => {
@@ -95,7 +248,6 @@
         }
     };
 
-    // গুগল লগইন
     window.googleLogin = () => {
         signInWithPopup(auth, provider)
             .then(() => window.location.href = "shop.html")
