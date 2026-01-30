@@ -8,34 +8,23 @@
         :root { --primary: #27ae60; --dark: #2c3e50; --danger: #e74c3c; --accent: #e67e22; }
         body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 10px; color: #333; }
         
-        /* স্ট্যাটাস কার্ড */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
         .stat-box { background: var(--dark); color: white; padding: 15px; border-radius: 12px; text-align: center; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .stat-box b { font-size: 22px; display: block; color: var(--primary); }
 
-        /* অর্ডার বাটন */
-        .order-nav-btn { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 20px; box-shadow: 0 4px 10px rgba(230, 126, 34, 0.3); transition: 0.3s; }
-        .order-nav-btn:active { transform: scale(0.98); }
+        .order-nav-btn { background: var(--accent); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; font-size: 16px; cursor: pointer; margin-bottom: 20px; transition: 0.3s; }
 
-        /* ফরম সেকশন */
         .card { background: white; padding: 20px; border-radius: 15px; margin-bottom: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
         h3 { margin-top: 0; color: var(--dark); border-bottom: 2px solid var(--primary); padding-bottom: 8px; font-size: 18px; }
-        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 14px; outline: none; }
-        input:focus, textarea:focus { border-color: var(--primary); }
-        .btn-add { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; margin-top: 10px; }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; outline: none; }
+        
+        .btn-add { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px; }
 
-        /* প্রোডাক্ট লিস্ট আইটেম */
-        .p-item { display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .p-item img { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; background: #eee; }
+        .p-item { display: flex; align-items: center; gap: 12px; background: white; padding: 12px; border-radius: 12px; margin-bottom: 10px; border: 1px solid #eee; }
+        .p-item img { width: 55px; height: 55px; border-radius: 8px; object-fit: cover; }
         .p-info { flex: 1; }
-        .p-info b { font-size: 15px; display: block; margin-bottom: 2px; }
-        .p-info span { font-size: 13px; color: #666; }
-        .actions { display: flex; flex-direction: column; gap: 5px; }
-        .btn-edit { background: #3498db; color: white; border: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; }
-        .btn-del { background: var(--danger); color: white; border: none; padding: 6px 10px; border-radius: 5px; font-size: 12px; }
-
-        /* রিভিউ সেকশন */
-        .review-card { background: #fffbe6; padding: 12px; border-radius: 10px; margin-bottom: 8px; border-left: 4px solid #f1c40f; font-size: 13px; }
+        .p-info b { font-size: 15px; display: block; }
+        .btn-del { background: var(--danger); color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -45,35 +34,28 @@
         <div class="stat-box"><b id="o-total">0</b>মোট অর্ডার</div>
     </div>
 
-    <button class="order-nav-btn" onclick="window.open('orders.html', '_blank')">
-        📦 View Order Requests (New Tab)
+    <button class="order-nav-btn" onclick="location.href='orders.html'">
+        📦 View Order Requests
     </button>
 
     <div class="card">
         <h3>🚀 নতুন প্রোডাক্ট পাবলিশ করুন</h3>
         <input type="text" id="p-name" placeholder="প্রোডাক্টের নাম">
         <input type="number" id="p-price" placeholder="দাম (টাকা)">
-        <input type="number" id="p-stock" placeholder="স্টক পরিমাণ (যেমন: ২০)">
-        <input type="text" id="p-img" placeholder="ছবির ডাইরেক্ট লিঙ্ক (URL)">
-        <textarea id="p-desc" placeholder="প্রোডাক্টের বিস্তারিত বর্ণনা লিখুন..." rows="3"></textarea>
-        <button class="btn-add" onclick="uploadProduct()">পাবলিশ করুন</button>
+        <input type="number" id="p-stock" placeholder="স্টক পরিমাণ">
+        <input type="text" id="p-img" placeholder="ছবির লিঙ্ক (URL)">
+        <textarea id="p-desc" placeholder="বিস্তারিত বর্ণনা..." rows="3"></textarea>
+        <button class="btn-add" id="uploadBtn">পাবলিশ করুন</button>
     </div>
 
     <div class="card">
         <h3>🛠️ প্রোডাক্ট ম্যানেজ করুন</h3>
-        <div id="admin-product-list">
-            <p style="text-align:center; color:#999;">লোড হচ্ছে...</p>
-        </div>
-    </div>
-
-    <div class="card">
-        <h3>💬 গ্রাহকদের ফিডব্যাক</h3>
-        <div id="admin-review-list">এখনো কোনো রিভিউ নেই।</div>
+        <div id="admin-product-list">লোড হচ্ছে...</div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
@@ -88,8 +70,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- প্রোডাক্ট আপলোড ফাংশন ---
-        window.uploadProduct = () => {
+        // --- প্রোডাক্ট আপলোড ---
+        document.getElementById('uploadBtn').addEventListener('click', () => {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const stock = document.getElementById('p-stock').value;
@@ -97,33 +79,62 @@
             const desc = document.getElementById('p-desc').value;
 
             if(name && price && stock && img && desc) {
-                push(ref(db, 'products'), {
-                    name, 
-                    price: parseInt(price), 
-                    stock: parseInt(stock), 
-                    img, 
-                    description: desc,
+                const productListRef = ref(db, 'products');
+                const newProductRef = push(productListRef);
+                set(newProductRef, {
+                    name, price: parseInt(price), stock: parseInt(stock), img, description: desc,
                     date: new Date().toLocaleDateString()
                 }).then(() => {
-                    alert("প্রোডাক্ট সফলভাবে যোগ হয়েছে!");
-                    location.reload();
-                });
+                    alert("সফলভাবে প্রোডাক্ট যোগ হয়েছে!");
+                    document.querySelectorAll('input, textarea').forEach(el => el.value = "");
+                }).catch(err => alert("Error: " + err.message));
             } else {
-                alert("দয়া করে সবকটি ঘর পূরণ করুন!");
+                alert("সবগুলো তথ্য দিন!");
+            }
+        });
+
+        // --- প্রোডাক্ট লিস্ট ও ম্যানেজমেন্ট ---
+        onValue(ref(db, 'products'), (snapshot) => {
+            const list = document.getElementById('admin-product-list');
+            const totalP = document.getElementById('p-total');
+            list.innerHTML = "";
+            let count = 0;
+            
+            if(snapshot.exists()) {
+                snapshot.forEach(child => {
+                    count++;
+                    const p = child.val();
+                    const id = child.key;
+                    list.innerHTML += `
+                        <div class="p-item">
+                            <img src="${p.img}" onerror="this.src='https://via.placeholder.com/50'">
+                            <div class="p-info">
+                                <b>${p.name}</b>
+                                <span>${p.price} ৳ | স্টক: ${p.stock}</span>
+                            </div>
+                            <button class="btn-del" onclick="deleteItem('${id}')">মুছুন</button>
+                        </div>
+                    `;
+                });
+                totalP.innerText = count;
+            } else {
+                list.innerHTML = "কোনো প্রোডাক্ট নেই।";
+                totalP.innerText = "0";
+            }
+        });
+
+        // --- ডিলিট ফাংশন ---
+        window.deleteItem = (id) => {
+            if(confirm("আপনি কি এটি ডিলিট করতে চান?")) {
+                remove(ref(db, 'products/' + id));
             }
         };
 
-        // --- প্রোডাক্ট লিস্ট লোড ও ম্যানেজমেন্ট ---
-        onValue(ref(db, 'products'), (snapshot) => {
-            const list = document.getElementById('admin-product-list');
-            list.innerHTML = "";
-            let count = 0;
-            if(!snapshot.exists()) list.innerHTML = "কোনো প্রোডাক্ট নেই।";
-            
-            snapshot.forEach(child => {
-                count++;
-                const p = child.val();
-                const id = child.key;
-                list.innerHTML += `
-                    <div class="p-item">
-                        <img src
+        // --- অর্ডার কাউন্ট ---
+        onValue(ref(db, 'orders'), (snapshot) => {
+            document.getElementById('o-total').innerText = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+        });
+
+    </script>
+</body>
+</html>
