@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Orders - SportX</title>
+    <style>
+        body { font-family: sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
+        h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #e67e22; padding-bottom: 10px; }
+        .order-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 5px solid #e67e22; }
+        .order-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
+        .detail { font-size: 14px; margin: 5px 0; color: #555; }
+        .trx { color: #27ae60; font-weight: bold; background: #e8f5e9; padding: 2px 5px; border-radius: 4px; }
+        .del-btn { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; float: right; margin-top: -30px; }
+    </style>
+</head>
+<body>
+
+    <h2>📦 কাস্টমার অর্ডার রিকোয়েস্ট</h2>
+    <div id="orders-container">লোড হচ্ছে...</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+            authDomain: "ms-sp-97f78.firebaseapp.com",
+            databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+            projectId: "ms-sp-97f78",
+            storageBucket: "ms-sp-97f78.appspot.com",
+            messagingSenderId: "880638162029",
+            appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        onValue(ref(db, 'orders'), (snapshot) => {
+            const container = document.getElementById('orders-container');
+            container.innerHTML = "";
+            
+            if(!snapshot.exists()) {
+                container.innerHTML = "<p style='text-align:center;'>কোনো অর্ডার পাওয়া যায়নি।</p>";
+                return;
+            }
+
+            snapshot.forEach(child => {
+                const o = child.val();
+                const id = child.key;
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span>👤 ${o.user || 'Guest'}</span>
+                            <small>${o.date || ''}</small>
+                        </div>
+                        <div class="detail"><b>ঠিকানা:</b> ${o.addr || o.address}</div>
+                        <div class="detail"><b>পেমেন্ট (TrxID):</b> <span class="trx">${o.trx || o.payment}</span></div>
+                        <div class="detail"><b>প্রোডাক্ট আইডি:</b> ${o.pId || 'N/A'}</div>
+                        <button class="del-btn" onclick="deleteOrder('${id}')">মুছুন</button>
+                    </div>
+                `;
+            });
+        });
+
+        window.deleteOrder = (id) => {
+            if(confirm("অর্ডারটি কি ডেলিভারি হয়ে গেছে? মুছতে চাইলে OK দিন।")) {
+                remove(ref(db, 'orders/' + id));
+            }
+        };
+    </script>
+</body>
+</html>

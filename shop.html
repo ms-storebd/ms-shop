@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>SportX Shop</title>
+    <style>
+        :root { --main: #27ae60; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background: #f0f2f5; -webkit-tap-highlight-color: transparent; }
+        .nav { background: var(--main); color: white; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; height: 50px; }
+        .container { padding: 10px; display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; } /* মোবাইলে ২ কলাম */
+        .p-card { background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 2px 5px rgba(0,0,0,0.05); cursor: pointer; position: relative; }
+        .p-card img { width: 100%; height: 150px; object-fit: cover; }
+        .p-info { padding: 8px; text-align: left; }
+        .p-info h3 { font-size: 14px; margin: 5px 0; color: #333; height: 35px; overflow: hidden; }
+        .p-info b { color: var(--main); font-size: 16px; }
+        .stock-badge { position: absolute; top: 5px; right: 5px; background: rgba(0,0,0,0.6); color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="nav">
+    <div style="font-weight: bold; font-size: 18px;">SportX</div>
+    <div id="user-initial" style="width:30px; height:30px; background:white; color:var(--main); border-radius:50%; display:flex; align-items:center; justify:center; font-weight:bold; cursor:pointer;" onclick="location.href='index.html'">U</div>
+</div>
+
+<div class="container" id="product-list"></div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+        authDomain: "ms-sp-97f78.firebaseapp.com",
+        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+        projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
+        messagingSenderId: "880638162029",
+        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    onValue(ref(db, 'products'), (snapshot) => {
+        const list = document.getElementById('product-list');
+        list.innerHTML = "";
+        snapshot.forEach(child => {
+            const p = child.val();
+            list.innerHTML += `
+                <div class="p-card" onclick="location.href='product_details.html?id=${child.key}'">
+                    <span class="stock-badge">Stock: ${p.stock || 0}</span>
+                    <img src="${p.img}">
+                    <div class="p-info">
+                        <h3>${p.name}</h3>
+                        <b>${p.price} TK</b>
+                    </div>
+                </div>
+            `;
+        });
+    });
+</script>
+</body>
+</html>

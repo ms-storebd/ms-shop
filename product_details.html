@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Details - SportX</title>
+    <style>
+        body { font-family: sans-serif; margin: 0; background: #fff; padding-bottom: 80px; }
+        .main-img { width: 100%; height: 300px; object-fit: contain; background: #f9f9f9; }
+        .content { padding: 15px; }
+        .price { color: #27ae60; font-size: 24px; font-weight: bold; }
+        .desc { color: #555; line-height: 1.6; margin-top: 15px; }
+        .order-btn { position: fixed; bottom: 0; width: 100%; background: #27ae60; color: white; border: none; padding: 18px; font-size: 18px; font-weight: bold; cursor: pointer; }
+        .review-box { padding: 15px; background: #f4f4f4; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+<div id="details"></div>
+
+<div class="review-box">
+    <h4>Customer Reviews</h4>
+    <div id="review-list" style="font-size: 13px;"></div>
+</div>
+
+<button class="order-btn" onclick="placeOrder()">🛒 সরাসরি অর্ডার করুন</button>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = { /* আপনার কনফিগ */ 
+        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+        authDomain: "ms-sp-97f78.firebaseapp.com",
+        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+        projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
+        messagingSenderId: "880638162029",
+        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+    const pId = new URLSearchParams(window.location.search).get('id');
+
+    onValue(ref(db, 'products/' + pId), (snapshot) => {
+        const p = snapshot.val();
+        document.getElementById('details').innerHTML = `
+            <img class="main-img" src="${p.img}">
+            <div class="content">
+                <h2>${p.name}</h2>
+                <div class="price">${p.price} TK</div>
+                <p>Stock Available: ${p.stock || 0}</p>
+                <div class="desc">${p.description}</div>
+            </div>
+        `;
+    });
+
+    window.placeOrder = () => {
+        const addr = prompt("ডেলিভারি ঠিকানা ও ফোন নম্বর:");
+        const trx = prompt("বিকাশ/নগদ TrxID দিন:");
+        if(addr && trx) {
+            push(ref(db, 'orders'), {
+                user: auth.currentUser ? auth.currentUser.email : "Guest",
+                product: pId,
+                address: addr,
+                payment: trx,
+                date: new Date().toLocaleString()
+            }).then(() => alert("অর্ডার সফল!"));
+        }
+    };
+</script>
+</body>
+</html>
