@@ -3,62 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Requests - Admin</title>
+    <title>Order Requests - SportX Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { 
             --primary: #2ecc71; 
             --dark: #1e293b; 
             --pending: #f1c40f; 
             --shipped: #3498db; 
-            --delivered: #9b59b6; 
+            --delivered: #2ecc71; 
             --danger: #e74c3c; 
         }
-        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; margin: 0; padding: 15px; }
         
-        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .header h2 { margin: 0; font-size: 20px; color: var(--dark); }
-        .back-btn { background: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .header h2 { margin: 0; font-size: 18px; color: var(--dark); }
+        .back-btn { background: var(--dark); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
 
-        /* অর্ডার কার্ড */
+        #orders-list { display: grid; gap: 20px; }
         .order-card { 
-            background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--pending);
-            animation: fadeIn 0.3s ease;
+            background: white; border-radius: 18px; padding: 20px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-left: 6px solid var(--pending);
+            position: relative; animation: slideIn 0.4s ease;
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
-        .product-name { font-size: 17px; font-weight: bold; color: var(--dark); }
-        .order-date { font-size: 12px; color: #64748b; }
-
-        .details-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 15px; }
-        .detail-item { font-size: 14px; color: #475569; display: flex; align-items: center; gap: 8px; }
-        .detail-item i { color: var(--accent); width: 16px; }
-
-        /* স্ট্যাটাস সেকশন */
-        .status-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; }
-        .status-label { font-size: 12px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 8px; }
-        .status-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-
-        .s-btn { 
-            padding: 6px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; 
-            background: white; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s;
-        }
-        .s-btn.active-pending { border-color: var(--pending); color: var(--pending); background: rgba(241, 196, 15, 0.1); }
-        .s-btn.active-shipped { border-color: var(--shipped); color: var(--shipped); background: rgba(52, 152, 219, 0.1); }
-        .s-btn.active-delivered { border-color: var(--delivered); color: var(--delivered); background: rgba(155, 89, 182, 0.1); }
-        .s-btn.active-cancel { border-color: var(--danger); color: var(--danger); background: rgba(231, 76, 60, 0.1); }
+        .order-header { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; margin-bottom: 15px; }
+        .p-name { font-size: 18px; font-weight: bold; color: var(--dark); }
         
-        .delete-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px; }
-        .delete-btn:hover { color: var(--danger); }
+        .info-row { margin-bottom: 15px; }
+        .info-item { font-size: 14px; margin: 5px 0; color: #475569; display: flex; align-items: center; gap: 8px; }
+        .info-item i { width: 18px; color: var(--shipped); }
+
+        /* স্ট্যাটাস বাটন */
+        .status-box { background: #f8fafc; padding: 15px; border-radius: 12px; }
+        .s-label { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 10px; text-transform: uppercase; }
+        .s-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+        .s-btn { padding: 8px 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; background: white; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
+        
+        .s-btn.active-Pending { border-color: var(--pending); color: var(--pending); background: #fffdf0; }
+        .s-btn.active-Shipped { border-color: var(--shipped); color: var(--shipped); background: #f0f7ff; }
+        .s-btn.active-Delivered { border-color: var(--delivered); color: var(--delivered); background: #f0fff4; }
+        .s-btn.active-Cancelled { border-color: var(--danger); color: var(--danger); background: #fff5f5; }
+
+        /* অ্যাকশন বাটন */
+        .action-area { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #f1f5f9; padding-top: 15px; }
+        .btn-invoice { flex: 1; background: #6366f1; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-del { background: #fee2e2; color: var(--danger); border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <button class="back-btn" onclick="location.href='admin.html'"><i class="fa fa-arrow-left"></i></button>
-        <h2>অর্ডার রিকোয়েস্ট সমূহ</h2>
+        <h2>অর্ডার ম্যানেজমেন্ট সেন্টার</h2>
     </div>
 
     <div id="orders-list">লোড হচ্ছে...</div>
@@ -79,75 +78,112 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    const ordersRef = ref(db, 'orders');
-
-    onValue(ordersRef, (snapshot) => {
-        const container = document.getElementById('orders-list');
-        container.innerHTML = "";
+    onValue(ref(db, 'orders'), (snapshot) => {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = "";
         
         if (snapshot.exists()) {
-            const data = snapshot.val();
-            // লেটেস্ট অর্ডার উপরে দেখানোর জন্য রিভার্স লুপ
-            Object.keys(data).reverse().forEach(key => {
-                const o = data[key];
+            const orders = snapshot.val();
+            Object.keys(orders).reverse().forEach(id => {
+                const o = orders[id];
                 const card = document.createElement('div');
                 card.className = 'order-card';
-                card.style.borderLeftColor = getStatusColor(o.status);
+                card.style.borderLeftColor = getCol(o.status);
 
                 card.innerHTML = `
                     <div class="order-header">
-                        <div>
-                            <div class="product-name">${o.productName}</div>
-                            <div class="order-date">${o.date}</div>
-                        </div>
-                        <button class="delete-btn" onclick="deleteOrder('${key}')"><i class="fa fa-trash-can"></i></button>
+                        <div class="p-name">${o.productName}</div>
+                        <div style="font-size:11px; color:#94a3b8;">${o.date}</div>
                     </div>
                     
-                    <div class="details-grid">
-                        <div class="detail-item"><i class="fa fa-user"></i> <b>ক্রেতা:</b> ${o.userName}</div>
-                        <div class="detail-item"><i class="fa fa-location-dot"></i> <b>ঠিকানা:</b> ${o.address}</div>
-                        <div class="detail-item"><i class="fa fa-receipt"></i> <b>Trx ID:</b> <span style="color:var(--shipped); font-weight:bold;">${o.trxID || 'N/A'}</span></div>
+                    <div class="info-row">
+                        <div class="info-item"><i class="fa fa-user"></i> ক্রেতা: ${o.userName}</div>
+                        <div class="info-item"><i class="fa fa-map-marker-alt"></i> ঠিকানা: ${o.address}</div>
+                        <div class="info-item"><i class="fa fa-receipt"></i> Trx ID: <b>${o.trxID}</b></div>
                     </div>
 
                     <div class="status-box">
-                        <span class="status-label">অর্ডার স্ট্যাটাস আপডেট করুন:</span>
-                        <div class="status-btns">
-                            <button class="s-btn ${o.status === 'Pending' ? 'active-pending' : ''}" onclick="updateStatus('${key}', 'Pending')">পেন্ডিং</button>
-                            <button class="s-btn ${o.status === 'Shipped' ? 'active-shipped' : ''}" onclick="updateStatus('${key}', 'Shipped')">শিফট</button>
-                            <button class="s-btn ${o.status === 'Delivered' ? 'active-delivered' : ''}" onclick="updateStatus('${key}', 'Delivered')">ডেলিভারড</button>
-                            <button class="s-btn ${o.status === 'Cancelled' ? 'active-cancel' : ''}" onclick="updateStatus('${key}', 'Cancelled')">বাতিল</button>
+                        <span class="s-label">স্ট্যাটাস পরিবর্তন করুন:</span>
+                        <div class="s-btns">
+                            ${['Pending', 'Shipped', 'Delivered', 'Cancelled'].map(st => `
+                                <button class="s-btn ${o.status === st ? 'active-'+st : ''}" 
+                                onclick="changeStatus('${id}', '${st}')">${st}</button>
+                            `).join('')}
                         </div>
                     </div>
+
+                    <div class="action-area">
+                        <button class="btn-invoice" onclick="downloadInvoice('${id}')">
+                            <i class="fa fa-file-pdf"></i> Invoice Download
+                        </button>
+                        <button class="btn-del" onclick="deleteOrder('${id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 `;
-                container.appendChild(card);
+                list.appendChild(card);
             });
         } else {
-            container.innerHTML = "<p style='text-align:center; color:#94a3b8;'>কোনো অর্ডার রিকোয়েস্ট নেই।</p>";
+            list.innerHTML = "<p style='text-align:center;'>কোনো অর্ডার নেই!</p>";
         }
     });
 
-    // স্ট্যাটাস আপডেট ফাংশন
-    window.updateStatus = (id, newStatus) => {
-        update(ref(db, 'orders/' + id), { status: newStatus })
-        .then(() => console.log("Status Updated"))
-        .catch(err => alert("Error: " + err.message));
+    window.changeStatus = (id, s) => {
+        update(ref(db, 'orders/' + id), { status: s });
     };
 
-    // অর্ডার ডিলিট ফাংশন
     window.deleteOrder = (id) => {
-        if(confirm("অর্ডারটি কি চিরতরে মুছে ফেলতে চান?")) {
-            remove(ref(db, 'orders/' + id));
-        }
+        if(confirm("অর্ডারটি মুছে ফেলতে চান?")) remove(ref(db, 'orders/' + id));
     };
 
-    function getStatusColor(status) {
-        switch(status) {
-            case 'Pending': return '#f1c40f';
-            case 'Shipped': return '#3498db';
-            case 'Delivered': return '#2ecc71';
-            case 'Cancelled': return '#e74c3c';
-            default: return '#cbd5e1';
-        }
+    // ইনভয়েস জেনারেটর ফাংশন
+    window.downloadInvoice = (id) => {
+        onValue(ref(db, 'orders/' + id), (snap) => {
+            const o = snap.val();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+
+            // ডিজাইন
+            doc.setFillColor(30, 41, 59);
+            doc.rect(0, 0, 210, 40, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(22);
+            doc.text("SportX Official Invoice", 105, 25, { align: "center" });
+
+            doc.setTextColor(0, 0, 0);
+            doc.setFontSize(12);
+            doc.text(`Order ID: #${id.substring(1, 8)}`, 20, 50);
+            doc.text(`Date: ${o.date}`, 20, 60);
+
+            doc.setLineWidth(0.5);
+            doc.line(20, 65, 190, 65);
+
+            doc.setFontSize(14);
+            doc.text("Customer Details:", 20, 80);
+            doc.setFontSize(11);
+            doc.text(`Name: ${o.userName}`, 25, 90);
+            doc.text(`Address: ${o.address}`, 25, 100);
+
+            doc.setFontSize(14);
+            doc.text("Product Details:", 20, 120);
+            doc.setFontSize(11);
+            doc.text(`Product: ${o.productName}`, 25, 130);
+            doc.text(`Payment TrxID: ${o.trxID}`, 25, 140);
+            doc.text(`Current Status: ${o.status}`, 25, 150);
+
+            doc.setFillColor(241, 245, 249);
+            doc.rect(20, 170, 170, 20, 'F');
+            doc.text("Thank you for shopping with SportX!", 105, 182, { align: "center" });
+
+            doc.save(`Invoice_${o.userName}.pdf`);
+        }, { onlyOnce: true });
+    };
+
+    function getCol(s) {
+        if(s === 'Pending') return '#f1c40f';
+        if(s === 'Shipped') return '#3498db';
+        if(s === 'Delivered') return '#2ecc71';
+        return '#e74c3c';
     }
 </script>
 </body>
