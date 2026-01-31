@@ -31,9 +31,7 @@
             box-sizing: border-box;
         }
 
-        /* এখান থেকে আপনি বাম পাশের নাম পরিবর্তন করতে পারবেন */
         .logo { font-size: 20px; font-weight: bold; color: var(--primary); flex-shrink: 0; }
-
         .header-right { display: flex; align-items: center; gap: 20px; flex: 1; justify-content: flex-end; }
 
         .search-box { position: relative; width: 130px; }
@@ -55,56 +53,28 @@
         }
         .profile-menu.show { display: block; animation: slideIn 0.3s ease; }
 
-        /* মেইন ক্যাটাগরি গ্রিড */
-        .cat-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 10px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-        .cat-item {
-            background: var(--glass);
-            border: 1px solid var(--border);
-            border-radius: 15px;
-            padding: 12px 5px;
+        /* আইডি কার্ড ডিজাইন */
+        .id-box {
+            background: rgba(0, 210, 255, 0.1);
+            border: 1px dashed var(--primary);
+            padding: 12px;
+            border-radius: 12px;
             text-align: center;
+            margin-bottom: 15px;
             cursor: pointer;
-            transition: 0.3s;
         }
+        .id-box:active { background: rgba(0, 210, 255, 0.2); }
+
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; margin-top: 10px; }
+        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
         .cat-item i { font-size: 20px; color: var(--primary); margin-bottom: 5px; display: block; }
         .cat-item span { font-size: 11px; font-weight: 500; color: #cbd5e1; }
         .cat-item.active { background: var(--primary); border-color: var(--primary); }
         .cat-item.active i, .cat-item.active span { color: #0f172a; }
 
-        /* সাব-ক্যাটাগরি স্ক্রল মেনু */
-        .sub-cat-container {
-            display: none; 
-            overflow-x: auto;
-            white-space: nowrap;
-            padding: 0 15px 15px;
-            gap: 10px;
-            scrollbar-width: none;
-        }
-        .sub-cat-container::-webkit-scrollbar { display: none; }
-        
-        .sub-cat-btn {
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.08);
-            border: 1px solid var(--border);
-            color: #94a3b8;
-            padding: 6px 15px;
-            border-radius: 20px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .sub-cat-btn.active {
-            background: var(--primary);
-            color: #0f172a;
-            border-color: var(--primary);
-            font-weight: 600;
-        }
+        .sub-cat-container { display: none; overflow-x: auto; white-space: nowrap; padding: 0 15px 15px; gap: 10px; scrollbar-width: none; }
+        .sub-cat-btn { display: inline-block; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: #94a3b8; padding: 6px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; }
+        .sub-cat-btn.active { background: var(--primary); color: #0f172a; border-color: var(--primary); font-weight: 600; }
 
         .container { padding: 0 15px 15px 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
@@ -113,7 +83,6 @@
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-price { color: var(--primary); font-weight: bold; font-size: 15px; margin-top: 4px; }
-        
         .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
 
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
@@ -136,28 +105,28 @@
 </header>
 
 <div class="profile-menu" id="profileMenu">
-    <h3 style="margin:0 0 10px 0; font-size: 18px; color:var(--primary);">My Profile</h3>
+    <h3 style="margin:0 0 15px 0; font-size: 18px; color:var(--primary); text-align: center;">My Profile</h3>
+    
+    <div class="id-box" onclick="copyMyID()">
+        <div style="font-size:10px; color:#94a3b8; text-transform: uppercase;">User Profile ID (ক্লিক করুন)</div>
+        <div id="u-id" style="font-size: 18px; font-weight: bold; color: white; letter-spacing: 2px; margin-top: 3px;">#------</div>
+    </div>
+
     <div class="user-label" style="font-size:11px; color:#94a3b8;">নাম:</div>
     <div class="user-data" id="u-name" style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px;">...</div>
+    
     <div class="user-label" style="font-size:11px; color:#94a3b8;">ইমেইল:</div>
     <div class="user-data" id="u-email" style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; font-size:12px;">...</div>
+    
     <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="location.href='my_orders.html'">My Orders</button>
     <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white; cursor:pointer;" onclick="logout()">লগআউট</button>
 </div>
 
 <div class="cat-grid">
-    <div class="cat-item active" onclick="selectMainCat('All', this)">
-        <i class="fa fa-th-large"></i><span>সব</span>
-    </div>
-    <div class="cat-item" onclick="selectMainCat('Sports', this)">
-        <i class="fa fa-futbol"></i><span>স্পোর্টস</span>
-    </div>
-    <div class="cat-item" onclick="selectMainCat('Electronics', this)">
-        <i class="fa fa-bolt"></i><span>ইলেক্ট্রো.</span>
-    </div>
-    <div class="cat-item" onclick="selectMainCat('Fashion', this)">
-        <i class="fa fa-tshirt"></i><span>ফ্যাশন</span>
-    </div>
+    <div class="cat-item active" onclick="selectMainCat('All', this)"><i class="fa fa-th-large"></i><span>সব</span></div>
+    <div class="cat-item" onclick="selectMainCat('Sports', this)"><i class="fa fa-futbol"></i><span>স্পোর্টস</span></div>
+    <div class="cat-item" onclick="selectMainCat('Electronics', this)"><i class="fa fa-bolt"></i><span>ইলেক্ট্রো.</span></div>
+    <div class="cat-item" onclick="selectMainCat('Fashion', this)"><i class="fa fa-tshirt"></i><span>ফ্যাশন</span></div>
 </div>
 
 <div id="subCatMenu" class="sub-cat-container"></div>
@@ -188,8 +157,19 @@
         if (user) {
             document.getElementById('u-name').innerText = user.displayName || "User";
             document.getElementById('u-email').innerText = user.email;
+            // আইডি জেনারেট
+            const shortID = user.uid.slice(-6).toUpperCase();
+            document.getElementById('u-id').innerText = "#" + shortID;
         } else { location.href = "index.html"; }
     });
+
+    // কপি ফাংশন
+    window.copyMyID = () => {
+        const idText = document.getElementById('u-id').innerText;
+        navigator.clipboard.writeText(idText).then(() => {
+            alert("আপনার আইডি কপি হয়েছে: " + idText);
+        });
+    };
 
     const subCats = {
         'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
@@ -226,7 +206,6 @@
         document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         const subMenu = document.getElementById('subCatMenu');
-        
         if (mainCat === 'All') {
             subMenu.style.display = 'none';
             render(pArray);
