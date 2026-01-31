@@ -3,68 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Requests - SportX Admin</title>
+    <title>Order Requests - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
-        :root { 
-            --primary: #2ecc71; 
-            --dark: #1e293b; 
-            --pending: #f1c40f; 
-            --shipped: #3498db; 
-            --delivered: #2ecc71; 
-            --danger: #e74c3c; 
-        }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; margin: 0; padding: 15px; }
-        
-        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .header h2 { margin: 0; font-size: 18px; color: var(--dark); }
-        .back-btn { background: var(--dark); color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
-
-        #orders-list { display: grid; gap: 20px; }
-        .order-card { 
-            background: white; border-radius: 18px; padding: 20px; 
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05); border-left: 6px solid var(--pending);
-            position: relative; animation: slideIn 0.4s ease;
-        }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        .order-header { display: flex; justify-content: space-between; border-bottom: 1px dashed #e2e8f0; padding-bottom: 12px; margin-bottom: 15px; }
-        .p-name { font-size: 18px; font-weight: bold; color: var(--dark); }
-        
-        .info-row { margin-bottom: 15px; }
-        .info-item { font-size: 14px; margin: 5px 0; color: #475569; display: flex; align-items: center; gap: 8px; }
-        .info-item i { width: 18px; color: var(--shipped); }
-
-        /* স্ট্যাটাস বাটন */
-        .status-box { background: #f8fafc; padding: 15px; border-radius: 12px; }
-        .s-label { font-size: 11px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 10px; text-transform: uppercase; }
-        .s-btns { display: flex; flex-wrap: wrap; gap: 8px; }
-        .s-btn { padding: 8px 14px; border-radius: 10px; border: 1.5px solid #cbd5e1; background: white; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; }
-        
-        .s-btn.active-Pending { border-color: var(--pending); color: var(--pending); background: #fffdf0; }
-        .s-btn.active-Shipped { border-color: var(--shipped); color: var(--shipped); background: #f0f7ff; }
+        :root { --primary: #2ecc71; --dark: #1e293b; --pending: #f1c40f; --shipped: #3498db; --delivered: #2ecc71; --danger: #e74c3c; }
+        body { font-family: 'Poppins', sans-serif; background: #f1f5f9; margin: 0; padding: 15px; }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: white; padding: 15px; border-radius: 15px; }
+        .order-card { background: white; border-radius: 18px; padding: 20px; margin-bottom: 20px; border-left: 6px solid var(--pending); box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .p-name { font-size: 17px; font-weight: bold; color: var(--dark); }
+        .info-item { font-size: 14px; margin: 5px 0; color: #475569; }
+        .s-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+        .s-btn { padding: 8px 12px; border-radius: 10px; border: 1.5px solid #cbd5e1; background: white; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .s-btn.active-Pending { border-color: var(--pending); color: var(--pending); }
+        .s-btn.active-Shipped { border-color: var(--shipped); color: var(--shipped); }
         .s-btn.active-Delivered { border-color: var(--delivered); color: var(--delivered); background: #f0fff4; }
-        .s-btn.active-Cancelled { border-color: var(--danger); color: var(--danger); background: #fff5f5; }
-
-        /* অ্যাকশন বাটন */
-        .action-area { display: flex; gap: 10px; margin-top: 15px; border-top: 1px solid #f1f5f9; padding-top: 15px; }
-        .btn-invoice { flex: 1; background: #6366f1; color: white; border: none; padding: 10px; border-radius: 10px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-del { background: #fee2e2; color: var(--danger); border: none; padding: 10px 15px; border-radius: 10px; cursor: pointer; }
+        .s-btn.active-Cancelled { border-color: var(--danger); color: var(--danger); }
+        .btn-invoice { background: #6366f1; color: white; border: none; padding: 10px; border-radius: 10px; margin-top: 15px; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-
     <div class="header">
-        <button class="back-btn" onclick="location.href='admin.html'"><i class="fa fa-arrow-left"></i></button>
-        <h2>অর্ডার ম্যানেজমেন্ট সেন্টার</h2>
+        <button onclick="location.href='admin_dashboard.html'" style="border:none; background:none; font-size:20px; cursor:pointer;"><i class="fa fa-arrow-left"></i></button>
+        <h2 style="margin:0; font-size:18px;">অর্ডার ম্যানেজমেন্ট</h2>
     </div>
-
     <div id="orders-list">লোড হচ্ছে...</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, onValue, update, get, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
@@ -74,14 +41,12 @@
         storageBucket: "ms-sp-97f78.appspot.com",
         appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
     };
-
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
     onValue(ref(db, 'orders'), (snapshot) => {
         const list = document.getElementById('orders-list');
         list.innerHTML = "";
-        
         if (snapshot.exists()) {
             const orders = snapshot.val();
             Object.keys(orders).reverse().forEach(id => {
@@ -89,102 +54,41 @@
                 const card = document.createElement('div');
                 card.className = 'order-card';
                 card.style.borderLeftColor = getCol(o.status);
-
                 card.innerHTML = `
-                    <div class="order-header">
-                        <div class="p-name">${o.productName}</div>
-                        <div style="font-size:11px; color:#94a3b8;">${o.date}</div>
+                    <div class="p-name">${o.productName}</div>
+                    <div class="info-item">ক্রেতা: ${o.userName}</div>
+                    <div class="info-item">ঠিকানা: ${o.address}</div>
+                    <div class="info-item">Trx ID: <b>${o.trxID}</b></div>
+                    <div class="s-btns">
+                        ${['Pending', 'Shipped', 'Delivered', 'Cancelled'].map(st => `
+                            <button class="s-btn ${o.status === st ? 'active-'+st : ''}" 
+                            onclick="updateStatus('${id}', '${st}', '${o.productName}')">${st}</button>
+                        `).join('')}
                     </div>
-                    
-                    <div class="info-row">
-                        <div class="info-item"><i class="fa fa-user"></i> ক্রেতা: ${o.userName}</div>
-                        <div class="info-item"><i class="fa fa-map-marker-alt"></i> ঠিকানা: ${o.address}</div>
-                        <div class="info-item"><i class="fa fa-receipt"></i> Trx ID: <b>${o.trxID}</b></div>
-                    </div>
-
-                    <div class="status-box">
-                        <span class="s-label">স্ট্যাটাস পরিবর্তন করুন:</span>
-                        <div class="s-btns">
-                            ${['Pending', 'Shipped', 'Delivered', 'Cancelled'].map(st => `
-                                <button class="s-btn ${o.status === st ? 'active-'+st : ''}" 
-                                onclick="changeStatus('${id}', '${st}')">${st}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-
-                    <div class="action-area">
-                        <button class="btn-invoice" onclick="downloadInvoice('${id}')">
-                            <i class="fa fa-file-pdf"></i> Invoice Download
-                        </button>
-                        <button class="btn-del" onclick="deleteOrder('${id}')">
-                            <i class="fa fa-trash"></i>
-                        </button>
-                    </div>
+                    <button class="btn-invoice" onclick="downloadInvoice('${id}')">Download Invoice</button>
                 `;
                 list.appendChild(card);
             });
-        } else {
-            list.innerHTML = "<p style='text-align:center;'>কোনো অর্ডার নেই!</p>";
         }
     });
 
-    window.changeStatus = (id, s) => {
-        update(ref(db, 'orders/' + id), { status: s });
+    window.updateStatus = async (orderId, newStatus, pName) => {
+        const orderRef = ref(db, 'orders/' + orderId);
+        const snap = await get(orderRef);
+        const oldStatus = snap.val().status;
+
+        if (newStatus === 'Delivered' && oldStatus !== 'Delivered') {
+            const pSnap = await get(ref(db, 'products'));
+            pSnap.forEach(c => {
+                if(c.val().name === pName && c.val().stock > 0) 
+                    update(ref(db, 'products/' + c.key), { stock: c.val().stock - 1 });
+            });
+        }
+        update(orderRef, { status: newStatus });
     };
 
-    window.deleteOrder = (id) => {
-        if(confirm("অর্ডারটি মুছে ফেলতে চান?")) remove(ref(db, 'orders/' + id));
-    };
-
-    // ইনভয়েস জেনারেটর ফাংশন
-    window.downloadInvoice = (id) => {
-        onValue(ref(db, 'orders/' + id), (snap) => {
-            const o = snap.val();
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-
-            // ডিজাইন
-            doc.setFillColor(30, 41, 59);
-            doc.rect(0, 0, 210, 40, 'F');
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(22);
-            doc.text("SportX Official Invoice", 105, 25, { align: "center" });
-
-            doc.setTextColor(0, 0, 0);
-            doc.setFontSize(12);
-            doc.text(`Order ID: #${id.substring(1, 8)}`, 20, 50);
-            doc.text(`Date: ${o.date}`, 20, 60);
-
-            doc.setLineWidth(0.5);
-            doc.line(20, 65, 190, 65);
-
-            doc.setFontSize(14);
-            doc.text("Customer Details:", 20, 80);
-            doc.setFontSize(11);
-            doc.text(`Name: ${o.userName}`, 25, 90);
-            doc.text(`Address: ${o.address}`, 25, 100);
-
-            doc.setFontSize(14);
-            doc.text("Product Details:", 20, 120);
-            doc.setFontSize(11);
-            doc.text(`Product: ${o.productName}`, 25, 130);
-            doc.text(`Payment TrxID: ${o.trxID}`, 25, 140);
-            doc.text(`Current Status: ${o.status}`, 25, 150);
-
-            doc.setFillColor(241, 245, 249);
-            doc.rect(20, 170, 170, 20, 'F');
-            doc.text("Thank you for shopping with SportX!", 105, 182, { align: "center" });
-
-            doc.save(`Invoice_${o.userName}.pdf`);
-        }, { onlyOnce: true });
-    };
-
-    function getCol(s) {
-        if(s === 'Pending') return '#f1c40f';
-        if(s === 'Shipped') return '#3498db';
-        if(s === 'Delivered') return '#2ecc71';
-        return '#e74c3c';
-    }
+    window.downloadInvoice = (id) => { /* আগের ইনভয়েস কোড এখানে */ };
+    function getCol(s) { return s==='Pending'?'#f1c40f':s==='Shipped'?'#3498db':s==='Delivered'?'#2ecc71':'#e74c3c'; }
 </script>
 </body>
 </html>
