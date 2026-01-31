@@ -33,14 +33,7 @@
 
         .logo { font-size: 20px; font-weight: bold; color: var(--primary); flex-shrink: 0; }
 
-        /* ডানদিকের কন্ট্রোল - এখানে গ্যাপ বাড়ানো হয়েছে */
-        .header-right { 
-            display: flex; 
-            align-items: center; 
-            gap: 20px; /* সার্চ এবং প্রোফাইলের মাঝে দূরত্ব */
-            flex: 1; 
-            justify-content: flex-end; 
-        }
+        .header-right { display: flex; align-items: center; gap: 20px; flex: 1; justify-content: flex-end; }
 
         .search-box { position: relative; width: 130px; }
         .search-box input { 
@@ -50,24 +43,8 @@
         }
         .search-box i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; pointer-events: none; }
         
-        /* প্রোফাইল বাটন - ক্লিক এরিয়া নিশ্চিত করা হয়েছে */
-        .profile-btn { 
-            font-size: 32px; 
-            cursor: pointer; 
-            color: var(--primary); 
-            background: none;
-            border: none;
-            padding: 5px; /* ক্লিক করার জায়গা বড় করা হয়েছে */
-            margin: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 5001;
-            transition: 0.2s;
-        }
-        .profile-btn:active { transform: scale(0.9); }
+        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 5px; display: flex; align-items: center; justify-content: center; z-index: 5001; transition: 0.2s; }
 
-        /* প্রোফাইল মেনু */
         .profile-menu { 
             display: none; position: fixed; top: 70px; right: 15px; 
             width: 260px; background: #1e293b; border-radius: 20px; 
@@ -77,19 +54,43 @@
         .profile-menu.show { display: block; animation: slideIn 0.3s ease; }
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         
+        /* --- নতুন ক্যাটাগরি গ্রিড স্টাইল --- */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .cat-item {
+            background: var(--glass);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 12px 5px;
+            text-align: center;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .cat-item i { font-size: 20px; color: var(--primary); margin-bottom: 5px; display: block; }
+        .cat-item span { font-size: 11px; font-weight: 500; color: #cbd5e1; }
+        .cat-item.active { background: var(--primary); border-color: var(--primary); }
+        .cat-item.active i, .cat-item.active span { color: #0f172a; }
+
         .user-label { font-size: 11px; color: #94a3b8; margin-top: 12px; font-weight: 600; text-transform: uppercase; }
         .user-data { font-size: 14px; color: #fff; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; margin-top: 4px; border: 1px solid var(--border); }
         
         .btn-orders { width: 100%; margin-top: 20px; padding: 12px; background: var(--primary); color: #0f172a; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 15px; }
         .btn-logout { width: 100%; margin-top: 10px; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        .container { padding: 15px; }
+        .container { padding: 0 15px 15px 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; }
+        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; position: relative; }
         .p-card img { width: 100%; height: 130px; object-fit: cover; }
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-price { color: var(--primary); font-weight: bold; font-size: 15px; margin-top: 4px; }
+        
+        .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
 
         @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .search-box { width: 110px; } }
     </style>
@@ -103,7 +104,7 @@
             <input type="text" id="searchInput" placeholder="খুঁজুন..." onkeyup="searchFn()">
             <i class="fa fa-search"></i>
         </div>
-        <button class="profile-btn" id="profileTrigger" title="Profile">
+        <button class="profile-btn" id="profileTrigger">
             <i class="fa fa-user-circle"></i>
         </button>
     </div>
@@ -120,6 +121,21 @@
         <i class="fa fa-shopping-bag"></i> My Orders
     </button>
     <button class="btn-logout" onclick="logout()">লগআউট</button>
+</div>
+
+<div class="cat-grid">
+    <div class="cat-item active" onclick="filterCat('All', this)">
+        <i class="fa fa-th-large"></i><span>সব</span>
+    </div>
+    <div class="cat-item" onclick="filterCat('Sports Item', this)">
+        <i class="fa fa-futbol"></i><span>স্পোর্টস</span>
+    </div>
+    <div class="cat-item" onclick="filterCat('Electronics', this)">
+        <i class="fa fa-bolt"></i><span>ইলেক্ট্রো.</span>
+    </div>
+    <div class="cat-item" onclick="filterCat('Fashion', this)">
+        <i class="fa fa-tshirt"></i><span>ফ্যাশন</span>
+    </div>
 </div>
 
 <div class="container">
@@ -148,9 +164,7 @@
         if (user) {
             document.getElementById('u-name').innerText = user.displayName || "User";
             document.getElementById('u-email').innerText = user.email;
-        } else {
-            location.href = "index.html";
-        }
+        } else { location.href = "index.html"; }
     });
 
     let pArray = [];
@@ -168,6 +182,7 @@
     function render(data) {
         document.getElementById('p-list').innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
+                ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
                 <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150'">
                 <div class="p-info">
                     <div class="p-name">${p.name}</div>
@@ -176,27 +191,32 @@
             </div>`).join('');
     }
 
+    // --- ক্যাটাগরি ফিল্টার ফাংশন ---
+    window.filterCat = (cat, el) => {
+        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+        el.classList.add('active');
+
+        if(cat === 'All') return render(pArray);
+
+        const filtered = pArray.filter(p => {
+            if(cat === 'Sports Item') return ['Jersey', 'Boots', 'Sports Equipment'].includes(p.category);
+            if(cat === 'Electronics') return ['Mobile Accessories', 'Gadgets', 'Headphones'].includes(p.category);
+            if(cat === 'Fashion') return ["Men's Fashion", "Women's Fashion", "Shoes"].includes(p.category);
+            return p.category === cat;
+        });
+        render(filtered);
+    };
+
     window.searchFn = () => {
         let val = document.getElementById('searchInput').value.toLowerCase();
         render(pArray.filter(p => p.name.toLowerCase().includes(val)));
     };
 
-    // মেনু কন্ট্রোল - নিখুঁত ইভেন্ট
     const menu = document.getElementById('profileMenu');
     const trigger = document.getElementById('profileTrigger');
 
-    trigger.addEventListener('click', (e) => {
-        e.preventDefault();
-        e.stopPropagation();
-        menu.classList.toggle('show');
-    });
-
-    document.addEventListener('click', (e) => {
-        if (!menu.contains(e.target) && !trigger.contains(e.target)) {
-            menu.classList.remove('show');
-        }
-    });
-
+    trigger.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+    document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
     window.logout = () => signOut(auth).then(() => location.href = "index.html");
 </script>
 </body>
