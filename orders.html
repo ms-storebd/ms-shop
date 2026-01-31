@@ -18,7 +18,18 @@
         body { font-family: 'Poppins', sans-serif; background: #f1f5f9; margin: 0; padding: 15px; color: #334155; }
         
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        
+
+        /* সার্চ বক্স ডিজাইন */
+        .search-area { margin-bottom: 15px; }
+        .search-box { 
+            display: flex; align-items: center; background: white; padding: 12px 15px; 
+            border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+            border: 2px solid transparent; transition: 0.3s;
+        }
+        .search-box:focus-within { border-color: var(--primary); }
+        .search-box input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
+        .search-box i { color: #94a3b8; }
+
         /* ট্যাব মেনু */
         .tab-menu { 
             display: flex; background: white; border-radius: 12px; padding: 5px; 
@@ -35,15 +46,15 @@
 
         /* অর্ডার কার্ড */
         .order-card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; border-left: 6px solid #ccc; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .order-id-badge { background: #f1f5f9; color: var(--dark); padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-bottom: 10px; display: inline-block; }
+        
         .p-name { font-size: 16px; font-weight: bold; color: var(--dark); margin-bottom: 8px; }
         .info-item { font-size: 13px; margin: 5px 0; color: #475569; display: flex; align-items: center; gap: 8px; }
         .info-item i { width: 15px; color: var(--shipped); }
 
-        /* স্ট্যাটাস বাটন গ্রূপ */
         .s-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #eee; }
         .s-btn { flex: 1; min-width: 80px; padding: 8px 4px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white; font-size: 10px; cursor: pointer; font-weight: bold; }
         
-        /* একটিভ বাটন স্টাইল */
         .active-Pending { border-color: var(--pending) !important; color: var(--pending); background: #fffdf2; }
         .active-Shipped { border-color: var(--shipped) !important; color: var(--shipped); background: #ebf8ff; }
         .active-Delivered { border-color: var(--delivered) !important; color: var(--delivered); background: #f0fff4; }
@@ -61,7 +72,14 @@
         <h2 style="margin:0; font-size:17px;">অর্ডার ম্যানেজমেন্ট</h2>
     </div>
 
-    <div class="tab-menu">
+    <div class="search-area">
+        <div class="search-box">
+            <i class="fa fa-search"></i>
+            <input type="text" id="orderSearch" placeholder="অর্ডার আইডি বা নাম দিয়ে খুঁজুন..." onkeyup="handleSearch()">
+        </div>
+    </div>
+
+    <div class="tab-menu" id="tabMenu">
         <div class="tab active" onclick="switchTab('Pending', this)">পেন্ডিং অর্ডারস</div>
         <div class="tab" onclick="switchTab('Shipped', this)">শিফট অর্ডারস</div>
         <div class="tab" onclick="switchTab('Delivered', this)">ডেলিভারি অর্ডারস</div>
@@ -87,18 +105,35 @@
     const db = getDatabase(app);
     let currentTab = 'Pending';
     let allOrders = {};
+    let isSearching = false;
 
+    // ডাটা লোড করা
+    onValue(ref(db, 'orders'), (snapshot) => {
+        allOrders = snapshot.exists() ? snapshot.val() : {};
+        if(!isSearching) renderOrders();
+    });
+
+    // ট্যাব পরিবর্তন
     window.switchTab = (status, el) => {
+        isSearching = false;
+        document.getElementById('orderSearch').value = "";
         currentTab = status;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         renderOrders();
     };
 
-    onValue(ref(db, 'orders'), (snapshot) => {
-        allOrders = snapshot.exists() ? snapshot.val() : {};
-        renderOrders();
-    });
+    // সার্চ হ্যান্ডলার
+    window.handleSearch = () => {
+        const query = document.getElementById('orderSearch').value.trim().toUpperCase();
+        if(query === "") {
+            isSearching = false;
+            renderOrders();
+            return;
+        }
+        isSearching = true;
+        renderSearchResults(query);
+    };
 
     function renderOrders() {
         const list = document.getElementById('orders-list');
@@ -107,34 +142,52 @@
 
         Object.keys(allOrders).reverse().forEach(id => {
             const o = allOrders[id];
-            
-            // নতুন ট্যাব নাম অনুযায়ী ফিল্টার
             if (o.status === currentTab) {
                 count++;
-                const card = document.createElement('div');
-                card.className = 'order-card';
-                card.style.borderLeftColor = getCol(o.status);
-                card.innerHTML = `
-                    <div class="p-name">${o.productName}</div>
-                    <div class="info-item"><i class="fa fa-user"></i> ক্রেতা: ${o.userName}</div>
-                    <div class="info-item"><i class="fa fa-map-marker-alt"></i> ঠিকানা: ${o.address}</div>
-                    <div class="info-item"><i class="fa fa-receipt"></i> Trx ID: <b>${o.trxID || 'N/A'}</b></div>
-                    
-                    <div class="s-btns">
-                        <button class="s-btn ${o.status === 'Pending' ? 'active-Pending' : ''}" onclick="updateStatus('${id}', 'Pending', '${o.productName}')">Pending</button>
-                        <button class="s-btn ${o.status === 'Shipped' ? 'active-Shipped' : ''}" onclick="updateStatus('${id}', 'Shipped', '${o.productName}')">Shipped</button>
-                        <button class="s-btn ${o.status === 'Delivered' ? 'active-Delivered' : ''}" onclick="updateStatus('${id}', 'Delivered', '${o.productName}')">Delivered</button>
-                        <button class="s-btn ${o.status === 'Cancelled' ? 'active-Cancelled' : ''}" onclick="updateStatus('${id}', 'Cancelled', '${o.productName}')">Cancelled</button>
-                    </div>
-                    <button class="btn-invoice" onclick="downloadInvoice('${id}')">Download Invoice</button>
-                `;
-                list.appendChild(card);
+                list.appendChild(createOrderCard(id, o));
             }
         });
 
-        if (count === 0) {
-            list.innerHTML = `<div id="empty-msg">এই সেকশনে কোনো অর্ডার নেই</div>`;
-        }
+        if (count === 0) list.innerHTML = `<div id="empty-msg">এই সেকশনে কোনো অর্ডার নেই</div>`;
+    }
+
+    function renderSearchResults(query) {
+        const list = document.getElementById('orders-list');
+        list.innerHTML = "";
+        let count = 0;
+
+        Object.keys(allOrders).forEach(id => {
+            const o = allOrders[id];
+            const shortId = id.slice(-6).toUpperCase();
+            if (shortId.includes(query) || o.userName.toUpperCase().includes(query)) {
+                count++;
+                list.appendChild(createOrderCard(id, o));
+            }
+        });
+
+        if (count === 0) list.innerHTML = `<div id="empty-msg">কোনো অর্ডার পাওয়া যায়নি!</div>`;
+    }
+
+    function createOrderCard(id, o) {
+        const card = document.createElement('div');
+        const shortId = id.slice(-6).toUpperCase();
+        card.className = 'order-card';
+        card.style.borderLeftColor = getCol(o.status);
+        card.innerHTML = `
+            <div class="order-id-badge">ORDER ID: #${shortId}</div>
+            <div class="p-name">${o.productName}</div>
+            <div class="info-item"><i class="fa fa-user"></i> ক্রেতা: ${o.userName}</div>
+            <div class="info-item"><i class="fa fa-receipt"></i> স্ট্যাটাস: <b>${o.status}</b></div>
+            
+            <div class="s-btns">
+                <button class="s-btn ${o.status === 'Pending' ? 'active-Pending' : ''}" onclick="updateStatus('${id}', 'Pending', '${o.productName}')">Pending</button>
+                <button class="s-btn ${o.status === 'Shipped' ? 'active-Shipped' : ''}" onclick="updateStatus('${id}', 'Shipped', '${o.productName}')">Shipped</button>
+                <button class="s-btn ${o.status === 'Delivered' ? 'active-Delivered' : ''}" onclick="updateStatus('${id}', 'Delivered', '${o.productName}')">Delivered</button>
+                <button class="s-btn ${o.status === 'Cancelled' ? 'active-Cancelled' : ''}" onclick="updateStatus('${id}', 'Cancelled', '${o.productName}')">Cancelled</button>
+            </div>
+            <button class="btn-invoice" onclick="downloadInvoice('${id}')">Download Invoice</button>
+        `;
+        return card;
     }
 
     window.updateStatus = async (orderId, newStatus, pName) => {
@@ -153,7 +206,7 @@
     };
 
     window.downloadInvoice = (id) => { 
-        alert("Invoice ID: " + id + " ডাউনলোড হচ্ছে...");
+        alert("Invoice ID: #" + id.slice(-6).toUpperCase() + " তৈরি হচ্ছে...");
     };
 
     function getCol(s) { 
