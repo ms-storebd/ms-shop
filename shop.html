@@ -16,7 +16,6 @@
         }
         body { font-family: 'Poppins', sans-serif; margin: 0; background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; }
         
-        /* ফিক্সড হেডার লেআউট */
         header { 
             background: rgba(15, 23, 42, 0.98); 
             backdrop-filter: blur(15px); 
@@ -26,7 +25,7 @@
             align-items: center; 
             position: sticky; 
             top: 0; 
-            z-index: 5000; /* অনেক বেশি ইন্ডেক্স যাতে সবার উপরে থাকে */
+            z-index: 5000; 
             border-bottom: 1px solid var(--border); 
             height: 65px;
             box-sizing: border-box;
@@ -34,10 +33,16 @@
 
         .logo { font-size: 20px; font-weight: bold; color: var(--primary); flex-shrink: 0; }
 
-        .header-right { display: flex; align-items: center; gap: 10px; flex: 1; justify-content: flex-end; }
+        /* ডানদিকের কন্ট্রোল - এখানে গ্যাপ বাড়ানো হয়েছে */
+        .header-right { 
+            display: flex; 
+            align-items: center; 
+            gap: 20px; /* সার্চ এবং প্রোফাইলের মাঝে দূরত্ব */
+            flex: 1; 
+            justify-content: flex-end; 
+        }
 
-        /* সার্চ বক্স ডিজাইন */
-        .search-box { position: relative; width: 140px; }
+        .search-box { position: relative; width: 130px; }
         .search-box input { 
             width: 100%; padding: 8px 32px 8px 10px; 
             border-radius: 12px; border: 1px solid var(--border); 
@@ -45,22 +50,24 @@
         }
         .search-box i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; pointer-events: none; }
         
-        /* প্রোফাইল বাটন */
+        /* প্রোফাইল বাটন - ক্লিক এরিয়া নিশ্চিত করা হয়েছে */
         .profile-btn { 
-            font-size: 30px; 
+            font-size: 32px; 
             cursor: pointer; 
             color: var(--primary); 
-            display: flex; 
-            align-items: center; 
-            justify-content: center;
             background: none;
             border: none;
-            padding: 0;
+            padding: 5px; /* ক্লিক করার জায়গা বড় করা হয়েছে */
             margin: 0;
-            outline: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 5001;
+            transition: 0.2s;
         }
+        .profile-btn:active { transform: scale(0.9); }
 
-        /* প্রোফাইল মেনু পপ-আপ */
+        /* প্রোফাইল মেনু */
         .profile-menu { 
             display: none; position: fixed; top: 70px; right: 15px; 
             width: 260px; background: #1e293b; border-radius: 20px; 
@@ -76,16 +83,15 @@
         .btn-orders { width: 100%; margin-top: 20px; padding: 12px; background: var(--primary); color: #0f172a; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 15px; }
         .btn-logout { width: 100%; margin-top: 10px; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        /* গ্রিড লেআউট */
         .container { padding: 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; transition: 0.3s; }
+        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; }
         .p-card img { width: 100%; height: 130px; object-fit: cover; }
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-price { color: var(--primary); font-weight: bold; font-size: 15px; margin-top: 4px; }
 
-        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
+        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .search-box { width: 110px; } }
     </style>
 </head>
 <body>
@@ -97,7 +103,7 @@
             <input type="text" id="searchInput" placeholder="খুঁজুন..." onkeyup="searchFn()">
             <i class="fa fa-search"></i>
         </div>
-        <button class="profile-btn" id="profileTrigger">
+        <button class="profile-btn" id="profileTrigger" title="Profile">
             <i class="fa fa-user-circle"></i>
         </button>
     </div>
@@ -138,7 +144,6 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // ইউজার ডাটা লোড
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('u-name').innerText = user.displayName || "User";
@@ -148,7 +153,6 @@
         }
     });
 
-    // প্রোডাক্ট লিস্ট লোড
     let pArray = [];
     onValue(ref(db, 'products'), (snap) => {
         pArray = [];
@@ -172,22 +176,21 @@
             </div>`).join('');
     }
 
-    // সার্চ ফাংশন
     window.searchFn = () => {
         let val = document.getElementById('searchInput').value.toLowerCase();
         render(pArray.filter(p => p.name.toLowerCase().includes(val)));
     };
 
-    // প্রোফাইল মেনু ওপেন/ক্লোজ করার সবচেয়ে নিরাপদ পদ্ধতি
+    // মেনু কন্ট্রোল - নিখুঁত ইভেন্ট
     const menu = document.getElementById('profileMenu');
     const trigger = document.getElementById('profileTrigger');
 
     trigger.addEventListener('click', (e) => {
+        e.preventDefault();
         e.stopPropagation();
         menu.classList.toggle('show');
     });
 
-    // মেনুর বাইরে ক্লিক করলে বন্ধ হবে
     document.addEventListener('click', (e) => {
         if (!menu.contains(e.target) && !trigger.contains(e.target)) {
             menu.classList.remove('show');
