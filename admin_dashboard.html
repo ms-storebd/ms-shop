@@ -6,145 +6,45 @@
     <title>Admin Dashboard - SportX</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { 
-            --primary: #2ecc71; 
-            --dark: #1e293b; 
-            --danger: #ff4757; 
-            --accent: #3498db; 
-            --bg: #f8fafc;
-            --glass: rgba(255, 255, 255, 0.9);
-        }
-        
-        body { 
-            font-family: 'Poppins', 'Segoe UI', sans-serif; 
-            background: var(--bg); 
-            margin: 0; 
-            padding: 15px; 
-            color: #334155; 
-        }
+        :root { --primary: #2ecc71; --dark: #1e293b; --danger: #ff4757; --accent: #3498db; --bg: #f8fafc; }
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #334155; }
 
-        /* স্ট্যাটাস গ্রিড আপডেট */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { 
-            background: linear-gradient(135deg, var(--dark), #334155); 
-            color: white; 
-            padding: 20px; 
-            border-radius: 20px; 
-            text-align: center; 
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            transition: 0.3s;
-        }
-        .stat-box b { font-size: 28px; display: block; color: var(--primary); margin-bottom: 5px; }
-        .stat-box span { font-size: 13px; opacity: 0.8; font-weight: 300; }
+        .stat-box { background: var(--dark); color: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .stat-box b { font-size: 28px; display: block; color: var(--primary); }
 
-        /* অর্ডার নেভিগেশন বাটন */
-        .order-nav-btn { 
-            background: linear-gradient(45deg, var(--accent), #2980b9); 
-            color: white; 
-            border: none; 
-            padding: 16px; 
-            width: 100%; 
-            border-radius: 15px; 
-            font-weight: 600; 
-            font-size: 16px; 
-            cursor: pointer; 
-            margin-bottom: 25px; 
-            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
+        .order-nav-btn { background: var(--accent); color: white; border: none; padding: 16px; width: 100%; border-radius: 15px; font-weight: bold; cursor: pointer; margin-bottom: 25px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(52, 152, 219, 0.2); }
 
-        /* কার্ড স্টাইল */
-        .card { 
-            background: white; 
-            padding: 25px; 
-            border-radius: 20px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); 
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-        h3 { 
-            margin-top: 0; 
-            color: var(--dark); 
-            border-left: 4px solid var(--primary); 
-            padding-left: 10px; 
-            font-size: 18px; 
-            margin-bottom: 20px;
-        }
+        .card { background: white; padding: 25px; border-radius: 20px; margin-bottom: 25px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); border: 1px solid #f1f5f9; }
+        h3 { margin-top: 0; color: var(--dark); border-left: 4px solid var(--primary); padding-left: 10px; font-size: 18px; }
 
-        input, textarea { 
-            width: 100%; 
-            padding: 12px 15px; 
-            margin: 10px 0; 
-            border: 1.5px solid #e2e8f0; 
-            border-radius: 12px; 
-            box-sizing: border-box; 
-            outline: none; 
-            font-family: inherit;
-            transition: 0.3s;
-        }
-        input:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1); }
+        input, textarea { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-family: inherit; transition: 0.3s; }
+        input:focus, textarea:focus { border-color: var(--primary); }
+        
+        .btn-main { background: var(--primary); color: white; border: none; padding: 15px; width: 100%; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 16px; transition: 0.3s; }
+        .btn-update { background: var(--accent); display: none; }
+        .btn-cancel { background: #94a3b8; color: white; border: none; padding: 10px; width: 100%; border-radius: 12px; margin-top: 10px; cursor: pointer; display: none; }
 
-        .btn-add { 
-            background: var(--primary); 
-            color: white; 
-            border: none; 
-            padding: 15px; 
-            width: 100%; 
-            border-radius: 12px; 
-            font-weight: bold; 
-            cursor: pointer; 
-            font-size: 16px; 
-            margin-top: 10px;
-            box-shadow: 0 4px 12px rgba(46, 204, 113, 0.2);
-        }
-
-        /* প্রোডাক্ট আইটেম ডিজাইন */
-        .p-item { 
-            display: flex; 
-            align-items: center; 
-            gap: 15px; 
-            background: #fff; 
-            padding: 15px; 
-            border-radius: 16px; 
-            margin-bottom: 12px; 
-            border: 1px solid #f1f5f9;
-            transition: 0.3s;
-        }
-        .p-item:hover { transform: scale(1.02); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .p-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #eee; }
+        .p-item { display: flex; align-items: center; gap: 15px; background: #fff; padding: 15px; border-radius: 16px; margin-bottom: 12px; border: 1px solid #f1f5f9; transition: 0.3s; }
+        .p-item:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .p-item img { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
         .p-info { flex: 1; }
-        .p-info b { font-size: 15px; color: var(--dark); display: block; margin-bottom: 2px; }
+        .p-info b { font-size: 15px; color: var(--dark); display: block; }
         .p-info span { font-size: 13px; color: #64748b; }
         
-        .btn-del { 
-            background: rgba(255, 71, 87, 0.1); 
-            color: var(--danger); 
-            border: none; 
-            width: 40px;
-            height: 40px;
-            border-radius: 10px; 
-            cursor: pointer; 
-            transition: 0.3s;
-        }
+        .btn-group { display: flex; gap: 8px; }
+        .action-btn { border: none; width: 38px; height: 38px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 16px; transition: 0.3s; }
+        .btn-edit { background: rgba(52, 152, 219, 0.1); color: var(--accent); }
+        .btn-edit:hover { background: var(--accent); color: white; }
+        .btn-del { background: rgba(255, 71, 87, 0.1); color: var(--danger); }
         .btn-del:hover { background: var(--danger); color: white; }
 
-        /* পপ-আপ মেসেজ স্টাইল */
-        .toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: var(--dark); color: white; padding: 12px 25px;
-            border-radius: 30px; display: none; z-index: 9999;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            animation: slideDown 0.4s ease forwards;
-        }
-        @keyframes slideDown { from { top: -50px; opacity: 0; } to { top: 20px; opacity: 1; } }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 30px; display: none; z-index: 9999; box-shadow: 0 10px 25px rgba(0,0,0,0.2); }
     </style>
 </head>
 <body>
 
-    <div class="toast" id="toast">মেসেজ এখানে আসবে</div>
+    <div class="toast" id="toast"></div>
 
     <div class="stat-grid">
         <div class="stat-box"><b id="p-total">0</b><span>মোট প্রোডাক্ট</span></div>
@@ -155,16 +55,18 @@
         <i class="fa fa-box-open"></i> View Order Requests
     </button>
 
-    <div class="card">
-        <h3>🚀 নতুন প্রোডাক্ট পাবলিশ করুন</h3>
-        <input type="text" id="p-name" placeholder="প্রোডাক্টের নাম (উদা: ফুটবল)">
-        <input type="number" id="p-price" placeholder="দাম (উদা: ৫০০)">
-        <input type="number" id="p-stock" placeholder="স্টক পরিমাণ (উদা: ১০)">
-        <input type="text" id="p-img" placeholder="ছবির লিঙ্ক (Direct Image URL)">
-        <textarea id="p-desc" placeholder="প্রোডাক্ট সম্পর্কে কিছু কথা লিখুন..." rows="3"></textarea>
-        <button class="btn-add" id="uploadBtn">
-            <i class="fa fa-cloud-upload-alt"></i> পাবলিশ করুন
-        </button>
+    <div class="card" id="form-card">
+        <h3 id="form-title">🚀 নতুন প্রোডাক্ট পাবলিশ করুন</h3>
+        <input type="hidden" id="edit-id"> 
+        <input type="text" id="p-name" placeholder="প্রোডাক্টের নাম">
+        <input type="number" id="p-price" placeholder="দাম (টাকা)">
+        <input type="number" id="p-stock" placeholder="স্টক পরিমাণ">
+        <input type="text" id="p-img" placeholder="ছবির লিঙ্ক (URL)">
+        <textarea id="p-desc" placeholder="বিস্তারিত বর্ণনা..." rows="3"></textarea>
+        
+        <button class="btn-main" id="uploadBtn">পাবলিশ করুন</button>
+        <button class="btn-main btn-update" id="updateBtn">আপডেট সেভ করুন</button>
+        <button class="btn-cancel" id="cancelBtn">এডিট বাতিল করুন</button>
     </div>
 
     <div class="card">
@@ -176,7 +78,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, push, set, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, push, set, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
@@ -190,48 +92,89 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // --- কাস্টম নোটিফিকেশন ফাংশন ---
         function showToast(msg) {
-            const toast = document.getElementById('toast');
-            toast.innerText = msg;
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 3000);
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 3000);
         }
 
         // --- প্রোডাক্ট আপলোড ---
         document.getElementById('uploadBtn').addEventListener('click', () => {
+            const data = getFormData();
+            if(data) {
+                push(ref(db, 'products'), data).then(() => {
+                    showToast("✅ সফলভাবে পাবলিশ হয়েছে!");
+                    clearForm();
+                });
+            }
+        });
+
+        // --- এডিট মোড (ডাটা ফর্মে আনা) ---
+        window.editProduct = (id) => {
+            onValue(ref(db, 'products/' + id), (snap) => {
+                const p = snap.val();
+                if(!p) return;
+                
+                document.getElementById('edit-id').value = id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-price').value = p.price;
+                document.getElementById('p-stock').value = p.stock;
+                document.getElementById('p-img').value = p.img;
+                document.getElementById('p-desc').value = p.description;
+
+                // UI Change
+                document.getElementById('form-title').innerText = "📝 প্রোডাক্ট এডিট করছেন";
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('updateBtn').style.display = 'block';
+                document.getElementById('cancelBtn').style.display = 'block';
+                
+                document.getElementById('form-card').scrollIntoView({behavior: "smooth"});
+            }, { onlyOnce: true });
+        };
+
+        // --- আপডেট সেভ করা ---
+        document.getElementById('updateBtn').addEventListener('click', () => {
+            const id = document.getElementById('edit-id').value;
+            const data = getFormData();
+            if(data && id) {
+                update(ref(db, 'products/' + id), data).then(() => {
+                    showToast("♻️ প্রোডাক্ট আপডেট হয়েছে!");
+                    clearForm();
+                });
+            }
+        });
+
+        // --- বাতিল ফাংশন ---
+        document.getElementById('cancelBtn').onclick = clearForm;
+
+        function getFormData() {
             const name = document.getElementById('p-name').value;
             const price = document.getElementById('p-price').value;
             const stock = document.getElementById('p-stock').value;
             const img = document.getElementById('p-img').value;
             const desc = document.getElementById('p-desc').value;
-
-            if(name && price && stock && img && desc) {
-                const productListRef = ref(db, 'products');
-                const newProductRef = push(productListRef);
-                set(newProductRef, {
-                    name, 
-                    price: parseInt(price), 
-                    stock: parseInt(stock), 
-                    img, 
-                    description: desc,
-                    date: new Date().toLocaleDateString()
-                }).then(() => {
-                    showToast("✅ প্রোডাক্ট সফলভাবে যোগ হয়েছে!");
-                    document.querySelectorAll('input, textarea').forEach(el => el.value = "");
-                }).catch(err => showToast("❌ ভুল হয়েছে: " + err.message));
-            } else {
-                showToast("⚠️ সব তথ্য পূরণ করুন!");
+            
+            if(!name || !price || !stock || !img || !desc) {
+                showToast("⚠️ সবগুলো ঘর পূরণ করুন!");
+                return null;
             }
-        });
+            return { name, price: parseInt(price), stock: parseInt(stock), img, description: desc, date: new Date().toLocaleDateString() };
+        }
 
-        // --- প্রোডাক্ট লিস্ট ও ম্যানেজমেন্ট ---
+        function clearForm() {
+            document.querySelectorAll('input, textarea').forEach(el => el.value = "");
+            document.getElementById('form-title').innerText = "🚀 নতুন প্রোডাক্ট পাবলিশ করুন";
+            document.getElementById('uploadBtn').style.display = 'block';
+            document.getElementById('updateBtn').style.display = 'none';
+            document.getElementById('cancelBtn').style.display = 'none';
+            document.getElementById('edit-id').value = "";
+        }
+
+        // --- প্রোডাক্ট লিস্ট প্রদর্শন ---
         onValue(ref(db, 'products'), (snapshot) => {
             const list = document.getElementById('admin-product-list');
-            const totalP = document.getElementById('p-total');
             list.innerHTML = "";
             let count = 0;
-            
             if(snapshot.exists()) {
                 snapshot.forEach(child => {
                     count++;
@@ -244,31 +187,33 @@
                                 <b>${p.name}</b>
                                 <span>${p.price} ৳ | স্টক: ${p.stock}</span>
                             </div>
-                            <button class="btn-del" onclick="deleteItem('${id}')">
-                                <i class="fa fa-trash"></i>
-                            </button>
+                            <div class="btn-group">
+                                <button class="action-btn btn-edit" onclick="editProduct('${id}')" title="Edit">
+                                    <i class="fa fa-pen-to-square"></i>
+                                </button>
+                                <button class="action-btn btn-del" onclick="deleteItem('${id}')" title="Delete">
+                                    <i class="fa fa-trash-can"></i>
+                                </button>
+                            </div>
                         </div>
                     `;
                 });
-                totalP.innerText = count;
             } else {
-                list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>কোনো প্রোডাক্ট নেই।</p>";
-                totalP.innerText = "0";
+                list.innerHTML = "<p style='text-align:center; color:#94a3b8;'>কোনো প্রোডাক্ট পাওয়া যায়নি।</p>";
             }
+            document.getElementById('p-total').innerText = count;
         });
 
         // --- ডিলিট ফাংশন ---
         window.deleteItem = (id) => {
-            if(confirm("আপনি কি এটি ডিলিট করতে চান?")) {
-                remove(ref(db, 'products/' + id)).then(() => {
-                    showToast("🗑️ প্রোডাক্ট মুছে ফেলা হয়েছে।");
-                });
+            if(confirm("আপনি কি নিশ্চিতভাবে এই প্রোডাক্টটি ডিলিট করতে চান?")) {
+                remove(ref(db, 'products/' + id)).then(() => showToast("🗑️ ডিলিট করা হয়েছে।"));
             }
         };
 
         // --- অর্ডার কাউন্ট ---
-        onValue(ref(db, 'orders'), (snapshot) => {
-            document.getElementById('o-total').innerText = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+        onValue(ref(db, 'orders'), (s) => {
+            document.getElementById('o-total').innerText = s.exists() ? Object.keys(s.val()).length : 0;
         });
 
     </script>
