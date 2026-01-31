@@ -3,71 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Customer Orders - SportX</title>
+    <title>Order Requests - Admin</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: sans-serif; background: #f4f7f6; margin: 0; padding: 15px; }
-        h2 { color: #2c3e50; text-align: center; border-bottom: 2px solid #e67e22; padding-bottom: 10px; }
-        .order-card { background: white; padding: 15px; border-radius: 10px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); border-left: 5px solid #e67e22; }
-        .order-header { display: flex; justify-content: space-between; font-weight: bold; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 10px; }
-        .detail { font-size: 14px; margin: 5px 0; color: #555; }
-        .trx { color: #27ae60; font-weight: bold; background: #e8f5e9; padding: 2px 5px; border-radius: 4px; }
-        .del-btn { background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 5px; cursor: pointer; float: right; margin-top: -30px; }
+        :root { 
+            --primary: #2ecc71; 
+            --dark: #1e293b; 
+            --pending: #f1c40f; 
+            --shipped: #3498db; 
+            --delivered: #9b59b6; 
+            --danger: #e74c3c; 
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: #f0f2f5; margin: 0; padding: 15px; }
+        
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
+        .header h2 { margin: 0; font-size: 20px; color: var(--dark); }
+        .back-btn { background: white; border: none; padding: 10px; border-radius: 10px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+
+        /* অর্ডার কার্ড */
+        .order-card { 
+            background: white; border-radius: 15px; padding: 20px; margin-bottom: 20px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--pending);
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 10px; }
+        .product-name { font-size: 17px; font-weight: bold; color: var(--dark); }
+        .order-date { font-size: 12px; color: #64748b; }
+
+        .details-grid { display: grid; grid-template-columns: 1fr; gap: 8px; margin-bottom: 15px; }
+        .detail-item { font-size: 14px; color: #475569; display: flex; align-items: center; gap: 8px; }
+        .detail-item i { color: var(--accent); width: 16px; }
+
+        /* স্ট্যাটাস সেকশন */
+        .status-box { background: #f8fafc; padding: 12px; border-radius: 10px; margin-top: 10px; }
+        .status-label { font-size: 12px; font-weight: bold; color: #94a3b8; display: block; margin-bottom: 8px; }
+        .status-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+        .s-btn { 
+            padding: 6px 12px; border-radius: 8px; border: 1.5px solid #cbd5e1; 
+            background: white; font-size: 12px; cursor: pointer; font-weight: 600; transition: 0.2s;
+        }
+        .s-btn.active-pending { border-color: var(--pending); color: var(--pending); background: rgba(241, 196, 15, 0.1); }
+        .s-btn.active-shipped { border-color: var(--shipped); color: var(--shipped); background: rgba(52, 152, 219, 0.1); }
+        .s-btn.active-delivered { border-color: var(--delivered); color: var(--delivered); background: rgba(155, 89, 182, 0.1); }
+        .s-btn.active-cancel { border-color: var(--danger); color: var(--danger); background: rgba(231, 76, 60, 0.1); }
+        
+        .delete-btn { background: none; border: none; color: #94a3b8; cursor: pointer; font-size: 18px; }
+        .delete-btn:hover { color: var(--danger); }
     </style>
 </head>
 <body>
 
-    <h2>📦 কাস্টমার অর্ডার রিকোয়েস্ট</h2>
-    <div id="orders-container">লোড হচ্ছে...</div>
+    <div class="header">
+        <button class="back-btn" onclick="location.href='admin.html'"><i class="fa fa-arrow-left"></i></button>
+        <h2>অর্ডার রিকোয়েস্ট সমূহ</h2>
+    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <div id="orders-list">লোড হচ্ছে...</div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
-            authDomain: "ms-sp-97f78.firebaseapp.com",
-            databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
-            projectId: "ms-sp-97f78",
-            storageBucket: "ms-sp-97f78.appspot.com",
-            messagingSenderId: "880638162029",
-            appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
-        };
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
+    const firebaseConfig = {
+        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+        authDomain: "ms-sp-97f78.firebaseapp.com",
+        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+        projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
+        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+    };
 
-        onValue(ref(db, 'orders'), (snapshot) => {
-            const container = document.getElementById('orders-container');
-            container.innerHTML = "";
-            
-            if(!snapshot.exists()) {
-                container.innerHTML = "<p style='text-align:center;'>কোনো অর্ডার পাওয়া যায়নি।</p>";
-                return;
-            }
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-            snapshot.forEach(child => {
-                const o = child.val();
-                const id = child.key;
-                container.innerHTML += `
-                    <div class="order-card">
-                        <div class="order-header">
-                            <span>👤 ${o.user || 'Guest'}</span>
-                            <small>${o.date || ''}</small>
+    const ordersRef = ref(db, 'orders');
+
+    onValue(ordersRef, (snapshot) => {
+        const container = document.getElementById('orders-list');
+        container.innerHTML = "";
+        
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            // লেটেস্ট অর্ডার উপরে দেখানোর জন্য রিভার্স লুপ
+            Object.keys(data).reverse().forEach(key => {
+                const o = data[key];
+                const card = document.createElement('div');
+                card.className = 'order-card';
+                card.style.borderLeftColor = getStatusColor(o.status);
+
+                card.innerHTML = `
+                    <div class="order-header">
+                        <div>
+                            <div class="product-name">${o.productName}</div>
+                            <div class="order-date">${o.date}</div>
                         </div>
-                        <div class="detail"><b>ঠিকানা:</b> ${o.addr || o.address}</div>
-                        <div class="detail"><b>পেমেন্ট (TrxID):</b> <span class="trx">${o.trx || o.payment}</span></div>
-                        <div class="detail"><b>প্রোডাক্ট আইডি:</b> ${o.pId || 'N/A'}</div>
-                        <button class="del-btn" onclick="deleteOrder('${id}')">মুছুন</button>
+                        <button class="delete-btn" onclick="deleteOrder('${key}')"><i class="fa fa-trash-can"></i></button>
+                    </div>
+                    
+                    <div class="details-grid">
+                        <div class="detail-item"><i class="fa fa-user"></i> <b>ক্রেতা:</b> ${o.userName}</div>
+                        <div class="detail-item"><i class="fa fa-location-dot"></i> <b>ঠিকানা:</b> ${o.address}</div>
+                        <div class="detail-item"><i class="fa fa-receipt"></i> <b>Trx ID:</b> <span style="color:var(--shipped); font-weight:bold;">${o.trxID || 'N/A'}</span></div>
+                    </div>
+
+                    <div class="status-box">
+                        <span class="status-label">অর্ডার স্ট্যাটাস আপডেট করুন:</span>
+                        <div class="status-btns">
+                            <button class="s-btn ${o.status === 'Pending' ? 'active-pending' : ''}" onclick="updateStatus('${key}', 'Pending')">পেন্ডিং</button>
+                            <button class="s-btn ${o.status === 'Shipped' ? 'active-shipped' : ''}" onclick="updateStatus('${key}', 'Shipped')">শিফট</button>
+                            <button class="s-btn ${o.status === 'Delivered' ? 'active-delivered' : ''}" onclick="updateStatus('${key}', 'Delivered')">ডেলিভারড</button>
+                            <button class="s-btn ${o.status === 'Cancelled' ? 'active-cancel' : ''}" onclick="updateStatus('${key}', 'Cancelled')">বাতিল</button>
+                        </div>
                     </div>
                 `;
+                container.appendChild(card);
             });
-        });
+        } else {
+            container.innerHTML = "<p style='text-align:center; color:#94a3b8;'>কোনো অর্ডার রিকোয়েস্ট নেই।</p>";
+        }
+    });
 
-        window.deleteOrder = (id) => {
-            if(confirm("অর্ডারটি কি ডেলিভারি হয়ে গেছে? মুছতে চাইলে OK দিন।")) {
-                remove(ref(db, 'orders/' + id));
-            }
-        };
-    </script>
+    // স্ট্যাটাস আপডেট ফাংশন
+    window.updateStatus = (id, newStatus) => {
+        update(ref(db, 'orders/' + id), { status: newStatus })
+        .then(() => console.log("Status Updated"))
+        .catch(err => alert("Error: " + err.message));
+    };
+
+    // অর্ডার ডিলিট ফাংশন
+    window.deleteOrder = (id) => {
+        if(confirm("অর্ডারটি কি চিরতরে মুছে ফেলতে চান?")) {
+            remove(ref(db, 'orders/' + id));
+        }
+    };
+
+    function getStatusColor(status) {
+        switch(status) {
+            case 'Pending': return '#f1c40f';
+            case 'Shipped': return '#3498db';
+            case 'Delivered': return '#2ecc71';
+            case 'Cancelled': return '#e74c3c';
+            default: return '#cbd5e1';
+        }
+    }
+</script>
 </body>
 </html>
