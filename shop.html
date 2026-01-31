@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Home</title>
+    <title>SportX - Home</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
@@ -31,6 +31,7 @@
             box-sizing: border-box;
         }
 
+        /* এখান থেকে আপনি বাম পাশের নাম পরিবর্তন করতে পারবেন */
         .logo { font-size: 20px; font-weight: bold; color: var(--primary); flex-shrink: 0; }
 
         .header-right { display: flex; align-items: center; gap: 20px; flex: 1; justify-content: flex-end; }
@@ -43,8 +44,9 @@
         }
         .search-box i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; pointer-events: none; }
         
-        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 5px; display: flex; align-items: center; justify-content: center; z-index: 5001; transition: 0.2s; }
+        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 5px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 
+        /* প্রোফাইল মেনু */
         .profile-menu { 
             display: none; position: fixed; top: 70px; right: 15px; 
             width: 260px; background: #1e293b; border-radius: 20px; 
@@ -52,9 +54,8 @@
             z-index: 6000; border: 1px solid var(--border); 
         }
         .profile-menu.show { display: block; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* --- নতুন ক্যাটাগরি গ্রিড স্টাইল --- */
+
+        /* মেইন ক্যাটাগরি গ্রিড */
         .cat-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -76,11 +77,34 @@
         .cat-item.active { background: var(--primary); border-color: var(--primary); }
         .cat-item.active i, .cat-item.active span { color: #0f172a; }
 
-        .user-label { font-size: 11px; color: #94a3b8; margin-top: 12px; font-weight: 600; text-transform: uppercase; }
-        .user-data { font-size: 14px; color: #fff; background: rgba(0,0,0,0.2); padding: 8px; border-radius: 8px; margin-top: 4px; border: 1px solid var(--border); }
+        /* সাব-ক্যাটাগরি স্ক্রল মেনু */
+        .sub-cat-container {
+            display: none; 
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 0 15px 15px;
+            gap: 10px;
+            scrollbar-width: none;
+        }
+        .sub-cat-container::-webkit-scrollbar { display: none; }
         
-        .btn-orders { width: 100%; margin-top: 20px; padding: 12px; background: var(--primary); color: #0f172a; border: none; border-radius: 12px; font-weight: bold; cursor: pointer; font-size: 15px; }
-        .btn-logout { width: 100%; margin-top: 10px; padding: 10px; background: #e74c3c; color: white; border: none; border-radius: 12px; cursor: pointer; font-weight: bold; }
+        .sub-cat-btn {
+            display: inline-block;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid var(--border);
+            color: #94a3b8;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .sub-cat-btn.active {
+            background: var(--primary);
+            color: #0f172a;
+            border-color: var(--primary);
+            font-weight: 600;
+        }
 
         .container { padding: 0 15px 15px 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
@@ -92,16 +116,17 @@
         
         .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
 
-        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } .search-box { width: 110px; } }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
     </style>
 </head>
 <body>
 
 <header>
-    <div class="logo">MS STORE</div>
+    <div class="logo">SportX</div> 
     <div class="header-right">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="search..." onkeyup="searchFn()">
+            <input type="text" id="searchInput" placeholder="খুঁজুন..." onkeyup="searchFn()">
             <i class="fa fa-search"></i>
         </div>
         <button class="profile-btn" id="profileTrigger">
@@ -112,31 +137,30 @@
 
 <div class="profile-menu" id="profileMenu">
     <h3 style="margin:0 0 10px 0; font-size: 18px; color:var(--primary);">My Profile</h3>
-    <div class="user-label">নাম:</div>
-    <div class="user-data" id="u-name">...</div>
-    <div class="user-label">জিমেইল:</div>
-    <div class="user-data" id="u-email" style="font-size: 12px; word-break: break-all;">...</div>
-    
-    <button class="btn-orders" onclick="location.href='my_orders.html'">
-        <i class="fa fa-shopping-bag"></i> My Orders
-    </button>
-    <button class="btn-logout" onclick="logout()">লগআউট</button>
+    <div class="user-label" style="font-size:11px; color:#94a3b8;">নাম:</div>
+    <div class="user-data" id="u-name" style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px;">...</div>
+    <div class="user-label" style="font-size:11px; color:#94a3b8;">ইমেইল:</div>
+    <div class="user-data" id="u-email" style="background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; font-size:12px;">...</div>
+    <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="location.href='my_orders.html'">My Orders</button>
+    <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white; cursor:pointer;" onclick="logout()">লগআউট</button>
 </div>
 
 <div class="cat-grid">
-    <div class="cat-item active" onclick="filterCat('All', this)">
+    <div class="cat-item active" onclick="selectMainCat('All', this)">
         <i class="fa fa-th-large"></i><span>সব</span>
     </div>
-    <div class="cat-item" onclick="filterCat('Sports Item', this)">
+    <div class="cat-item" onclick="selectMainCat('Sports', this)">
         <i class="fa fa-futbol"></i><span>স্পোর্টস</span>
     </div>
-    <div class="cat-item" onclick="filterCat('Electronics', this)">
+    <div class="cat-item" onclick="selectMainCat('Electronics', this)">
         <i class="fa fa-bolt"></i><span>ইলেক্ট্রো.</span>
     </div>
-    <div class="cat-item" onclick="filterCat('Fashion', this)">
+    <div class="cat-item" onclick="selectMainCat('Fashion', this)">
         <i class="fa fa-tshirt"></i><span>ফ্যাশন</span>
     </div>
 </div>
+
+<div id="subCatMenu" class="sub-cat-container"></div>
 
 <div class="container">
     <div class="product-grid" id="p-list"></div>
@@ -167,6 +191,12 @@
         } else { location.href = "index.html"; }
     });
 
+    const subCats = {
+        'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
+        'Electronics': ['Mobile Accessories', 'Gadgets', 'Headphones'],
+        'Fashion': ["Men's Fashion", "Women's Fashion", "Shoes"]
+    };
+
     let pArray = [];
     onValue(ref(db, 'products'), (snap) => {
         pArray = [];
@@ -180,7 +210,8 @@
     });
 
     function render(data) {
-        document.getElementById('p-list').innerHTML = data.map(p => `
+        const list = document.getElementById('p-list');
+        list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
                 ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
                 <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150'">
@@ -191,21 +222,49 @@
             </div>`).join('');
     }
 
-    // --- ক্যাটাগরি ফিল্টার ফাংশন ---
-    window.filterCat = (cat, el) => {
+    window.selectMainCat = (mainCat, el) => {
         document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
+        const subMenu = document.getElementById('subCatMenu');
+        
+        if (mainCat === 'All') {
+            subMenu.style.display = 'none';
+            render(pArray);
+        } else {
+            subMenu.style.display = 'flex';
+            generateSubMenu(mainCat);
+            filterByMainCat(mainCat);
+        }
+    };
 
-        if(cat === 'All') return render(pArray);
+    function generateSubMenu(mainCat) {
+        const subMenu = document.getElementById('subCatMenu');
+        const list = subCats[mainCat];
+        subMenu.innerHTML = `<div class="sub-cat-btn active" onclick="filterByMainCat('${mainCat}', this)">সব ${mainCat}</div>`;
+        list.forEach(sub => {
+            subMenu.innerHTML += `<div class="sub-cat-btn" onclick="filterBySubCat('${sub}', this)">${sub}</div>`;
+        });
+    }
 
+    window.filterByMainCat = (mainCat, el) => {
+        if(el) updateSubBtnStyle(el);
         const filtered = pArray.filter(p => {
-            if(cat === 'Sports Item') return ['Jersey', 'Boots', 'Sports Equipment'].includes(p.category);
-            if(cat === 'Electronics') return ['Mobile Accessories', 'Gadgets', 'Headphones'].includes(p.category);
-            if(cat === 'Fashion') return ["Men's Fashion", "Women's Fashion", "Shoes"].includes(p.category);
-            return p.category === cat;
+            if(mainCat === 'Sports') return ['Jersey', 'Boots', 'Sports Equipment'].includes(p.category);
+            if(mainCat === 'Electronics') return ['Mobile Accessories', 'Gadgets', 'Headphones'].includes(p.category);
+            if(mainCat === 'Fashion') return ["Men's Fashion", "Women's Fashion", "Shoes"].includes(p.category);
         });
         render(filtered);
     };
+
+    window.filterBySubCat = (subCat, el) => {
+        updateSubBtnStyle(el);
+        render(pArray.filter(p => p.category === subCat));
+    };
+
+    function updateSubBtnStyle(el) {
+        document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
+        el.classList.add('active');
+    }
 
     window.searchFn = () => {
         let val = document.getElementById('searchInput').value.toLowerCase();
@@ -214,7 +273,6 @@
 
     const menu = document.getElementById('profileMenu');
     const trigger = document.getElementById('profileTrigger');
-
     trigger.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
     document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
     window.logout = () => signOut(auth).then(() => location.href = "index.html");
