@@ -19,23 +19,17 @@
         input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; margin-bottom: 10px;}
         input:focus { border-color: var(--primary); }
         
-        /* পেমেন্ট মেথড */
         .method-container { display: flex; gap: 10px; margin-top: 10px; }
         .method-card { flex: 1; background: #1e293b; border: 1px solid var(--border); padding: 15px 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
-        
-        /* লোগো সাইজ ও স্টাইল ঠিক করা হয়েছে */
         .method-card img { width: 100%; max-width: 70px; height: 45px; object-fit: contain; display: block; margin: 0 auto 8px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        
         .method-card span { font-size: 11px; font-weight: 600; display: block; line-height: 1.2; color: #e2e8f0; }
         .method-card.selected { border-color: var(--primary); background: rgba(0, 210, 255, 0.1); box-shadow: 0 0 15px rgba(0, 210, 255, 0.2); }
 
-        /* নম্বর বক্স */
         #numberDisplay { display: none; background: #0f172a; border: 1px dashed var(--primary); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; cursor: pointer; animation: fadeIn 0.3s; }
         #numberDisplay b { font-size: 18px; color: var(--primary); letter-spacing: 1px; }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* TrxID বক্স */
         #trxSection { display: none; margin-top: 15px; border-top: 1px solid var(--border); padding-top: 15px; }
 
         .price-summary { border-top: 1px dashed var(--border); margin-top: 15px; padding-top: 15px; }
@@ -137,7 +131,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // আপনার Firebase কনফিগারেশন
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
         authDomain: "ms-sp-97f78.firebaseapp.com",
@@ -161,17 +154,23 @@
         "Mymensingh": ["ময়মনসিংহ", "জামালপুর", "শেরপুর", "নেত্রকোনা"]
     };
 
-    const productId = new URLSearchParams(window.location.search).get('id');
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
     let productPrice = 0;
+    let productName = "";
     let selectedMethodName = "";
 
-    onValue(ref(db, 'products/' + productId), (snap) => {
-        if(snap.exists()) {
-            productPrice = parseInt(snap.val().price);
-            document.getElementById('pPriceText').innerText = productPrice + " ৳";
-            calculatePrice();
-        }
-    });
+    if(productId) {
+        onValue(ref(db, 'products/' + productId), (snap) => {
+            if(snap.exists()) {
+                const data = snap.val();
+                productPrice = parseInt(data.price);
+                productName = data.name;
+                document.getElementById('pPriceText').innerText = productPrice + " ৳";
+                calculatePrice();
+            }
+        });
+    }
 
     window.updateDistricts = () => {
         const div = document.getElementById('uDivision').value;
@@ -206,7 +205,8 @@
     };
 
     window.copyPaymentNumber = () => {
-        navigator.clipboard.writeText(document.getElementById('payNum').innerText).then(() => {
+        const num = document.getElementById('payNum').innerText;
+        navigator.clipboard.writeText(num).then(() => {
             alert("নম্বর কপি হয়েছে! সেন্ড মানি করে TrxID দিন।");
             document.getElementById('trxSection').style.display = 'block';
         });
@@ -214,24 +214,39 @@
 
     window.placeOrder = () => {
         const name = document.getElementById('uName').value;
+        const phone = document.getElementById('uPhone').value;
+        const division = document.getElementById('uDivision').value;
+        const district = document.getElementById('uDistrict').value;
+        const area = document.getElementById('uArea').value;
+        const landmark = document.getElementById('uLandmark').value;
         const trx = document.getElementById('trxID').value;
-        if(!name || !trx || !selectedMethodName) { alert("সবগুলো তথ্য সঠিকভাবে দিন!"); return; }
+        const paymentType = document.getElementById('uPaymentType').value;
+
+        if(!name || !phone || !division || !district || !area || !trx || !selectedMethodName) { 
+            alert("সবগুলো তথ্য সঠিকভাবে দিন!"); 
+            return; 
+        }
 
         const orderRef = push(ref(db, 'orders'));
         set(orderRef, {
             userName: name,
-            userPhone: document.getElementById('uPhone').value,
-            division: document.getElementById('uDivision').value,
-            district: document.getElementById('uDistrict').value,
-            area: document.getElementById('uArea').value,
+            userPhone: phone,
+            division: division,
+            district: district,
+            area: area,
+            landmark: landmark || "নেই",
+            productName: productName || "স্পোর্টস প্রোডাক্ট",
             transactionID: trx.toUpperCase(),
             totalAmount: document.getElementById('totalAmount').innerText,
             gateway: selectedMethodName,
+            paymentType: paymentType,
             status: "Pending",
             timestamp: Date.now()
         }).then(() => {
             alert("অর্ডার সফল হয়েছে!");
             window.close();
+        }).catch((error) => {
+            alert("ত্রুটি হয়েছে: " + error.message);
         });
     };
 </script>
