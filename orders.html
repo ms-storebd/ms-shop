@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Order Management - Admin</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root { 
             --primary: #00d2ff; 
@@ -19,71 +18,58 @@
         
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; background: white; padding: 15px; border-radius: 15px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
 
-        /* সার্চ বক্স ডিজাইন */
-        .search-area { margin-bottom: 15px; }
         .search-box { 
             display: flex; align-items: center; background: white; padding: 12px 15px; 
-            border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            border: 2px solid transparent; transition: 0.3s;
+            border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 15px;
         }
-        .search-box:focus-within { border-color: var(--primary); }
         .search-box input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; }
-        .search-box i { color: #94a3b8; }
 
-        /* ট্যাব মেনু */
-        .tab-menu { 
-            display: flex; background: white; border-radius: 12px; padding: 5px; 
-            overflow-x: auto; gap: 5px; margin-bottom: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            scrollbar-width: none;
-        }
-        .tab-menu::-webkit-scrollbar { display: none; }
-        .tab { 
-            flex: 1; min-width: 110px; text-align: center; padding: 12px 8px; 
-            cursor: pointer; border-radius: 10px; font-size: 11px; font-weight: bold; 
-            color: #64748b; white-space: nowrap; transition: 0.3s;
-        }
+        .tab-menu { display: flex; background: white; border-radius: 12px; padding: 5px; overflow-x: auto; gap: 5px; margin-bottom: 15px; }
+        .tab { flex: 1; min-width: 100px; text-align: center; padding: 10px 5px; cursor: pointer; border-radius: 10px; font-size: 11px; font-weight: bold; color: #64748b; }
         .tab.active { background: var(--dark); color: white; }
 
-        /* অর্ডার কার্ড */
+        /* অর্ডার কার্ড ডিজাইন */
         .order-card { background: white; border-radius: 18px; padding: 18px; margin-bottom: 15px; border-left: 6px solid #ccc; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
         .order-id-badge { background: #f1f5f9; color: var(--dark); padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: bold; margin-bottom: 10px; display: inline-block; }
         
-        .p-name { font-size: 16px; font-weight: bold; color: var(--dark); margin-bottom: 8px; }
-        .info-item { font-size: 13px; margin: 5px 0; color: #475569; display: flex; align-items: center; gap: 8px; }
-        .info-item i { width: 15px; color: var(--shipped); }
-
-        .s-btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 15px; padding-top: 12px; border-top: 1px dashed #eee; }
-        .s-btn { flex: 1; min-width: 80px; padding: 8px 4px; border-radius: 8px; border: 1.5px solid #cbd5e1; background: white; font-size: 10px; cursor: pointer; font-weight: bold; }
+        .p-name { font-size: 16px; font-weight: bold; color: var(--dark); margin-bottom: 8px; border-bottom: 1px solid #eee; padding-bottom: 5px;}
         
-        .active-Pending { border-color: var(--pending) !important; color: var(--pending); background: #fffdf2; }
-        .active-Shipped { border-color: var(--shipped) !important; color: var(--shipped); background: #ebf8ff; }
-        .active-Delivered { border-color: var(--delivered) !important; color: var(--delivered); background: #f0fff4; }
-        .active-Cancelled { border-color: var(--danger) !important; color: var(--danger); background: #fff5f5; }
+        /* তথ্য সাজানো */
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .info-item { font-size: 12px; color: #475569; display: flex; align-items: center; gap: 5px; }
+        .info-item i { color: var(--primary); width: 14px; }
 
-        .btn-invoice { background: var(--dark); color: white; border: none; padding: 10px; border-radius: 10px; margin-top: 12px; width: 100%; cursor: pointer; font-size: 13px; font-weight: bold; }
+        .address-box { background: #f8fafc; padding: 10px; border-radius: 10px; margin-top: 10px; font-size: 12px; border: 1px solid #edf2f7; }
+        .total-badge { background: var(--dark); color: var(--primary); padding: 10px; border-radius: 10px; display: flex; justify-content: space-between; margin-top: 10px; font-weight: bold; }
+
+        .s-btns { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 15px; border-top: 1px dashed #eee; padding-top: 10px; }
+        .s-btn { flex: 1; min-width: 75px; padding: 8px 2px; border-radius: 8px; border: 1px solid #cbd5e1; background: white; font-size: 9px; cursor: pointer; font-weight: bold; }
         
-        #empty-msg { text-align: center; padding: 60px 20px; color: #94a3b8; }
+        .active-Pending { border-color: var(--pending) !important; color: var(--pending); }
+        .active-Shipped { border-color: var(--shipped) !important; color: var(--shipped); }
+        .active-Delivered { border-color: var(--delivered) !important; color: var(--delivered); }
+        .active-Cancelled { border-color: var(--danger) !important; color: var(--danger); }
+
+        .btn-invoice { background: var(--dark); color: white; border: none; padding: 10px; border-radius: 10px; margin-top: 10px; width: 100%; cursor: pointer; font-size: 13px; }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <button onclick="location.href='admin_dashboard.html'" style="border:none; background:none; font-size:20px; cursor:pointer;"><i class="fa fa-arrow-left"></i></button>
-        <h2 style="margin:0; font-size:17px;">অর্ডার ম্যানেজমেন্ট</h2>
+        <button onclick="location.href='admin_dashboard.html'" style="border:none; background:none; font-size:20px;"><i class="fa fa-arrow-left"></i></button>
+        <h2 style="margin:0; font-size:17px;">অর্ডার রিকোয়েস্ট</h2>
     </div>
 
-    <div class="search-area">
-        <div class="search-box">
-            <i class="fa fa-search"></i>
-            <input type="text" id="orderSearch" placeholder="অর্ডার আইডি বা নাম দিয়ে খুঁজুন..." onkeyup="handleSearch()">
-        </div>
+    <div class="search-box">
+        <i class="fa fa-search"></i>
+        <input type="text" id="orderSearch" placeholder="আইডি বা নাম দিয়ে খুঁজুন..." onkeyup="handleSearch()">
     </div>
 
-    <div class="tab-menu" id="tabMenu">
-        <div class="tab active" onclick="switchTab('Pending', this)">পেন্ডিং অর্ডারস</div>
-        <div class="tab" onclick="switchTab('Shipped', this)">শিফট অর্ডারস</div>
-        <div class="tab" onclick="switchTab('Delivered', this)">ডেলিভারি অর্ডারস</div>
-        <div class="tab" onclick="switchTab('Cancelled', this)">ক্যানসেল দা অর্ডারস</div>
+    <div class="tab-menu">
+        <div class="tab active" onclick="switchTab('Pending', this)">পেন্ডিং</div>
+        <div class="tab" onclick="switchTab('Shipped', this)">শিফট</div>
+        <div class="tab" onclick="switchTab('Delivered', this)">ডেলিভারি</div>
+        <div class="tab" onclick="switchTab('Cancelled', this)">ক্যানসেল</div>
     </div>
 
     <div id="orders-list">লোড হচ্ছে...</div>
@@ -105,116 +91,93 @@
     const db = getDatabase(app);
     let currentTab = 'Pending';
     let allOrders = {};
-    let isSearching = false;
 
-    // ডাটা লোড করা
     onValue(ref(db, 'orders'), (snapshot) => {
         allOrders = snapshot.exists() ? snapshot.val() : {};
-        if(!isSearching) renderOrders();
+        renderOrders();
     });
 
-    // ট্যাব পরিবর্তন
     window.switchTab = (status, el) => {
-        isSearching = false;
-        document.getElementById('orderSearch').value = "";
         currentTab = status;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         renderOrders();
     };
 
-    // সার্চ হ্যান্ডলার
     window.handleSearch = () => {
-        const query = document.getElementById('orderSearch').value.trim().toUpperCase();
-        if(query === "") {
-            isSearching = false;
-            renderOrders();
-            return;
-        }
-        isSearching = true;
-        renderSearchResults(query);
+        const q = document.getElementById('orderSearch').value.toUpperCase();
+        renderOrders(q);
     };
 
-    function renderOrders() {
+    function renderOrders(filter = "") {
         const list = document.getElementById('orders-list');
         list.innerHTML = "";
         let count = 0;
 
         Object.keys(allOrders).reverse().forEach(id => {
             const o = allOrders[id];
-            if (o.status === currentTab) {
-                count++;
-                list.appendChild(createOrderCard(id, o));
-            }
-        });
-
-        if (count === 0) list.innerHTML = `<div id="empty-msg">এই সেকশনে কোনো অর্ডার নেই</div>`;
-    }
-
-    function renderSearchResults(query) {
-        const list = document.getElementById('orders-list');
-        list.innerHTML = "";
-        let count = 0;
-
-        Object.keys(allOrders).forEach(id => {
-            const o = allOrders[id];
             const shortId = id.slice(-6).toUpperCase();
-            if (shortId.includes(query) || o.userName.toUpperCase().includes(query)) {
-                count++;
-                list.appendChild(createOrderCard(id, o));
+            
+            if (o.status === currentTab || filter !== "") {
+                if (shortId.includes(filter) || o.userName.toUpperCase().includes(filter)) {
+                    count++;
+                    list.appendChild(createOrderCard(id, o));
+                }
             }
         });
-
-        if (count === 0) list.innerHTML = `<div id="empty-msg">কোনো অর্ডার পাওয়া যায়নি!</div>`;
+        if (count === 0) list.innerHTML = `<center style="margin-top:50px; color:gray;">কোনো অর্ডার নেই</center>`;
     }
 
     function createOrderCard(id, o) {
         const card = document.createElement('div');
-        const shortId = id.slice(-6).toUpperCase();
         card.className = 'order-card';
         card.style.borderLeftColor = getCol(o.status);
+        
+        const payStyle = o.paymentType === 'full' ? 'color:#2ecc71' : 'color:#f39c12';
+        const payText = o.paymentType === 'full' ? 'ফুল পেমেন্ট' : 'শুধু চার্জ';
+
         card.innerHTML = `
-            <div class="order-id-badge">ORDER ID: #${shortId}</div>
-            <div class="p-name">${o.productName}</div>
-            <div class="info-item"><i class="fa fa-user"></i> ক্রেতা: ${o.userName}</div>
-            <div class="info-item"><i class="fa fa-receipt"></i> স্ট্যাটাস: <b>${o.status}</b></div>
+            <div class="order-id-badge">ID: #${id.slice(-6).toUpperCase()}</div>
+            <div class="p-name">${o.productName || 'Product'}</div>
+            
+            <div class="info-grid">
+                <div class="info-item"><i class="fa fa-user"></i> ${o.userName}</div>
+                <div class="info-item"><i class="fa fa-phone"></i> ${o.userPhone || 'No Phone'}</div>
+                <div class="info-item"><i class="fa fa-map-marker-alt"></i> ${o.region || 'No Region'}</div>
+                <div class="info-item"><i class="fa fa-wallet"></i> <span style="${payStyle}">${payText}</span></div>
+            </div>
+
+            <div class="address-box">
+                <b>ঠিকানা:</b> ${o.address}<br>
+                <small><b>ল্যান্ডমার্ক:</b> ${o.landmark || 'নেই'}</small>
+            </div>
+
+            <div class="total-badge">
+                <span>মোট টাকা:</span>
+                <span>${o.totalPayable || '0 ৳'}</span>
+            </div>
             
             <div class="s-btns">
-                <button class="s-btn ${o.status === 'Pending' ? 'active-Pending' : ''}" onclick="updateStatus('${id}', 'Pending', '${o.productName}')">Pending</button>
-                <button class="s-btn ${o.status === 'Shipped' ? 'active-Shipped' : ''}" onclick="updateStatus('${id}', 'Shipped', '${o.productName}')">Shipped</button>
-                <button class="s-btn ${o.status === 'Delivered' ? 'active-Delivered' : ''}" onclick="updateStatus('${id}', 'Delivered', '${o.productName}')">Delivered</button>
-                <button class="s-btn ${o.status === 'Cancelled' ? 'active-Cancelled' : ''}" onclick="updateStatus('${id}', 'Cancelled', '${o.productName}')">Cancelled</button>
+                <button class="s-btn ${o.status === 'Pending' ? 'active-Pending' : ''}" onclick="updateStatus('${id}', 'Pending')">Pending</button>
+                <button class="s-btn ${o.status === 'Shipped' ? 'active-Shipped' : ''}" onclick="updateStatus('${id}', 'Shipped')">Shipped</button>
+                <button class="s-btn ${o.status === 'Delivered' ? 'active-Delivered' : ''}" onclick="updateStatus('${id}', 'Delivered')">Delivered</button>
+                <button class="s-btn ${o.status === 'Cancelled' ? 'active-Cancelled' : ''}" onclick="updateStatus('${id}', 'Cancelled')">Cancel</button>
             </div>
             <button class="btn-invoice" onclick="downloadInvoice('${id}')">Download Invoice</button>
         `;
         return card;
     }
 
-    window.updateStatus = async (orderId, newStatus, pName) => {
-        const orderRef = ref(db, 'orders/' + orderId);
-        const snap = await get(orderRef);
-        const oldStatus = snap.val().status;
-
-        if (newStatus === 'Delivered' && oldStatus !== 'Delivered') {
-            const pSnap = await get(ref(db, 'products'));
-            pSnap.forEach(c => {
-                if(c.val().name === pName && c.val().stock > 0) 
-                    update(ref(db, 'products/' + c.key), { stock: c.val().stock - 1 });
-            });
-        }
-        update(orderRef, { status: newStatus });
-    };
-
-    window.downloadInvoice = (id) => { 
-        alert("Invoice ID: #" + id.slice(-6).toUpperCase() + " তৈরি হচ্ছে...");
-    };
-
+    window.updateStatus = (id, s) => { update(ref(db, 'orders/' + id), { status: s }); };
+    
     function getCol(s) { 
         if(s==='Pending') return '#f1c40f';
         if(s==='Shipped') return '#3498db';
         if(s==='Delivered') return '#2ecc71';
         return '#e74c3c';
     }
+
+    window.downloadInvoice = (id) => { alert("ইনভয়েস তৈরির কাজ চলছে..."); };
 </script>
 </body>
 </html>
