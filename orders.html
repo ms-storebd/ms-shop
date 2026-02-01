@@ -38,7 +38,6 @@
         .info-item i { color: var(--primary); width: 14px; }
         .copy-btn { color: #94a3b8; font-size: 10px; margin-left: auto; }
 
-        /* Trx Box আপডেট */
         .trx-box { background: #e0f2fe; color: #0369a1; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 12px; font-weight: bold; display: flex; justify-content: space-between; align-items: center; border: 1px dashed #0ea5e9; cursor: pointer; }
         .trx-box .method-info { display: flex; align-items: center; gap: 8px; }
         .trx-box img { width: 22px; height: 22px; object-fit: contain; border-radius: 4px; background: white; padding: 2px; }
@@ -148,7 +147,6 @@
         card.className = 'order-card';
         card.style.borderLeftColor = getCol(o.status);
         
-        // পেমেন্ট গেটওয়ে চেক (ছোট/বড় হাতের পার্থক্য দূর করা হয়েছে)
         let gatewayLogo = "";
         const gatewayName = o.gateway ? o.gateway.toLowerCase() : "";
 
@@ -157,7 +155,7 @@
         } else if (gatewayName === 'nagad') {
             gatewayLogo = "https://www.logo.wine/a/logo/Nagad/Nagad-Logo.wine.svg";
         } else {
-            gatewayLogo = "https://cdn-icons-png.flaticon.com/512/4341/4341764.png"; // Default icon
+            gatewayLogo = "https://cdn-icons-png.flaticon.com/512/4341/4341764.png"; 
         }
 
         const payStatusText = o.paymentType === 'full' ? 'ফুল পেমেন্ট' : 'শুধু চার্জ';
@@ -187,7 +185,7 @@
 
             <div class="address-box">
                 <b>এলাকা:</b> ${o.area || 'N/A'}<br>
-                <b>ল্যান্ডমার্ক:</b> ${o.landmark || 'নেই'}
+                <b>ল্যান্ডমার্ক:</b> ${o.uLandmark || o.landmark || 'নেই'}
             </div>
 
             <div class="total-badge">
