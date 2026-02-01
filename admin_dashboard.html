@@ -125,11 +125,15 @@
         'Fashion': ["Men's Fashion", "Women's Fashion", "Shoes"]
     };
 
-    // সাইজ বক্স দেখানোর লজিক
+    // সাইজ বক্স দেখানোর লজিক (আপডেট করা হয়েছে)
     window.checkSizeRequirement = () => {
         const subCat = document.getElementById('p-category').value;
         const sizeSec = document.getElementById('size-section');
-        if(subCat === 'Jersey' || subCat === 'Boots') {
+        
+        // জার্সি, বুটস এবং ফ্যাশনের সব সাব-ক্যাটাগরির জন্য সাইজ বক্স দেখাবে
+        const needsSize = ['Jersey', 'Boots', "Men's Fashion", "Women's Fashion", "Shoes"];
+        
+        if(needsSize.includes(subCat)) {
             sizeSec.style.display = 'block';
         } else {
             sizeSec.style.display = 'none';
@@ -288,7 +292,5 @@
     };
 </script>
 </body>
-        </html>
-
-
-
+    </html>
+    
