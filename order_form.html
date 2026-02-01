@@ -14,6 +14,19 @@
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .header h2 { font-size: 20px; margin: 0; color: var(--primary); }
 
+        /* নতুন প্রোডাক্ট সামারি সেকশন */
+        .product-summary { 
+            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
+            padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;
+        }
+        .product-summary img { 
+            width: 65px; height: 65px; border-radius: 12px; object-fit: cover; background: white; 
+            border: 2px solid var(--primary);
+        }
+        .p-info-text b { font-size: 15px; color: white; display: block; margin-bottom: 3px; }
+        .p-info-text span { font-size: 12px; color: var(--primary); font-weight: 600; }
+        .size-badge { background: rgba(0, 210, 255, 0.2); padding: 2px 8px; border-radius: 5px; margin-left: 5px; font-size: 11px; }
+
         .section-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
         label { font-size: 13px; color: #94a3b8; display: block; margin: 10px 0 5px 5px; }
         input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; margin-bottom: 10px;}
@@ -46,6 +59,14 @@
     <div class="header">
         <i class="fa fa-arrow-left" onclick="history.back()" style="cursor:pointer"></i>
         <h2>অর্ডার সম্পন্ন করুন</h2>
+    </div>
+
+    <div class="product-summary">
+        <img id="sumImg" src="https://via.placeholder.com/100" alt="Product">
+        <div class="p-info-text">
+            <b id="sumTitle">লোড হচ্ছে...</b>
+            <span>সাইজ: <span id="sumSize" class="size-badge">N/A</span></span>
+        </div>
     </div>
 
     <div class="section-card">
@@ -150,7 +171,13 @@
     let productName = "";
     let selectedMethodName = "";
 
-    // লগইন চেক
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    const selectedSize = urlParams.get('size') || "N/A"; // URL থেকে সাইজ নেওয়া
+
+    // UI-তে আগে থেকে সাইজ দেখিয়ে রাখা
+    document.getElementById('sumSize').innerText = selectedSize;
+
     onAuthStateChanged(auth, (user) => {
         if (user) {
             currentUser = user;
@@ -160,15 +187,16 @@
         }
     });
 
-    const urlParams = new URLSearchParams(window.location.search);
-    const productId = urlParams.get('id');
-
     if(productId) {
         onValue(ref(db, 'products/' + productId), (snap) => {
             if(snap.exists()) {
                 const data = snap.val();
                 productPrice = parseInt(data.price);
                 productName = data.name;
+                
+                // সামারি আপডেট
+                document.getElementById('sumTitle').innerText = productName;
+                document.getElementById('sumImg').src = data.img || data.image;
                 document.getElementById('pPriceText').innerText = productPrice + " ৳";
                 calculatePrice();
             }
@@ -244,23 +272,24 @@
         const dateStr = now.toLocaleDateString('bn-BD', timeOptions);
 
         set(orderRef, {
-            uid: currentUser.uid, // এই লাইনটি "My Orders" পেজে অর্ডার দেখানোর জন্য জরুরি
+            uid: currentUser.uid,
             userName: name,
             userPhone: phone,
             division: document.getElementById('uDivision').value,
             district: document.getElementById('uDistrict').value,
-            address: area + (land ? ", " + land : ""), // My Orders পেজের জন্য ফুল অ্যাড্রেস
+            address: area + (land ? ", " + land : ""),
             landmark: land || "নেই",
             productName: productName || "স্পোর্টস প্রোডাক্ট",
+            productSize: selectedSize, // সাইজটি সেভ হবে
             transactionID: trx.toUpperCase(),
-            totalPrice: document.getElementById('totalAmount').innerText.replace(' ৳', ''), // My Orders পেজের ফরম্যাট
+            totalPrice: document.getElementById('totalAmount').innerText.replace(' ৳', ''),
             gateway: selectedMethodName,
             status: "Pending",
-            date: dateStr, // My Orders পেজের তারিখ
+            date: dateStr,
             timestamp: Date.now()
         }).then(() => {
             alert("অর্ডার সফল হয়েছে!");
-            window.location.href = "my_orders.html"; // অর্ডার শেষে সরাসরি হিস্টোরি পেজে নিয়ে যাবে
+            window.location.href = "my_orders.html";
         });
     };
 </script>
