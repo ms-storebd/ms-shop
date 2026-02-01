@@ -125,15 +125,11 @@
         'Fashion': ["Men's Fashion", "Women's Fashion", "Shoes"]
     };
 
-    // সাইজ বক্স দেখানোর লজিক - শুধুমাত্র এখানে Fashion সাব-ক্যাটাগরিগুলো যোগ করা হয়েছে
+    // সাইজ বক্স দেখানোর লজিক
     window.checkSizeRequirement = () => {
         const subCat = document.getElementById('p-category').value;
         const sizeSec = document.getElementById('size-section');
-        
-        // এখানে তোমার শর্ত অনুযায়ী সব সাব-ক্যাটাগরি দেওয়া হলো
-        const needSize = ['Jersey', 'Boots', "Men's Fashion", "Women's Fashion", "Shoes"];
-        
-        if(needSize.includes(subCat)) {
+        if(subCat === 'Jersey' || subCat === 'Boots') {
             sizeSec.style.display = 'block';
         } else {
             sizeSec.style.display = 'none';
@@ -221,6 +217,7 @@
             document.getElementById('p-img').value = p.img;
             document.getElementById('p-desc').value = p.description;
             
+            // সাইজ ডাটা রিকভার করা (এডিট করার সময়)
             if(p.sizes) {
                 document.getElementById('p-sizes').value = p.sizes.join(', ');
             } else {
@@ -229,5 +226,69 @@
 
             document.getElementById('form-title').innerText = "📝 প্রোডাক্ট আপডেট";
             document.getElementById('uploadBtn').style.display = 'none';
-            document
-    
+            document.getElementById('updateBtn').style.display = 'block';
+            document.getElementById('cancelBtn').style.display = 'block';
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+    };
+
+    document.getElementById('updateBtn').onclick = () => {
+        const id = document.getElementById('edit-id').value;
+        const data = getFormData();
+        if(data && id) {
+            update(ref(db, 'products/' + id), data).then(() => {
+                showToast("♻️ আপডেট সফল!");
+                clearForm();
+            });
+        }
+    };
+
+    function getFormData() {
+        const name = document.getElementById('p-name').value,
+              cat = document.getElementById('p-category').value,
+              price = document.getElementById('p-price').value,
+              stock = document.getElementById('p-stock').value,
+              img = document.getElementById('p-img').value,
+              desc = document.getElementById('p-desc').value,
+              sizeInput = document.getElementById('p-sizes').value;
+
+        if(!name || !cat || !price || !stock || !img) {
+            showToast("⚠️ সব ঘর পূরণ করুন!");
+            return null;
+        }
+
+        // সাইজগুলোকে অ্যারেতে রূপান্তর করা
+        let sizeList = [];
+        if(sizeInput.trim() !== "") {
+            sizeList = sizeInput.split(',').map(s => s.trim());
+        }
+
+        return { 
+            name, 
+            category: cat, 
+            price: parseInt(price), 
+            stock: parseInt(stock), 
+            img, 
+            description: desc,
+            sizes: sizeList // ডাটাবেসে সাইজ লিস্ট পাঠানো
+        };
+    }
+
+    window.clearForm = () => {
+        document.querySelectorAll('input, textarea, select').forEach(i => i.value = "");
+        document.getElementById('size-section').style.display = 'none';
+        document.getElementById('form-title').innerText = "🚀 নতুন প্রোডাক্ট যোগ করুন";
+        document.getElementById('uploadBtn').style.display = 'block';
+        document.getElementById('updateBtn').style.display = 'none';
+        document.getElementById('cancelBtn').style.display = 'none';
+    };
+
+    window.deleteItem = (id) => {
+        if(confirm("ডিলিট করতে চান?")) remove(ref(db, 'products/' + id));
+    };
+</script>
+</body>
+        </html>
+
+
+
