@@ -22,16 +22,6 @@
         .p-title { font-size: 22px; font-weight: 600; margin-bottom: 8px; }
         .p-price { font-size: 24px; font-weight: bold; color: var(--primary); margin-bottom: 15px; display: block;}
         .p-desc { color: #94a3b8; font-size: 14px; line-height: 1.6; margin-bottom: 25px;}
-        
-        /* পপ-আপ (Modal) ডিজাইন */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
-        .modal-content { background: #1e293b; margin: 20% auto; padding: 25px; border-radius: 20px; width: 85%; max-width: 400px; border: 1px solid var(--border); box-shadow: 0 10px 40px rgba(0,0,0,0.5); }
-        .modal-content h2 { margin-top: 0; color: var(--primary); font-size: 20px; text-align: center; }
-        .modal-content input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 12px; border: 1px solid var(--border); background: #0f172a; color: white; box-sizing: border-box; outline: none; }
-        .modal-btns { display: flex; gap: 10px; margin-top: 15px; }
-        .modal-btn { flex: 1; padding: 12px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; }
-        .confirm-btn { background: var(--primary); color: #0f172a; }
-        .cancel-btn { background: #334155; color: white; }
 
         /* রিভিউ সেকশন */
         .review-section { margin-top: 30px; background: var(--glass); padding: 15px; border-radius: 20px; border: 1px solid var(--border); }
@@ -45,7 +35,7 @@
         .rev-text { font-size: 14px; margin-top: 5px; color: #cbd5e1; }
 
         .buy-footer { position: fixed; bottom: 0; width: 100%; background: #1e293b; padding: 15px; display: flex; gap: 10px; border-top: 1px solid var(--border); box-sizing: border-box; z-index: 1000; }
-        .buy-btn-main { flex: 1; background: var(--primary); color: #0f172a; text-align: center; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 16px; border: none; cursor: pointer;}
+        .buy-btn-main { flex: 1; background: var(--primary); color: #0f172a; text-align: center; padding: 14px; border-radius: 12px; font-weight: bold; text-decoration: none; font-size: 16px; border: none; cursor: pointer; display: block;}
     </style>
 </head>
 <body>
@@ -77,20 +67,8 @@
     </div>
 </div>
 
-<div id="orderModal" class="modal">
-    <div class="modal-content">
-        <h2>অর্ডার নিশ্চিত করুন</h2>
-        <input type="text" id="uAddress" placeholder="আপনার পূর্ণ ঠিকানা">
-        <input type="tel" id="uPhone" placeholder="আপনার মোবাইল নম্বর">
-        <div class="modal-btns">
-            <button class="modal-btn cancel-btn" onclick="closeOrderModal()">বাতিল</button>
-            <button class="modal-btn confirm-btn" onclick="placeOrder()">অর্ডার সম্পন্ন</button>
-        </div>
-    </div>
-</div>
-
 <div class="buy-footer">
-    <button class="buy-btn-main" onclick="openOrderModal()">অর্ডার করুন</button>
+    <button class="buy-btn-main" onclick="goToOrderPage()">অর্ডার করুন</button>
 </div>
 
 <script type="module">
@@ -114,13 +92,12 @@
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
     let currentUser = null;
-    let productData = null;
 
     onAuthStateChanged(auth, (user) => { if(user) currentUser = user; });
 
     if (productId) {
         onValue(ref(db, 'products/' + productId), (snap) => {
-            productData = snap.val();
+            const productData = snap.val();
             if(productData) {
                 document.getElementById('pName').innerText = productData.name;
                 document.getElementById('pPrice').innerText = productData.price + " ৳";
@@ -142,31 +119,14 @@
         });
     }
 
-    // পপ-আপ ফাংশন
-    window.openOrderModal = () => { if(!currentUser) { alert("অর্ডার করতে লগইন করুন!"); return; } document.getElementById('orderModal').style.display = 'block'; };
-    window.closeOrderModal = () => { document.getElementById('orderModal').style.display = 'none'; };
-
-    // অর্ডার প্লেস করা
-    window.placeOrder = () => {
-        const address = document.getElementById('uAddress').value;
-        const phone = document.getElementById('uPhone').value;
-        if(!address || !phone) { alert("ঠিকানা এবং ফোন নম্বর দিন!"); return; }
-
-        const orderRef = push(ref(db, 'orders'));
-        set(orderRef, {
-            productId: productId,
-            productName: productData.name,
-            price: productData.price,
-            userName: currentUser.displayName || "User",
-            userEmail: currentUser.email,
-            address: address,
-            phone: phone,
-            status: "Pending",
-            timestamp: Date.now()
-        }).then(() => {
-            alert("অর্ডার সফল হয়েছে!");
-            closeOrderModal();
-        });
+    // নতুন ট্যাবে অর্ডার পেজ ওপেন করার ফাংশন
+    window.goToOrderPage = () => {
+        if(!currentUser) { 
+            alert("অর্ডার করতে লগইন করুন!"); 
+            return; 
+        }
+        // এখানে order_form.html হচ্ছে আপনার তৈরি করা নতুন ফাইলের নাম
+        window.open('order_form.html?id=' + productId, '_blank');
     };
 
     window.postReview = () => {
@@ -177,7 +137,7 @@
         set(newRevRef, { userName: currentUser.displayName || "User", userId: currentUser.uid.slice(-6).toUpperCase(), text: text }).then(() => { document.getElementById('revInput').value = ""; });
     };
 
-    window.shareProduct = () => { navigator.share({ title: productData.name, url: window.location.href }); };
+    window.shareProduct = () => { navigator.share({ title: document.getElementById('pName').innerText, url: window.location.href }); };
     window.toggleFav = () => { const icon = document.getElementById('favIcon'); icon.classList.toggle('fa-regular'); icon.classList.toggle('fa-solid'); icon.style.color = icon.classList.contains('fa-solid') ? '#ef4444' : '#00d2ff'; };
 </script>
 </body>
