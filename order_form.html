@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - SportX</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #00d2ff; --dark: #0f172a; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
+        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; box-sizing: border-box; }
+        
+        .checkout-container { max-width: 500px; margin: 0 auto; }
+        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
+        .header h2 { font-size: 20px; margin: 0; color: var(--primary); }
+
+        .section-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
+        label { font-size: 13px; color: #94a3b8; display: block; margin: 10px 0 5px 5px; }
+        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; }
+        
+        /* ডেলিভারি টাইপ */
+        .delivery-options { display: flex; gap: 10px; margin-top: 10px; }
+        .d-opt { flex: 1; padding: 12px; border-radius: 12px; text-align: center; border: 1px solid var(--border); cursor: pointer; font-size: 13px; transition: 0.3s; }
+        .d-opt.active { background: var(--primary); color: var(--dark); font-weight: bold; }
+        .d-opt.disabled { opacity: 0.5; cursor: not-allowed; background: #0f172a; position: relative; }
+        .d-opt.disabled small { display: block; font-size: 9px; color: #ef4444; }
+
+        /* পেমেন্ট সিস্টেম */
+        .payment-choice { display: flex; flex-direction: column; gap: 10px; margin-top: 10px; }
+        .choice-item { display: flex; align-items: center; gap: 10px; background: rgba(0,0,0,0.2); padding: 12px; border-radius: 12px; border: 1px solid var(--border); cursor: pointer; }
+        .choice-item input { width: auto; margin: 0; }
+        
+        .price-summary { border-top: 1px dashed var(--border); margin-top: 15px; padding-top: 15px; }
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
+        .total-row { font-size: 18px; font-weight: bold; color: var(--primary); border-top: 1px solid var(--border); padding-top: 10px; margin-top: 5px; }
+
+        /* পপআপ */
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); }
+        .modal-content { background: #1e293b; margin: 30% auto; padding: 25px; border-radius: 20px; width: 80%; max-width: 350px; text-align: center; border: 1px solid var(--primary); }
+        
+        .confirm-btn { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 15px; font-weight: bold; color: var(--dark); cursor: pointer; font-size: 16px; margin-top: 20px; box-shadow: 0 4px 15px rgba(0, 210, 255, 0.3); }
+        
+        .info-msg { font-size: 12px; color: #94a3b8; text-align: center; margin-top: 15px; }
+    </style>
+</head>
+<body>
+
+<div class="checkout-container">
+    <div class="header">
+        <i class="fa fa-arrow-left" onclick="history.back()"></i>
+        <h2>অর্ডার সম্পন্ন করুন</h2>
+    </div>
+
+    <div class="section-card">
+        <label>আপনার নাম</label>
+        <input type="text" id="uName" placeholder="নাম লিখুন">
+        
+        <label>মোবাইল নম্বর</label>
+        <input type="tel" id="uPhone" placeholder="017XXXXXXXX">
+        
+        <label>অঞ্চল / জেলা</label>
+        <select id="uRegion" onchange="calculatePrice()">
+            <option value="70">ঢাকা সিটি (৳৭০)</option>
+            <option value="100">সাব ঢাকা (৳১০০)</option>
+            <option value="130">ঢাকার বাইরে (৳১৩০)</option>
+        </select>
+
+        <label>বিস্তারিত ঠিকানা</label>
+        <input type="text" id="uAddress" placeholder="বাসা নং, রোড নং, এলাকা...">
+        
+        <label>ল্যান্ডমার্ক (অপশনাল)</label>
+        <input type="text" id="uLandmark" placeholder="যেমন: স্কুলের পাশে বা পরিচিত জায়গা">
+    </div>
+
+    <div class="section-card">
+        <label>ডেলিভারি পদ্ধতি</label>
+        <div class="delivery-options">
+            <div class="d-opt active">
+                <i class="fa fa-truck"></i> হোম ডেলিভারি
+            </div>
+            <div class="d-opt disabled">
+                <i class="fa fa-building"></i> পিকআপ পয়েন্ট
+                <small>শীঘ্রই আসছে...</small>
+            </div>
+        </div>
+        <p style="font-size: 11px; color: #2ecc71; margin-top: 10px; text-align: center;">
+            <i class="fa fa-info-circle"></i> এই অর্ডারটি হোম ডেলিভারিতে পাঠানো হবে।
+        </p>
+    </div>
+
+    <div class="section-card">
+        <label onclick="showChargeInfo()" style="cursor: pointer; text-decoration: underline; color: var(--primary);">
+            পেমেন্ট অপশন (চার্জ জানতে ক্লিক করুন)
+        </label>
+        
+        <div class="payment-choice">
+            <div class="choice-item" onclick="setPaymentType('full')">
+                <input type="radio" name="pType" id="fullPay" checked>
+                <span>ফুল পেমেন্ট (প্রোডাক্ট + ডেলিভারি)</span>
+            </div>
+            <div class="choice-item" onclick="setPaymentType('onlyCharge')">
+                <input type="radio" name="pType" id="chargePay">
+                <span>শুধুমাত্র ডেলিভারি চার্জ আগে দিন</span>
+            </div>
+        </div>
+
+        <div class="price-summary">
+            <div class="price-row"><span>প্রোডাক্টের দাম:</span> <span id="pPriceText">0 ৳</span></div>
+            <div class="price-row"><span>ডেলিভারি চার্জ:</span> <span id="dChargeText">0 ৳</span></div>
+            <div class="price-row total-row"><span>মোট প্রদেয়:</span> <span id="totalAmount">0 ৳</span></div>
+        </div>
+    </div>
+
+    <button class="confirm-btn" onclick="placeOrder()">অর্ডার নিশ্চিত করুন</button>
+    <div class="info-msg">নিরাপদ পেমেন্ট ও দ্রুত ডেলিভারির নিশ্চয়তা দিচ্ছে SportX</div>
+</div>
+
+<div id="chargeModal" class="modal">
+    <div class="modal-content">
+        <h3 style="color: var(--primary);">ডেলিভারি চার্জ লিস্ট</h3>
+        <p>ঢাকা সিটি: ৳৭০</p>
+        <p>সাব ঢাকা: ৳১০০</p>
+        <p>ঢাকার বাইরে: ৳১৩০</p>
+        <button class="confirm-btn" style="margin-top: 10px;" onclick="closeModal()">ঠিক আছে</button>
+    </div>
+</div>
+
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    const firebaseConfig = {
+        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+        authDomain: "ms-sp-97f78.firebaseapp.com",
+        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+        projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
+        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    const productId = new URLSearchParams(window.location.search).get('id');
+    let productPrice = 0;
+    let paymentType = 'full';
+    let currentUser = null;
+
+    onAuthStateChanged(auth, (user) => { if(user) currentUser = user; });
+
+    // ১. প্রোডাক্ট ডাটা লোড
+    if (productId) {
+        onValue(ref(db, 'products/' + productId), (snap) => {
+            const data = snap.val();
+            if(data) {
+                productPrice = parseInt(data.price);
+                document.getElementById('pPriceText').innerText = productPrice + " ৳";
+                calculatePrice();
+            }
+        });
+    }
+
+    // ২. ক্যালকুলেশন ফাংশন
+    window.calculatePrice = () => {
+        const dCharge = parseInt(document.getElementById('uRegion').value);
+        document.getElementById('dChargeText').innerText = dCharge + " ৳";
+        
+        let total = 0;
+        if(paymentType === 'full') {
+            total = productPrice + dCharge;
+        } else {
+            total = dCharge;
+        }
+        document.getElementById('totalAmount').innerText = total + " ৳";
+    };
+
+    window.setPaymentType = (type) => {
+        paymentType = type;
+        document.getElementById(type === 'full' ? 'fullPay' : 'chargePay').checked = true;
+        calculatePrice();
+    };
+
+    // ৩. পপআপ কন্ট্রোল
+    window.showChargeInfo = () => document.getElementById('chargeModal').style.display = 'block';
+    window.closeModal = () => document.getElementById('chargeModal').style.display = 'none';
+
+    // ৪. অর্ডার সাবমিট
+    window.placeOrder = () => {
+        const name = document.getElementById('uName').value;
+        const phone = document.getElementById('uPhone').value;
+        const address = document.getElementById('uAddress').value;
+        
+        if(!name || !phone || !address) { alert("দয়া করে প্রয়োজনীয় সব তথ্য পূরণ করুন!"); return; }
+
+        const orderRef = push(ref(db, 'orders'));
+        set(orderRef, {
+            productId: productId,
+            userName: name,
+            userPhone: phone,
+            address: address,
+            region: document.getElementById('uRegion').options[document.getElementById('uRegion').selectedIndex].text,
+            landmark: document.getElementById('uLandmark').value || "None",
+            paymentType: paymentType,
+            totalPayable: document.getElementById('totalAmount').innerText,
+            status: "Pending",
+            timestamp: Date.now()
+        }).then(() => {
+            alert("অর্ডার সফল হয়েছে! আমাদের প্রতিনিধি শীঘ্রই আপনার সাথে যোগাযোগ করবেন।");
+            window.close();
+        });
+    };
+</script>
+</body>
+                                                                       </html>
+
