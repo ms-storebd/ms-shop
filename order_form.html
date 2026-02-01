@@ -14,7 +14,6 @@
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
         .header h2 { font-size: 20px; margin: 0; color: var(--primary); }
 
-        /* নতুন প্রোডাক্ট সামারি সেকশন */
         .product-summary { 
             background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
             padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;
@@ -29,8 +28,8 @@
 
         .section-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
         label { font-size: 13px; color: #94a3b8; display: block; margin: 10px 0 5px 5px; }
-        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; margin-bottom: 10px;}
-        input:focus { border-color: var(--primary); }
+        input, select, textarea { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; margin-bottom: 10px; font-family: inherit;}
+        input:focus, textarea:focus { border-color: var(--primary); }
         
         .method-container { display: flex; gap: 10px; margin-top: 10px; }
         .method-card { flex: 1; background: #1e293b; border: 1px solid var(--border); padding: 15px 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; position: relative; }
@@ -76,29 +75,79 @@
         <label>মোবাইল নম্বর</label>
         <input type="tel" id="uPhone" placeholder="017XXXXXXXX">
 
-        <label>বিভাগ</label>
-        <select id="uDivision" onchange="updateDistricts()">
-            <option value="">বিভাগ সিলেক্ট করুন</option>
-            <option value="Dhaka">ঢাকা (Dhaka)</option>
-            <option value="Chattogram">চট্টগ্রাম (Chattogram)</option>
-            <option value="Rajshahi">রাজশাহী (Rajshahi)</option>
-            <option value="Khulna">খুলনা (Khulna)</option>
-            <option value="Barishal">বরিশাল (Barishal)</option>
-            <option value="Sylhet">সিলেট (Sylhet)</option>
-            <option value="Rangpur">রংপুর (Rangpur)</option>
-            <option value="Mymensingh">ময়মনসিংহ (Mymensingh)</option>
-        </select>
-
-        <label>জেলা</label>
+        <label>আপনার জেলা সিলেক্ট করুন</label>
         <select id="uDistrict">
-            <option value="">বিভাগ সিলেক্ট করার পর জেলা আসবে</option>
+            <option value="" disabled selected>জেলা সিলেক্ট করুন</option>
+            <option value="Bagerhat">Bagerhat (বাগেরহাট)</option>
+            <option value="Bandarban">Bandarban (বান্দরবান)</option>
+            <option value="Barguna">Barguna (বরগুনা)</option>
+            <option value="Barishal">Barishal (বরিশাল)</option>
+            <option value="Bhola">Bhola (ভোলা)</option>
+            <option value="Bogra">Bogra (বগুড়া)</option>
+            <option value="Brahmanbaria">Brahmanbaria (ব্রাহ্মণবাড়িয়া)</option>
+            <option value="Chandpur">Chandpur (চাঁদপুর)</option>
+            <option value="Chattogram">Chattogram (চট্টগ্রাম)</option>
+            <option value="Chuadanga">Chuadanga (চুয়াডাঙ্গা)</option>
+            <option value="Cumilla">Cumilla (কুমিল্লা)</option>
+            <option value="Cox's Bazar">Cox's Bazar (কক্সবাজার)</option>
+            <option value="Dhaka">Dhaka (ঢাকা)</option>
+            <option value="Dinajpur">Dinajpur (দিনাজপুর)</option>
+            <option value="Faridpur">Faridpur (ফরিদপুর)</option>
+            <option value="Feni">Feni (ফেনী)</option>
+            <option value="Gaibandha">Gaibandha (গাইবান্ধা)</option>
+            <option value="Gazipur">Gazipur (গাজীপুর)</option>
+            <option value="Gopalganj">Gopalganj (গোপালগঞ্জ)</option>
+            <option value="Habiganj">Habiganj (হবিগঞ্জ)</option>
+            <option value="Jamalpur">Jamalpur (জামালপুর)</option>
+            <option value="Jashore">Jashore (যশোর)</option>
+            <option value="Jhalokati">Jhalokati (ঝালকাঠি)</option>
+            <option value="Jhenaidah">Jhenaidah (ঝিনাইদহ)</option>
+            <option value="Joypurhat">Joypurhat (জয়পুরহাট)</option>
+            <option value="Khagrachari">Khagrachari (খাগড়াছড়ি)</option>
+            <option value="Khulna">Khulna (খুলনা)</option>
+            <option value="Kishoreganj">Kishoreganj (কিশোরগঞ্জ)</option>
+            <option value="Kurigram">Kurigram (কুড়িগ্রাম)</option>
+            <option value="Kushtia">Kushtia (কুষ্টিয়া)</option>
+            <option value="Lakshmipur">Lakshmipur (লক্ষ্মীপুর)</option>
+            <option value="Lalmonirhat">Lalmonirhat (লালমনিরহাট)</option>
+            <option value="Madaripur">Madaripur (মাদারীপুর)</option>
+            <option value="Magura">Magura (মাগুরা)</option>
+            <option value="Manikganj">Manikganj (মানিকগঞ্জ)</option>
+            <option value="Meherpur">Meherpur (মেহেরপুর)</option>
+            <option value="Moulvibazar">Moulvibazar (মৌলভীবাজার)</option>
+            <option value="Munshiganj">Munshiganj (মুন্সিগঞ্জ)</option>
+            <option value="Mymensingh">Mymensingh (ময়মনসিংহ)</option>
+            <option value="Naogaon">Naogaon (নওগাঁ)</option>
+            <option value="Narail">Narail (নড়াইল)</option>
+            <option value="Narayanganj">Narayanganj (নারায়ণগঞ্জ)</option>
+            <option value="Narsingdi">Narsingdi (নরসিংদী)</option>
+            <option value="Natore">Natore (নাটোর)</option>
+            <option value="Netrokona">Netrokona (নেত্রকোনা)</option>
+            <option value="Nilphamari">Nilphamari (নীলফামারী)</option>
+            <option value="Noakhali">Noakhali (নোয়াখালী)</option>
+            <option value="Pabna">Pabna (পাবনা)</option>
+            <option value="Panchagarh">Panchagarh (পঞ্চগড়)</option>
+            <option value="Patuakhali">Patuakhali (পটুয়াখালী)</option>
+            <option value="Pirojpur">Pirojpur (পিরোজপুর)</option>
+            <option value="Rajbari">Rajbari (রাজবাড়ী)</option>
+            <option value="Rajshahi">Rajshahi (রাজশাহী)</option>
+            <option value="Rangamati">Rangamati (রাঙ্গামাটি)</option>
+            <option value="Rangpur">Rangpur (রংপুর)</option>
+            <option value="Satkhira">Satkhira (সাতক্ষীরা)</option>
+            <option value="Shariatpur">Shariatpur (শরীয়তপুর)</option>
+            <option value="Sherpur">Sherpur (শেরপুর)</option>
+            <option value="Sirajganj">Sirajganj (সিরাজগঞ্জ)</option>
+            <option value="Sunamganj">Sunamganj (সুনামগঞ্জ)</option>
+            <option value="Sylhet">Sylhet (সিলেট)</option>
+            <option value="Tangail">Tangail (টাঙ্গাইল)</option>
+            <option value="Thakurgaon">Thakurgaon (ঠাকুরগাঁও)</option>
         </select>
 
-        <label>এলাকা বা জায়গার নাম</label>
-        <input type="text" id="uArea" placeholder="গ্রাম/রোড/এলাকার নাম">
+        <label>আপনার বিস্তারিত অ্যাড্রেস</label>
+        <textarea id="uArea" rows="3" placeholder="বাসা নং, রোড নং, গ্রাম বা এলাকার বিস্তারিত নাম লিখুন..."></textarea>
 
-        <label>ল্যান্ডমার্ক (ঐচ্ছিক)</label>
-        <input type="text" id="uLandmark" placeholder="যেমন: মসজিদের পাশে">
+        <label>স্পেশাল নোট (ঐচ্ছিক)</label>
+        <input type="text" id="uLandmark" placeholder="যেমন: ডেলিভারি ম্যানের জন্য কোনো বার্তা">
     </div>
 
     <div class="section-card">
@@ -173,9 +222,8 @@
 
     const urlParams = new URLSearchParams(window.location.search);
     const productId = urlParams.get('id');
-    const selectedSize = urlParams.get('size') || "N/A"; // URL থেকে সাইজ নেওয়া
+    const selectedSize = urlParams.get('size') || "N/A";
 
-    // UI-তে আগে থেকে সাইজ দেখিয়ে রাখা
     document.getElementById('sumSize').innerText = selectedSize;
 
     onAuthStateChanged(auth, (user) => {
@@ -193,8 +241,6 @@
                 const data = snap.val();
                 productPrice = parseInt(data.price);
                 productName = data.name;
-                
-                // সামারি আপডেট
                 document.getElementById('sumTitle').innerText = productName;
                 document.getElementById('sumImg').src = data.img || data.image;
                 document.getElementById('pPriceText').innerText = productPrice + " ৳";
@@ -202,30 +248,6 @@
             }
         });
     }
-
-    const districts = {
-        "Dhaka": ["ঢাকা", "গাজীপুর", "মানিকগঞ্জ", "নারায়ণগঞ্জ", "মুন্সিগঞ্জ", "নরসিংদী", "টাংগাইল", "কিশোরগঞ্জ", "ফারিদপুর", "গোপালগঞ্জ", "মাদারীপুর", "রাজবাড়ী", "শরীয়তপুর"],
-        "Chattogram": ["চট্টগ্রাম", "কুমিল্লা", "কক্সবাজার", "নোয়াখালী", "ব্রাহ্মণবাড়িয়া", "চাঁদপুর", "লক্ষ্মীপুর", "ফেনী", "খাগড়াছড়ি", "রাঙ্গামাটি", "বান্দরবন"],
-        "Rajshahi": ["রাজশাহী", "নাটোর", "নওগাঁ", "চাঁপাইনবাবগঞ্জ", "পাবনা", "সিরাজগঞ্জ", "বগুড়া", "জয়পুরহাট"],
-        "Khulna": ["খুলনা", "বাগেরহাট", "সাতক্ষীরা", "যশোর", "ঝিনাইদহ", "নড়াইল", "কুষ্টিয়া", "চুয়াডাঙ্গা", "মেহেরপুর"],
-        "Barishal": ["বরিশাল", "পটুয়াখালী", "ভোলা", "পিরোজপুর", "বরগুনা", "ঝালকাঠি"],
-        "Sylhet": ["সিলেট", "সুনামগঞ্জ", "মৌলভীবাজার", "হবিগঞ্জ"],
-        "Rangpur": ["রংপুর", "পঞ্চগড়", "কুড়িগ্রাম", "লালমনিরহাট", "নীলফামারী", "দিনাজপুর", "ঠাকুরগাঁও", "গাইবান্ধা"],
-        "Mymensingh": ["ময়মনসিংহ", "জামালপুর", "শেরপুর", "নেত্রকোনা"]
-    };
-
-    window.updateDistricts = () => {
-        const div = document.getElementById('uDivision').value;
-        const distSelect = document.getElementById('uDistrict');
-        distSelect.innerHTML = '<option value="">জেলা সিলেক্ট করুন</option>';
-        if(div && districts[div]) {
-            districts[div].forEach(d => {
-                let opt = document.createElement('option');
-                opt.value = d; opt.text = d;
-                distSelect.add(opt);
-            });
-        }
-    };
 
     window.calculatePrice = () => {
         const charge = parseInt(document.getElementById('uDeliveryArea').value);
@@ -260,8 +282,9 @@
         const area = document.getElementById('uArea').value;
         const land = document.getElementById('uLandmark').value;
         const trx = document.getElementById('trxID').value;
+        const dist = document.getElementById('uDistrict').value;
 
-        if(!name || !phone || !area || !trx || !selectedMethodName) { 
+        if(!name || !phone || !dist || !area || !trx || !selectedMethodName) { 
             alert("সবগুলো তথ্য সঠিকভাবে দিন!"); 
             return; 
         }
@@ -275,12 +298,11 @@
             uid: currentUser.uid,
             userName: name,
             userPhone: phone,
-            division: document.getElementById('uDivision').value,
-            district: document.getElementById('uDistrict').value,
-            address: area + (land ? ", " + land : ""),
+            district: dist,
+            address: area,
             landmark: land || "নেই",
-            productName: productName || "স্পোর্টস প্রোডাক্ট",
-            productSize: selectedSize, // সাইজটি সেভ হবে
+            productName: productName,
+            productSize: selectedSize,
             transactionID: trx.toUpperCase(),
             totalPrice: document.getElementById('totalAmount').innerText.replace(' ৳', ''),
             gateway: selectedMethodName,
