@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SportX - Premium Store</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="https://via.placeholder.com/192">
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -194,6 +199,16 @@
     </p>
 </div>
 
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('sw.js')
+        .then(reg => console.log('Service Worker Registered'))
+        .catch(err => console.log('Service Worker Failed', err));
+    });
+  }
+</script>
+
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -211,7 +226,6 @@
     const auth = getAuth(app);
     const provider = new GoogleAuthProvider();
 
-    // অলরেডি লগইন থাকলে শপে পাঠিয়ে দিবে
     onAuthStateChanged(auth, (user) => {
         if (user) window.location.href = "shop.html";
     });
