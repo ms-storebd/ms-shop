@@ -12,11 +12,12 @@
             --shipped: #3498db;
             --delivered: #2ecc71;
             --cancelled: #e74c3c;
+            --primary: #00d2ff;
         }
         body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; padding: 20px; margin: 0; }
         
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; cursor: pointer; }
-        .header h2 { margin: 0; font-size: 20px; }
+        .header h2 { margin: 0; font-size: 20px; color: var(--primary); }
 
         .order-card { 
             background: rgba(255, 255, 255, 0.05); 
@@ -25,12 +26,10 @@
             margin-bottom: 20px; 
             border: 1px solid rgba(255, 255, 255, 0.1); 
             position: relative;
-            overflow: hidden;
         }
 
-        /* ইউনিক আইডি সেকশন */
         .id-badge {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0, 210, 255, 0.1);
             padding: 5px 12px;
             border-radius: 8px;
             font-size: 11px;
@@ -39,10 +38,9 @@
             align-items: center;
             gap: 8px;
             margin-bottom: 12px;
-            color: #00d2ff;
+            color: var(--primary);
         }
         .copy-icon { cursor: pointer; color: #fff; opacity: 0.6; }
-        .copy-icon:hover { opacity: 1; }
 
         .status-tag { 
             float: right; 
@@ -50,17 +48,16 @@
             border-radius: 8px; 
             font-size: 11px; 
             font-weight: bold; 
-            text-transform: uppercase;
         }
 
-        /* ডাইনামিক স্ট্যাটাস কালার */
         .Pending { background: var(--pending); color: #000; }
         .Shipped { background: var(--shipped); color: #fff; }
         .Delivered { background: var(--delivered); color: #fff; }
         .Cancelled { background: var(--cancelled); color: #fff; }
 
-        .p-info b { font-size: 16px; display: block; margin-bottom: 5px; color: #f8fafc; }
-        .p-info small { color: #94a3b8; display: block; margin-bottom: 3px; }
+        .p-info b { font-size: 16px; display: block; margin-bottom: 8px; color: #f8fafc; }
+        .p-info small { color: #94a3b8; display: block; margin-bottom: 5px; font-size: 13px; }
+        .p-info i { width: 20px; color: var(--primary); }
 
         .help-text {
             margin-top: 15px;
@@ -77,10 +74,10 @@
 
     <div class="header" onclick="location.href='shop.html'">
         <i class="fa fa-arrow-left"></i>
-        <h2>আমার অর্ডারসমূহ</h2>
+        <h2>My All orders</h2></h2>
     </div>
 
-    <div id="order-list">লোড হচ্ছে...</div>
+    <div id="order-list">loading...</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -106,19 +103,31 @@
                 const list = document.getElementById('order-list');
                 list.innerHTML = "";
                 let found = false;
-
                 const ordersData = [];
+
                 snap.forEach(c => {
                     const o = c.val();
-                    if(o.uid === user.uid) {
+                    // চেকআউট পেজ থেকে 'uid' বা 'userId' যে নামেই সেভ হোক তা চেক করছে
+                    const orderUID = o.uid || o.userId; 
+                    
+                    if(orderUID === user.uid) {
                         found = true;
-                        // অর্ডারের আইডি বের করা (শেষ ৬ ক্যারেক্টার)
                         const shortId = c.key.slice(-6).toUpperCase();
-                        ordersData.push({ ...o, shortId });
+                        
+                        // তারিখ ফরম্যাট করা (অর্ডারের সময় থেকে)
+                        const d = o.timestamp ? new Date(o.timestamp).toLocaleDateString('bn-BD') : "N/A";
+
+                        ordersData.push({ 
+                            ...o, 
+                            shortId, 
+                            displayDate: d,
+                            // কি-নেমগুলো চেকআউটের সাথে মিলিয়ে নেওয়া হলো
+                            displayPrice: o.totalAmount || o.totalPrice || "0",
+                            displayAddress: o.address || "ঠিকানা পাওয়া যায়নি"
+                        });
                     }
                 });
 
-                // নতুন অর্ডারগুলো উপরে দেখানোর জন্য রিভার্স করা
                 ordersData.reverse().forEach(o => {
                     list.innerHTML += `
                         <div class="order-card">
@@ -128,13 +137,14 @@
                                 <i class="fa fa-copy copy-icon" onclick="copyToClipboard('${o.shortId}')"></i>
                             </div>
                             <div class="p-info">
-                                <b>${o.productName}</b>
-                                <small><i class="fa fa-calendar-alt"></i> ${o.date}</small>
-                                <small><i class="fa fa-map-marker-alt"></i> ${o.address}</small>
-                                <small><i class="fa fa-money-bill-wave"></i> মোট: ${o.totalPrice} ৳</small>
+                                <b>${o.productName} (সাইজ: ${o.productSize || 'N/A'})</b>
+                                <small><i class="fa fa-calendar-alt"></i> তারিখ: ${o.displayDate}</small>
+                                <small><i class="fa fa-map-marker-alt"></i> ${o.displayAddress}</small>
+                                <small><i class="fa fa-money-bill-wave"></i> মোট পেমেন্ট: ${o.displayPrice}</small>
+                                <small><i class="fa fa-credit-card"></i> মাধ্যম: ${o.paymentMethod} (${o.paymentType})</small>
                             </div>
                             <div class="help-text">
-                                <i class="fa fa-info-circle"></i> কোনো সমস্যা হলে এই আইডিটি অ্যাডমিনকে দিন।
+                                <i class="fa fa-info-circle"></i> TrxID: ${o.trxID}
                             </div>
                         </div>`;
                 });
@@ -144,11 +154,11 @@
                 }
             });
         } else {
-            location.href = 'login.html'; // লগইন না থাকলে পাঠিয়ে দিবে
+            // ইউজার লগইন না থাকলে লগইন পেজে পাঠিয়ে দিবে
+            location.href = 'login.html';
         }
     });
 
-    // আইডি কপি করার ফাংশন
     window.copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
             alert("অর্ডার আইডি কপি হয়েছে: #" + text);
