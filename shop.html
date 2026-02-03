@@ -22,34 +22,50 @@
         }
         body { font-family: 'Poppins', sans-serif; margin: 0; background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; }
         
+        /* --- আপডেটেড হেডার স্টাইল --- */
         header { 
             background: rgba(15, 23, 42, 0.98); 
             backdrop-filter: blur(15px); 
-            padding: 10px 15px; 
+            padding: 12px 15px; 
             display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+            flex-direction: column; /* এলিমেন্টগুলো নিচে নিচে থাকবে */
+            gap: 12px;
             position: sticky; 
             top: 0; 
             z-index: 5000; 
             border-bottom: 1px solid var(--border); 
-            height: 65px;
             box-sizing: border-box;
         }
 
-        .logo { font-size: 20px; font-weight: bold; color: var(--primary); flex-shrink: 0; }
-        .header-right { display: flex; align-items: center; gap: 20px; flex: 1; justify-content: flex-end; }
-
-        .search-box { position: relative; width: 130px; }
-        .search-box input { 
-            width: 100%; padding: 8px 32px 8px 10px; 
-            border-radius: 12px; border: 1px solid var(--border); 
-            background: var(--glass); color: white; font-size: 13px; outline: none; 
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
         }
-        .search-box i { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: var(--primary); font-size: 14px; pointer-events: none; }
-        
-        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 5px; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 
+        .logo { font-size: 22px; font-weight: bold; color: var(--primary); letter-spacing: 1px; }
+
+        .search-container { width: 100%; }
+        .search-box { position: relative; width: 100%; }
+        .search-box input { 
+            width: 100%; 
+            padding: 10px 40px 10px 15px; 
+            border-radius: 12px; 
+            border: 1px solid var(--border); 
+            background: var(--glass); 
+            color: white; 
+            font-size: 14px; 
+            outline: none; 
+            box-sizing: border-box;
+            transition: 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+        .search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        
+        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 0; display: flex; align-items: center; transition: 0.2s; }
+
+        /* --- প্রোফাইল মেনু --- */
         .profile-menu { 
             display: none; position: fixed; top: 70px; right: 15px; 
             width: 260px; background: #1e293b; border-radius: 20px; 
@@ -67,12 +83,11 @@
             margin-bottom: 15px;
             cursor: pointer;
         }
-        .id-box:active { background: rgba(0, 210, 255, 0.2); }
-
         .user-label { font-size:11px; color:#94a3b8; margin-top: 5px; }
         .user-data { background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px; font-size: 13px; }
 
-        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; margin-top: 10px; }
+        /* --- ক্যাটাগরি এবং প্রোডাক্ট গ্রিড --- */
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; margin-top: 5px; }
         .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
         .cat-item i { font-size: 20px; color: var(--primary); margin-bottom: 5px; display: block; }
         .cat-item span { font-size: 11px; font-weight: 500; color: #cbd5e1; }
@@ -99,15 +114,18 @@
 <body>
 
 <header>
-    <div class="logo">MS STORE</div> 
-    <div class="header-right">
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="খুঁজুন..." onkeyup="searchFn()">
-            <i class="fa fa-search"></i>
-        </div>
+    <div class="header-top">
+        <div class="logo">MS STORE</div> 
         <button class="profile-btn" id="profileTrigger">
             <i class="fa fa-user-circle"></i>
         </button>
+    </div>
+
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন..." onkeyup="searchFn()">
+            <i class="fa fa-search"></i>
+        </div>
     </div>
 </header>
 
