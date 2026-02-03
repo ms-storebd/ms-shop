@@ -256,7 +256,6 @@
         });
     }
 
-    // পেমেন্ট টাইপ বা এরিয়া চেঞ্জ হলে আপডেট
     document.getElementById('uDeliveryArea').onchange = updateTotal;
     document.getElementById('paymentType').onchange = updateTotal;
 
@@ -276,7 +275,6 @@
         document.getElementById('totalAmount').innerText = finalAmount + " ৳";
     }
 
-    // পেমেন্ট মেথড বাটন
     document.getElementById('bkashBtn').onclick = () => setPayment('bKash', '017XXXXXXXX');
     document.getElementById('nagadBtn').onclick = () => setPayment('Nagad', '018XXXXXXXX');
 
@@ -297,8 +295,13 @@
         alert("নম্বর কপি হয়েছে!");
     };
 
-    // অর্ডার সাবমিট
     document.getElementById('submitOrder').onclick = function() {
+        // ফিক্স: ইউজার আইডি নিশ্চিত করা
+        if (!auth.currentUser) {
+            alert("অর্ডার করতে আগে লগইন করুন!");
+            return;
+        }
+
         const name = document.getElementById('uName').value;
         const phone = document.getElementById('uPhone').value;
         const dist = document.getElementById('uDistrict').value;
@@ -314,6 +317,7 @@
 
         const orderRef = push(ref(db, 'orders'));
         set(orderRef, {
+            uid: auth.currentUser.uid, // ইউজারের আইডি সেভ হচ্ছে যাতে My Orders-এ দেখা যায়
             userName: name,
             userPhone: phone,
             district: dist,
@@ -339,4 +343,5 @@
 </script>
 
 </body>
-</html>
+    </html>
+    
