@@ -3,304 +3,181 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Premium Experience</title>
+    <title>MS STORE - Premium</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     
     <style>
         :root {
-            --primary: #00d2ff;
-            --secondary: #3a7bd5;
             --gradient: linear-gradient(to right, #5c6bc0, #2da0a8);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Montserrat', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
 
         body {
             background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* ড্রপডাউন মেনু */
-        nav {
-            position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 2000;
-        }
-        .logo { font-size: 24px; font-weight: 700; color: white; }
-        .dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            background: #1e293b;
-            border-radius: 8px;
-            width: 150px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-        }
-        .dropdown a { display: block; padding: 12px; color: white; text-decoration: none; }
-        .three-dots:hover .dropdown { display: block; }
-
-        /* মেইন কন্টেইনার (পিসি মোড) */
         .container {
             background-color: #fff;
-            border-radius: 30px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
             position: relative;
             overflow: hidden;
             width: 768px;
-            max-width: 95%;
+            max-width: 100%;
             min-height: 480px;
-            height: 80vh; /* পিসিতে সুন্দর দেখানোর জন্য */
+            border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.35);
         }
 
+        /* ফর্ম স্টাইল */
         .form-container {
-            position: absolute;
-            top: 0;
-            height: 100%;
+            position: absolute; top: 0; height: 100%;
             transition: all 0.6s ease-in-out;
         }
 
         .sign-in { left: 0; width: 50%; z-index: 2; }
-        .container.active .sign-in { transform: translateX(100%); }
+        .container.active .sign-in { transform: translateX(100%); opacity: 0; }
+
         .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; }
-        .container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; animation: move 0.6s; }
+        .container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; }
 
-        @keyframes move { 0%, 49.99% { opacity: 0; z-index: 1; } 50%, 100% { opacity: 1; z-index: 5; } }
-
-        .container form {
+        form {
             background-color: #fff;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 40px;
-            height: 100%;
-            text-align: center;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; padding: 0 40px; height: 100%; text-align: center;
         }
 
-        .container input {
-            background-color: #eee;
-            border: none;
-            margin: 8px 0;
-            padding: 12px 15px;
-            font-size: 14px;
-            border-radius: 8px;
-            width: 100%;
-            outline: none;
+        input {
+            background-color: #eee; border: none; margin: 8px 0;
+            padding: 10px 15px; font-size: 13px; border-radius: 8px; width: 100%; outline: none;
         }
 
-        .container button {
-            background-color: #2da0a8;
-            color: #fff;
-            font-size: 12px;
-            padding: 10px 45px;
-            border-radius: 8px;
-            border: none;
-            font-weight: 600;
-            text-transform: uppercase;
-            margin-top: 10px;
-            cursor: pointer;
+        button {
+            background-color: #2da0a8; color: #fff; font-size: 12px;
+            padding: 10px 45px; border: 1px solid transparent;
+            border-radius: 8px; font-weight: 600; text-transform: uppercase;
+            margin-top: 10px; cursor: pointer;
         }
 
-        .google-btn {
-            background-color: #fff !important;
-            color: #444 !important;
-            border: 1px solid #ddd !important;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 10px;
-        }
+        button.hidden { background-color: transparent; border-color: #fff; }
 
-        /* টগল প্যানেল (পিসি) */
+        /* টগল এনিমেশন */
         .toggle-container {
-            position: absolute;
-            top: 0;
-            left: 50%;
-            width: 50%;
-            height: 100%;
-            overflow: hidden;
-            transition: all 0.6s ease-in-out;
-            z-index: 1000;
+            position: absolute; top: 0; left: 50%; width: 50%; height: 100%;
+            overflow: hidden; transition: all 0.6s ease-in-out; z-index: 1000;
             border-radius: 150px 0 0 100px;
         }
         .container.active .toggle-container { transform: translateX(-100%); border-radius: 0 150px 100px 0; }
-        
+
         .toggle {
-            background: var(--gradient);
-            color: #fff;
-            position: relative;
-            left: -100%;
-            height: 100%;
-            width: 200%;
-            transform: translateX(0);
-            transition: all 0.6s ease-in-out;
+            background: var(--gradient); color: #fff; position: relative;
+            left: -100%; height: 100%; width: 200%;
+            transform: translateX(0); transition: all 0.6s ease-in-out;
         }
         .container.active .toggle { transform: translateX(50%); }
 
         .toggle-panel {
-            position: absolute;
-            width: 50%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-            padding: 0 30px;
-            text-align: center;
-            top: 0;
-            transition: all 0.6s ease-in-out;
+            position: absolute; width: 50%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            flex-direction: column; padding: 0 30px; text-align: center;
+            top: 0; transition: all 0.6s ease-in-out;
         }
         .toggle-left { transform: translateX(-200%); }
         .container.active .toggle-left { transform: translateX(0); }
         .toggle-right { right: 0; }
         .container.active .toggle-right { transform: translateX(200%); }
-        .hidden { background-color: transparent !important; border: 1px solid #fff !important; }
 
-        /* মোবাইল রেসপন্সিভ - আপনার রিকয়ারমেন্ট অনুযায়ী ফুলস্ক্রিন ও ফিক্সড */
+        /* মোবাইল ভিউ ফিক্সড (Full Screen) */
         @media screen and (max-width: 650px) {
-            .container {
-                width: 100vw;
-                height: 100vh;
-                border-radius: 0;
-                max-width: 100%;
-            }
-
-            .form-container {
-                top: 0;
-                height: 50%; /* ফর্মের জন্য ৫০% জায়গা */
-                width: 100%;
-                left: 0;
-            }
-
-            /* মোবাইল স্লাইডিং লজিক (নিচ থেকে উপরে) */
-            .sign-in { top: 50%; }
-            .sign-up { top: 50%; }
-
-            .container.active .sign-in { transform: translateY(-100%); opacity: 0; }
-            .container.active .sign-up { transform: translateY(-100%); opacity: 1; z-index: 5; }
+            .container { width: 100vw; height: 100vh; border-radius: 0; }
+            .form-container { top: 50%; height: 50%; width: 100%; }
+            .sign-in, .sign-up { left: 0; width: 100%; }
+            .container.active .sign-in { transform: translateY(-100%); }
+            .container.active .sign-up { transform: translateY(-100%); }
 
             .toggle-container {
-                left: 0;
-                top: 0;
-                width: 100%;
-                height: 50%; /* নীল প্যানেলের জন্য ৫০% জায়গা */
-                border-radius: 0 0 50px 50px;
+                left: 0; top: 0; width: 100%; height: 50%;
+                border-radius: 0 0 40px 40px;
             }
-
-            .container.active .toggle-container {
-                transform: translateY(100%);
-                border-radius: 50px 50px 0 0;
-            }
-
-            .toggle {
-                left: 0;
-                top: -100%;
-                width: 100%;
-                height: 200%;
-            }
-
+            .container.active .toggle-container { transform: translateY(100%); border-radius: 40px 40px 0 0; }
+            .toggle { left: 0; top: -100%; width: 100%; height: 200%; }
             .container.active .toggle { transform: translateY(50%); }
-
             .toggle-panel { width: 100%; height: 50%; }
-            .toggle-left { transform: translateY(-100%); }
+            .toggle-left { transform: translateY(-200%); }
             .container.active .toggle-left { transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
-<nav>
-    <div class="logo">MS STORE</div>
-    <div style="position: relative;" class="three-dots">
-        <i class="fa fa-ellipsis-v" style="cursor: pointer; color: white; padding: 10px;"></i>
-        <div class="dropdown">
-            <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form id="registerForm">
+                <h1>Create Account</h1>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="password" id="regPass" placeholder="Password" required>
+                <button type="submit">Sign Up</button>
+            </form>
         </div>
-    </div>
-</nav>
 
-<div class="container" id="container">
-    <div class="form-container sign-up">
-        <form id="registerForm">
-            <h1>Create Account</h1>
-            <input type="text" id="regName" placeholder="আপনার পূর্ণ নাম" required />
-            <input type="email" id="regEmail" placeholder="ইমেইল এড্রেস" required />
-            <input type="password" id="regPass" placeholder="পাসওয়ার্ড" required />
-            <button type="submit">Sign Up</button>
-        </form>
-    </div>
+        <div class="form-container sign-in">
+            <form id="loginForm">
+                <h1>Sign In</h1>
+                <input type="email" id="logEmail" placeholder="Email" required>
+                <input type="password" id="logPass" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
 
-    <div class="form-container sign-in">
-        <form id="loginForm">
-            <h1>Sign In</h1>
-            <input type="email" id="logEmail" placeholder="ইমেইল এড্রেস" required />
-            <input type="password" id="logPass" placeholder="পাসওয়ার্ড" required />
-            <button type="submit">Sign In</button>
-            <button type="button" class="google-btn" onclick="googleLogin()">
-                <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="20"/> Google Login
-            </button>
-        </form>
-    </div>
-
-    <div class="toggle-container">
-        <div class="toggle">
-            <div class="toggle-panel toggle-left">
-                <h1>Welcome Back!</h1>
-                <p>অ্যাকাউন্ট থাকলে লগইন করুন</p>
-                <button class="hidden" id="login">Sign In</button>
-            </div>
-            <div class="toggle-panel toggle-right">
-                <h1>Hello, Friend!</h1>
-                <p>নতুন হলে আজই রেজিস্ট্রেশন করুন</p>
-                <button class="hidden" id="register">Sign Up</button>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome Back!</h1>
+                    <p>Login to stay connected</p>
+                    <button class="hidden" id="login">Sign In</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>Hello, Friend!</h1>
+                    <p>Register to start your journey</p>
+                    <button class="hidden" id="register">Sign Up</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
         authDomain: "ms-sp-97f78.firebaseapp.com",
-        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
         projectId: "ms-sp-97f78",
-        storageBucket: "ms-sp-97f78.appspot.com",
         appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
 
+    // অ্যানিমেশন লজিক (১০০% ফিক্সড)
     const container = document.getElementById('container');
-    document.getElementById('register').onclick = () => container.classList.add('active');
-    document.getElementById('login').onclick = () => container.classList.remove('active');
+    const registerBtn = document.getElementById('register');
+    const loginBtn = document.getElementById('login');
 
-    onAuthStateChanged(auth, (user) => {
-        if (user) window.location.href = "shop.html";
+    registerBtn.addEventListener('click', () => {
+        container.classList.add('active');
     });
 
-    document.getElementById('registerForm').onsubmit = (e) => {
+    loginBtn.addEventListener('click', () => {
+        container.classList.remove('active');
+    });
+
+    // রেজিস্ট্রেশন
+    document.getElementById('registerForm').addEventListener('submit', (e) => {
         e.preventDefault();
         const name = document.getElementById('regName').value;
         const email = document.getElementById('regEmail').value;
@@ -309,22 +186,16 @@
             updateProfile(res.user, { displayName: name }).then(() => {
                 window.location.href = "shop.html";
             });
-        }).catch(err => alert("রেজিস্ট্রেশন ব্যর্থ!"));
-    };
+        }).catch(err => alert(err.message));
+    });
 
-    document.getElementById('loginForm').onsubmit = (e) => {
+    // লগইন
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
         e.preventDefault();
-        const email = document.getElementById('logEmail').value;
-        const pass = document.getElementById('logPass').value;
-        signInWithEmailAndPassword(auth, email, pass)
-            .then(() => window.location.href = "shop.html")
-            .catch(() => alert("ভুল ইমেইল বা পাসওয়ার্ড"));
-    };
-
-    window.googleLogin = () => {
-        signInWithPopup(auth, provider)
-            .then(() => window.location.href = "shop.html");
-    };
+        signInWithEmailAndPassword(auth, document.getElementById('logEmail').value, document.getElementById('logPass').value)
+        .then(() => window.location.href = "shop.html")
+        .catch(() => alert("Error!"));
+    });
 </script>
 </body>
 </html>
