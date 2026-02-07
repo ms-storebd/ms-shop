@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Pro Experience</title>
+    <title>MS STORE - Premium Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <link rel="stylesheet" href="style.css">
@@ -26,7 +26,10 @@
                 <input type="text" id="regName" placeholder="Full Name" required>
                 <input type="email" id="regEmail" placeholder="Email" required>
                 <input type="password" id="regPass" placeholder="Password" required>
-                <button type="submit">Sign Up Now</button>
+                <button type="submit">Sign Up</button>
+                <button type="button" class="google-btn" onclick="googleLogin()">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png"/> Google Sign Up
+                </button>
             </form>
         </div>
 
@@ -36,6 +39,9 @@
                 <input type="email" id="logEmail" placeholder="Email" required>
                 <input type="password" id="logPass" placeholder="Password" required>
                 <button type="submit">Sign In</button>
+                <button type="button" class="google-btn" onclick="googleLogin()">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png"/> Google Sign In
+                </button>
             </form>
         </div>
 
@@ -53,6 +59,6 @@
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
