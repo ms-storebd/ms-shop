@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Fixed Login</title>
+    <title>MS STORE - Premium Experience</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Montserrat', sans-serif; }
         body {
@@ -12,6 +13,53 @@
             display: flex; align-items: center; justify-content: center;
             height: 100vh; width: 100vw; overflow: hidden;
         }
+
+        /* --- থ্রি ডট মেনু স্টাইল --- */
+        .admin-nav {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 5000;
+        }
+        .three-dots-btn {
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .admin-dropdown {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 45px;
+            background: #1e293b;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+            min-width: 150px;
+            overflow: hidden;
+        }
+        .admin-dropdown a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 15px;
+            display: block;
+            font-size: 14px;
+        }
+        .admin-dropdown a:hover {
+            background: #2da0a8;
+        }
+        .admin-nav:hover .admin-dropdown {
+            display: block;
+        }
+
+        /* --- আপনার অরিজিনাল ডিজাইন --- */
         .container {
             background: #fff; position: relative; overflow: hidden;
             width: 768px; max-width: 100%; min-height: 480px; border-radius: 30px;
@@ -20,7 +68,6 @@
         .sign-in { left: 0; width: 50%; z-index: 2; }
         .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; }
         
-        /* স্লাইডিং লজিক */
         .container.active .sign-in { transform: translateX(100%); opacity: 0; }
         .container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; }
 
@@ -74,6 +121,15 @@
 </head>
 <body>
 
+    <div class="admin-nav">
+        <div class="three-dots-btn">
+            <i class="fa fa-ellipsis-v"></i>
+        </div>
+        <div class="admin-dropdown">
+            <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
+        </div>
+    </div>
+
     <div class="container" id="container">
         <div class="form-container sign-up">
             <form id="registerForm">
@@ -115,6 +171,16 @@
 
         registerBtn.onclick = () => container.classList.add('active');
         loginBtn.onclick = () => container.classList.remove('active');
+
+        // মোবাইল টাচ এর জন্য মেনু ওপেন লজিক
+        document.querySelector('.three-dots-btn').onclick = function(e) {
+            e.stopPropagation();
+            let dropdown = document.querySelector('.admin-dropdown');
+            dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+        };
+        window.onclick = function() {
+            document.querySelector('.admin-dropdown').style.display = 'none';
+        }
     </script>
 </body>
 </html>
