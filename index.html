@@ -3,278 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SportX - Premium Store</title>
-    
-    <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="https://via.placeholder.com/192">
-
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
-    <style>
-        :root {
-            --primary: #00d2ff;
-            --secondary: #3a7bd5;
-            --success: #27ae60;
-            --dark: #0f172a;
-            --glass: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            font-family: 'Poppins', sans-serif;
-            margin: 0;
-            background: radial-gradient(circle at top right, #1e293b, #0f172a);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
-
-        nav {
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(15px);
-            padding: 15px 25px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .logo {
-            font-size: 26px;
-            font-weight: 700;
-            background: linear-gradient(to right, var(--primary), var(--secondary));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: 1px;
-        }
-
-        .hero {
-            text-align: center;
-            padding: 80px 20px;
-            animation: fadeIn 1s ease-out;
-        }
-
-        .hero h1 {
-            font-size: 3rem;
-            margin-bottom: 10px;
-            background: linear-gradient(white, #cbd5e1);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .auth-box {
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            padding: 30px;
-            border-radius: 24px;
-            max-width: 380px;
-            margin: 0 auto 50px;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: slideUp 0.8s ease-out;
-        }
-
-        h2 { text-align: center; font-weight: 600; margin-bottom: 25px; }
-
-        input {
-            width: 100%;
-            padding: 14px;
-            margin: 12px 0;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        input:focus {
-            outline: none;
-            border-color: var(--primary);
-            background: rgba(255,255,255,0.1);
-            box-shadow: 0 0 15px rgba(0, 210, 255, 0.2);
-        }
-
-        .btn {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(45deg, var(--primary), var(--secondary));
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 16px;
-            margin-top: 15px;
-            transition: 0.3s;
-            text-transform: uppercase;
-        }
-
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 210, 255, 0.3);
-        }
-
-        .google-btn {
-            background: white;
-            color: #444;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-        }
-
-        .google-btn img { width: 20px; }
-
-        .dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 30px;
-            background: #1e293b;
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 12px;
-            overflow: hidden;
-            width: 150px;
-        }
-
-        .dropdown a {
-            display: block;
-            padding: 12px 20px;
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            transition: 0.2s;
-        }
-
-        .dropdown a:hover { background: var(--primary); }
-        .three-dots:hover .dropdown { display: block; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { 
-            from { opacity: 0; transform: translateY(30px); } 
-            to { opacity: 1; transform: translateY(0); } 
-        }
-
-    </style>
+    <title>MS STORE - Pro Experience</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<nav>
-    <div class="logo">MS STORE</div>
-    <div style="position: relative;" class="three-dots">
-        <i class="fa fa-ellipsis-v" style="cursor: pointer; padding: 5px 10px;"></i>
-        <div class="dropdown">
+    <div class="admin-nav">
+        <div class="three-dots-btn">
+            <i class="fa fa-ellipsis-v"></i>
+        </div>
+        <div class="admin-dropdown">
             <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
         </div>
     </div>
-</nav>
 
-<div class="hero">
-    <h1>Elevate Your Game</h1>
-    <p style="color: #94a3b8;">উচ্চমানের অনলাইন শপিং এক্সপেরিয়েন্স দিতে এসেছি আমরা, সাথে থাকুন MS STORE এর।</p>
-</div>
+    <div class="container" id="container">
+        <div class="form-container sign-up">
+            <form id="registerForm">
+                <h1>Create Account</h1>
+                <input type="text" id="regName" placeholder="Full Name" required>
+                <input type="email" id="regEmail" placeholder="Email" required>
+                <input type="password" id="regPass" placeholder="Password" required>
+                <button type="submit">Sign Up Now</button>
+            </form>
+        </div>
 
-<div class="auth-box">
-    <h2 id="auth-title">ইউজার লগইন</h2>
-    <input type="text" id="user-name" placeholder="আপনার পূর্ণ নাম" style="display: none;">
-    <input type="email" id="user-email" placeholder="ইমেইল এড্রেস">
-    <input type="password" id="user-pass" placeholder="পাসওয়ার্ড">
-    
-    <button class="btn" onclick="handleAuth()" id="auth-btn">লগইন করুন</button>
-    
-    <button class="btn google-btn" onclick="googleLogin()">
-        <img src="https://img.icons8.com/color/48/000000/google-logo.png"/>
-        Google দিয়ে প্রবেশ করুন
-    </button>
-    
-    <p id="toggle-text" style="text-align: center; margin-top: 20px; font-size: 14px; color: #94a3b8; cursor: pointer;" onclick="toggleAuth()">
-        অ্যাকাউন্ট নেই? <span style="color: var(--primary);">রেজিস্ট্রেশন করুন</span>
-    </p>
-</div>
+        <div class="form-container sign-in">
+            <form id="loginForm">
+                <h1>Sign In</h1>
+                <input type="email" id="logEmail" placeholder="Email" required>
+                <input type="password" id="logPass" placeholder="Password" required>
+                <button type="submit">Sign In</button>
+            </form>
+        </div>
 
-<script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('sw.js')
-        .then(reg => console.log('Service Worker Registered'))
-        .catch(err => console.log('Service Worker Failed', err));
-    });
-  }
-</script>
+        <div class="toggle-container">
+            <div class="toggle">
+                <div class="toggle-panel toggle-left">
+                    <h1>Welcome Back!</h1>
+                    <button class="hidden" id="login">Back to Login</button>
+                </div>
+                <div class="toggle-panel toggle-right">
+                    <h1>New Here?</h1>
+                    <button class="hidden" id="register">Go to Sign Up</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    const firebaseConfig = {
-        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
-        authDomain: "ms-sp-97f78.firebaseapp.com",
-        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
-        projectId: "ms-sp-97f78",
-        storageBucket: "ms-sp-97f78.appspot.com",
-        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const provider = new GoogleAuthProvider();
-
-    onAuthStateChanged(auth, (user) => {
-        if (user) window.location.href = "shop.html";
-    });
-
-    let isRegisterMode = false;
-
-    window.toggleAuth = () => {
-        isRegisterMode = !isRegisterMode;
-        document.getElementById('auth-title').innerText = isRegisterMode ? "নতুন অ্যাকাউন্ট" : "ইউজার লগইন";
-        document.getElementById('user-name').style.display = isRegisterMode ? "block" : "none";
-        document.getElementById('auth-btn').innerText = isRegisterMode ? "রেজিস্ট্রেশন" : "লগইন";
-        document.getElementById('toggle-text').innerHTML = isRegisterMode ? 
-            "অ্যাকাউন্ট আছে? <span style='color: var(--primary);'>লগইন করুন</span>" : 
-            "অ্যাকাউন্ট নেই? <span style='color: var(--primary);'>রেজিস্ট্রেশন করুন</span>";
-    };
-
-    window.handleAuth = () => {
-        const email = document.getElementById('user-email').value;
-        const pass = document.getElementById('user-pass').value;
-        const name = document.getElementById('user-name').value;
-
-        if(!email || !pass) return alert("সব ঘর পূরণ করুন");
-
-        if(isRegisterMode) {
-            if(!name) return alert("আপনার নাম লিখুন");
-            createUserWithEmailAndPassword(auth, email, pass).then((res) => {
-                updateProfile(res.user, { displayName: name }).then(() => {
-                    window.location.href = "shop.html";
-                });
-            }).catch(e => alert("ভুল তথ্য অথবা ইমেইলটি আগে ব্যবহার হয়েছে"));
-        } else {
-            signInWithEmailAndPassword(auth, email, pass)
-                .then(() => window.location.href = "shop.html")
-                .catch(e => alert("ভুল ইমেইল বা পাসওয়ার্ড"));
-        }
-    };
-
-    window.googleLogin = () => {
-        signInWithPopup(auth, provider)
-            .then(() => window.location.href = "shop.html")
-            .catch(e => alert("Google লগইন বাতিল হয়েছে"));
-    };
-</script>
+    <script src="script.js"></script>
 </body>
 </html>
-
-
-
-
-
-
-    
