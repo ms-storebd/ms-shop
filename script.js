@@ -12,20 +12,26 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
+// গুরুত্বপূর্ণ: Google লগইন ফাংশনটি গ্লোবাল করা হলো
+window.googleLogin = function() {
+    signInWithPopup(auth, provider)
+        .then((result) => {
+            console.log("Success:", result.user);
+            window.location.href = "shop.html";
+        })
+        .catch((error) => {
+            console.error("Error:", error.message);
+            alert("গুগল লগইন করতে সমস্যা হয়েছে: " + error.message);
+        });
+};
+
 // অ্যানিমেশন লজিক
 const container = document.getElementById('container');
 const registerBtn = document.getElementById('register');
 const loginBtn = document.getElementById('login');
 
-registerBtn.onclick = () => container.classList.add('active');
-loginBtn.onclick = () => container.classList.remove('active');
-
-// Google লগইন ফাংশন
-window.googleLogin = () => {
-    signInWithPopup(auth, provider)
-        .then(() => window.location.href = "shop.html")
-        .catch(() => alert("Google লগইন বাতিল হয়েছে"));
-};
+if(registerBtn) registerBtn.onclick = () => container.classList.add('active');
+if(loginBtn) loginBtn.onclick = () => container.classList.remove('active');
 
 // ইমেইল সাইন আপ
 document.getElementById('registerForm').onsubmit = (e) => {
@@ -38,7 +44,7 @@ document.getElementById('registerForm').onsubmit = (e) => {
         updateProfile(res.user, { displayName: name }).then(() => {
             window.location.href = "shop.html";
         });
-    }).catch(err => alert("রেজিস্ট্রেশন ব্যর্থ!"));
+    }).catch(err => alert("রেজিস্ট্রেশন ব্যর্থ: " + err.message));
 };
 
 // ইমেইল লগইন
@@ -49,13 +55,19 @@ document.getElementById('loginForm').onsubmit = (e) => {
     
     signInWithEmailAndPassword(auth, email, pass)
         .then(() => window.location.href = "shop.html")
-        .catch(() => alert("ভুল ইমেইল বা পাসওয়ার্ড"));
+        .catch(err => alert("ভুল ইমেইল বা পাসওয়ার্ড"));
 };
 
 // থ্রি-ডট মেনু
-document.querySelector('.three-dots-btn').onclick = (e) => {
-    e.stopPropagation();
+const menuBtn = document.querySelector('.three-dots-btn');
+if(menuBtn) {
+    menuBtn.onclick = (e) => {
+        e.stopPropagation();
+        const dropdown = document.querySelector('.admin-dropdown');
+        dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    };
+}
+window.onclick = () => {
     const dropdown = document.querySelector('.admin-dropdown');
-    dropdown.style.display = (dropdown.style.display === 'block') ? 'none' : 'block';
+    if(dropdown) dropdown.style.display = 'none';
 };
-window.onclick = () => document.querySelector('.admin-dropdown').style.display = 'none';
