@@ -11,36 +11,36 @@
 <body>
 
     <div class="admin-nav">
-        <div class="three-dots-btn">
+        <div class="three-dots-btn" id="menuToggle">
             <i class="fa fa-ellipsis-v"></i>
         </div>
-        <div class="admin-dropdown">
+        <div class="admin-dropdown" id="dropdownMenu">
             <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
         </div>
     </div>
 
     <div class="container" id="container">
-        <div class="form-container sign-up">
+        <div class="form-container sign-up-container">
             <form id="registerForm">
                 <h1>Create Account</h1>
                 <input type="text" id="regName" placeholder="Full Name" required>
                 <input type="email" id="regEmail" placeholder="Email" required>
                 <input type="password" id="regPass" placeholder="Password" required>
-                <button type="submit">Sign Up Now</button>
+                <button type="submit">Sign Up</button>
                 <button type="button" class="google-btn" onclick="googleLogin()">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png"/> Google Sign Up
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="G"/> Google Sign Up
                 </button>
             </form>
         </div>
 
-        <div class="form-container sign-in">
+        <div class="form-container sign-in-container">
             <form id="loginForm">
                 <h1>Sign In</h1>
                 <input type="email" id="logEmail" placeholder="Email" required>
                 <input type="password" id="logPass" placeholder="Password" required>
                 <button type="submit">Sign In</button>
                 <button type="button" class="google-btn" onclick="googleLogin()">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png"/> Google Sign In
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="G"/> Google Sign In
                 </button>
             </form>
         </div>
@@ -53,15 +53,17 @@
                         <p class="brand-tagline">Quality You Can Trust</p>
                     </div>
                     <h1>Welcome Back!</h1>
-                    <button class="hidden" id="login">Back to Login</button>
+                    <p>To keep connected with us please login</p>
+                    <button class="hidden" id="loginBtn">Back to Login</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <div class="brand-inside">
                         <h1 class="brand-name">MS STORE</h1>
                         <p class="brand-tagline">Elevate Your Lifestyle</p>
                     </div>
-                    <h1>New Here?</h1>
-                    <button class="hidden" id="register">Go to Sign Up</button>
+                    <h1>Hello, Friend!</h1>
+                    <p>Enter your details and start journey with us</p>
+                    <button class="hidden" id="registerBtn">Go to Sign Up</button>
                 </div>
             </div>
         </div>
