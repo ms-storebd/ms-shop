@@ -12,7 +12,6 @@
         :root {
             --primary: #00d2ff;
             --secondary: #3a7bd5;
-            --dark-bg: #0f172a;
             --gradient: linear-gradient(to right, #5c6bc0, #2da0a8);
         }
 
@@ -28,12 +27,12 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-direction: column;
-            min-height: 100vh;
-            color: #333;
+            height: 100vh;
+            width: 100vw;
             overflow: hidden;
         }
 
+        /* ড্রপডাউন মেনু */
         nav {
             position: fixed;
             top: 0;
@@ -44,7 +43,7 @@
             align-items: center;
             z-index: 2000;
         }
-        .logo { font-size: 24px; font-weight: 700; color: white; letter-spacing: 1px; }
+        .logo { font-size: 24px; font-weight: 700; color: white; }
         .dropdown {
             display: none;
             position: absolute;
@@ -54,9 +53,10 @@
             width: 150px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
         }
-        .dropdown a { display: block; padding: 12px; color: white; text-decoration: none; font-size: 14px; }
+        .dropdown a { display: block; padding: 12px; color: white; text-decoration: none; }
         .three-dots:hover .dropdown { display: block; }
 
+        /* মেইন কন্টেইনার (পিসি মোড) */
         .container {
             background-color: #fff;
             border-radius: 30px;
@@ -65,7 +65,8 @@
             overflow: hidden;
             width: 768px;
             max-width: 95%;
-            min-height: 500px; /* হাইট একটু বাড়ানো হয়েছে */
+            min-height: 480px;
+            height: 80vh; /* পিসিতে সুন্দর দেখানোর জন্য */
         }
 
         .form-container {
@@ -93,15 +94,13 @@
             text-align: center;
         }
 
-        .container h1 { margin-bottom: 15px; font-size: 24px; }
-
         .container input {
             background-color: #eee;
             border: none;
-            margin: 6px 0;
+            margin: 8px 0;
             padding: 12px 15px;
             font-size: 14px;
-            border-radius: 10px;
+            border-radius: 8px;
             width: 100%;
             outline: none;
         }
@@ -110,15 +109,13 @@
             background-color: #2da0a8;
             color: #fff;
             font-size: 12px;
-            padding: 12px 45px;
-            border: 1px solid transparent;
-            border-radius: 10px;
+            padding: 10px 45px;
+            border-radius: 8px;
+            border: none;
             font-weight: 600;
-            letter-spacing: 0.5px;
             text-transform: uppercase;
-            margin-top: 15px;
+            margin-top: 10px;
             cursor: pointer;
-            transition: 0.3s;
         }
 
         .google-btn {
@@ -127,11 +124,11 @@
             border: 1px solid #ddd !important;
             display: flex;
             align-items: center;
-            justify-content: center;
             gap: 10px;
-            width: 100%;
+            margin-top: 10px;
         }
 
+        /* টগল প্যানেল (পিসি) */
         .toggle-container {
             position: absolute;
             top: 0;
@@ -143,9 +140,8 @@
             z-index: 1000;
             border-radius: 150px 0 0 100px;
         }
-
         .container.active .toggle-container { transform: translateX(-100%); border-radius: 0 150px 100px 0; }
-
+        
         .toggle {
             background: var(--gradient);
             color: #fff;
@@ -153,9 +149,9 @@
             left: -100%;
             height: 100%;
             width: 200%;
+            transform: translateX(0);
             transition: all 0.6s ease-in-out;
         }
-
         .container.active .toggle { transform: translateX(50%); }
 
         .toggle-panel {
@@ -171,52 +167,60 @@
             top: 0;
             transition: all 0.6s ease-in-out;
         }
-
         .toggle-left { transform: translateX(-200%); }
         .container.active .toggle-left { transform: translateX(0); }
         .toggle-right { right: 0; }
         .container.active .toggle-right { transform: translateX(200%); }
-
         .hidden { background-color: transparent !important; border: 1px solid #fff !important; }
 
-        /* মোবাইল রেসপন্সিভ - হুবহু ফিক্সড ভার্সন */
+        /* মোবাইল রেসপন্সিভ - আপনার রিকয়ারমেন্ট অনুযায়ী ফুলস্ক্রিন ও ফিক্সড */
         @media screen and (max-width: 650px) {
             .container {
-                min-height: 600px;
-                width: 100%;
+                width: 100vw;
+                height: 100vh;
                 border-radius: 0;
+                max-width: 100%;
             }
 
             .form-container {
-                top: 30%;
-                height: 70%;
+                top: 0;
+                height: 50%; /* ফর্মের জন্য ৫০% জায়গা */
                 width: 100%;
+                left: 0;
             }
 
-            .container.active .sign-in { transform: translateY(100%); opacity: 0; }
-            .container.active .sign-up { transform: translateY(0); opacity: 1; }
+            /* মোবাইল স্লাইডিং লজিক (নিচ থেকে উপরে) */
+            .sign-in { top: 50%; }
+            .sign-up { top: 50%; }
+
+            .container.active .sign-in { transform: translateY(-100%); opacity: 0; }
+            .container.active .sign-up { transform: translateY(-100%); opacity: 1; z-index: 5; }
 
             .toggle-container {
                 left: 0;
                 top: 0;
                 width: 100%;
-                height: 30%;
-                border-radius: 0 0 40px 40px;
+                height: 50%; /* নীল প্যানেলের জন্য ৫০% জায়গা */
+                border-radius: 0 0 50px 50px;
             }
 
-            .container.active .toggle-container { transform: translateY(233%); border-radius: 40px 40px 0 0; }
+            .container.active .toggle-container {
+                transform: translateY(100%);
+                border-radius: 50px 50px 0 0;
+            }
 
             .toggle {
                 left: 0;
                 top: -100%;
                 width: 100%;
                 height: 200%;
-                flex-direction: column;
             }
 
             .container.active .toggle { transform: translateY(50%); }
 
             .toggle-panel { width: 100%; height: 50%; }
+            .toggle-left { transform: translateY(-100%); }
+            .container.active .toggle-left { transform: translateY(0); }
         }
     </style>
 </head>
@@ -238,8 +242,8 @@
             <h1>Create Account</h1>
             <input type="text" id="regName" placeholder="আপনার পূর্ণ নাম" required />
             <input type="email" id="regEmail" placeholder="ইমেইল এড্রেস" required />
-            <input type="password" id="regPass" placeholder="পাসওয়ার্ড তৈরি করুন" required />
-            <button type="submit">রেজিস্ট্রেশন করুন</button>
+            <input type="password" id="regPass" placeholder="পাসওয়ার্ড" required />
+            <button type="submit">Sign Up</button>
         </form>
     </div>
 
@@ -248,7 +252,7 @@
             <h1>Sign In</h1>
             <input type="email" id="logEmail" placeholder="ইমেইল এড্রেস" required />
             <input type="password" id="logPass" placeholder="পাসওয়ার্ড" required />
-            <button type="submit">লগইন</button>
+            <button type="submit">Sign In</button>
             <button type="button" class="google-btn" onclick="googleLogin()">
                 <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="20"/> Google Login
             </button>
@@ -258,13 +262,13 @@
     <div class="toggle-container">
         <div class="toggle">
             <div class="toggle-panel toggle-left">
-                <h1>স্বাগতম!</h1>
+                <h1>Welcome Back!</h1>
                 <p>অ্যাকাউন্ট থাকলে লগইন করুন</p>
                 <button class="hidden" id="login">Sign In</button>
             </div>
             <div class="toggle-panel toggle-right">
-                <h1>হ্যালো বন্ধু!</h1>
-                <p>নতুন হলে আজই জয়েন করুন</p>
+                <h1>Hello, Friend!</h1>
+                <p>নতুন হলে আজই রেজিস্ট্রেশন করুন</p>
                 <button class="hidden" id="register">Sign Up</button>
             </div>
         </div>
@@ -305,7 +309,7 @@
             updateProfile(res.user, { displayName: name }).then(() => {
                 window.location.href = "shop.html";
             });
-        }).catch(err => alert("রেজিস্ট্রেশন ব্যর্থ: " + err.message));
+        }).catch(err => alert("রেজিস্ট্রেশন ব্যর্থ!"));
     };
 
     document.getElementById('loginForm').onsubmit = (e) => {
@@ -319,10 +323,8 @@
 
     window.googleLogin = () => {
         signInWithPopup(auth, provider)
-            .then(() => window.location.href = "shop.html")
-            .catch(() => alert("গুগল লগইন বাতিল হয়েছে"));
+            .then(() => window.location.href = "shop.html");
     };
 </script>
-
 </body>
 </html>
