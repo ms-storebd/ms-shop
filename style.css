@@ -7,10 +7,10 @@ body {
     justify-content: center;
     height: 100vh;
     width: 100vw;
-    overflow: hidden; /* স্ক্রলবার পুরোপুরি বন্ধ */
+    overflow: hidden; /* নো স্ক্রলবার */
 }
 
-/* মেনু স্টাইল */
+/* মেনু */
 .admin-nav { position: fixed; top: 15px; right: 15px; z-index: 5000; }
 .three-dots-btn {
     color: white; font-size: 20px; cursor: pointer; padding: 10px;
@@ -24,53 +24,56 @@ body {
 }
 .admin-dropdown a { color: white; text-decoration: none; padding: 12px 15px; display: block; font-size: 14px; }
 .admin-dropdown a:hover { background: #2da0a8; }
-.admin-nav:hover .admin-dropdown { display: block; }
 
 /* মেইন কন্টেইনার */
 .container {
     background: #fff; position: relative; overflow: hidden;
     width: 768px; max-width: 95%; min-height: 520px; border-radius: 30px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+    box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
 }
 
-/* স্লাইডিং প্যানেল লজিক */
 .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease-in-out; }
-.sign-in { left: 0; width: 50%; z-index: 2; pointer-events: all; }
-.sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; pointer-events: none; }
 
-.container.active .sign-in { transform: translateX(100%); opacity: 0; pointer-events: none; }
-.container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; pointer-events: all; }
+/* স্লাইডিং ফিক্স: pointer-events */
+.sign-in-container { left: 0; width: 50%; z-index: 2; pointer-events: all; }
+.container.active .sign-in-container { transform: translateX(100%); opacity: 0; pointer-events: none; }
+
+.sign-up-container { left: 0; width: 50%; opacity: 0; z-index: 1; pointer-events: none; }
+.container.active .sign-up-container { transform: translateX(100%); opacity: 1; z-index: 5; pointer-events: all; animation: show 0.6s; }
+
+@keyframes show { 0%, 49.99% { opacity: 0; z-index: 1; } 50%, 100% { opacity: 1; z-index: 5; } }
 
 form { background: #fff; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 0 40px; height: 100%; text-align: center; }
-input { background: #eee; border: none; margin: 6px 0; padding: 12px; border-radius: 8px; width: 100%; outline: none; }
-button { background: #2da0a8; color: #fff; padding: 10px 45px; border-radius: 8px; border: none; font-weight: 600; text-transform: uppercase; margin-top: 10px; cursor: pointer; width: 100%; }
+input { background: #eee; border: none; margin: 8px 0; padding: 12px; border-radius: 8px; width: 100%; outline: none; }
+button { background: #2da0a8; color: #fff; padding: 10px 45px; border-radius: 8px; border: none; font-weight: 600; text-transform: uppercase; margin-top: 10px; cursor: pointer; width: 100%; transition: transform 80ms ease-in; }
+button:active { transform: scale(0.95); }
 button.hidden { background: transparent; border: 1px solid #fff; width: auto; margin-top: 20px; }
 
-/* গুগল বাটন */
-.google-btn { background: white !important; color: #444 !important; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #ddd !important; }
-.google-btn img { width: 20px; }
+.google-btn { background: white !important; color: #444 !important; display: flex; align-items: center; justify-content: center; gap: 10px; border: 1px solid #ddd !important; margin-top: 10px; }
+.google-btn img { width: 18px; }
 
-/* টগল প্যানেল এবং ব্র্যান্ডিং */
+/* টগল প্যানেল */
 .toggle-container { position: absolute; top: 0; left: 50%; width: 50%; height: 100%; overflow: hidden; transition: all 0.6s ease-in-out; z-index: 100; border-radius: 150px 0 0 100px; }
 .container.active .toggle-container { transform: translateX(-100%); border-radius: 0 150px 100px 0; }
 .toggle { background: linear-gradient(to right, #5c6bc0, #2da0a8); color: #fff; position: relative; left: -100%; height: 100%; width: 200%; transition: all 0.6s ease-in-out; }
 .container.active .toggle { transform: translateX(50%); }
-.toggle-panel { position: absolute; width: 50%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 0 30px; text-align: center; top: 0; }
+.toggle-panel { position: absolute; width: 50%; height: 100%; display: flex; align-items: center; justify-content: center; flex-direction: column; padding: 0 30px; text-align: center; top: 0; transform: translateX(0); transition: all 0.6s ease-in-out; }
 
-.brand-inside { margin-bottom: 30px; }
+.brand-inside { margin-bottom: 20px; }
 .brand-name { font-size: 2.5rem; font-weight: 900; color: #fff; letter-spacing: 2px; text-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 .brand-tagline { font-size: 0.8rem; color: rgba(255,255,255,0.8); letter-spacing: 1px; }
 
-.toggle-left { transform: translateX(-200%); }
+.toggle-left { transform: translateX(-20%); }
 .container.active .toggle-left { transform: translateX(0); }
-.toggle-right { right: 0; }
+.toggle-right { right: 0; transform: translateX(0); }
+.container.active .toggle-right { transform: translateX(20%); }
 
 /* মোবাইল ফিক্স */
 @media screen and (max-width: 650px) {
-    .container { height: 100vh; width: 100vw; border-radius: 0; }
+    .container { min-height: 100vh; width: 100vw; border-radius: 0; }
     .form-container { top: 40%; height: 60%; width: 100%; }
     .toggle-container { left: 0; top: 0; width: 100%; height: 40%; border-radius: 0 0 40px 40px; }
     .container.active .toggle-container { transform: translateY(150%); }
-    .container.active .sign-up, .container.active .sign-in { transform: translateY(-65%); }
+    .container.active .sign-up-container, .container.active .sign-in-container { transform: translateY(-65%); }
     .brand-name { font-size: 1.8rem; }
 }
