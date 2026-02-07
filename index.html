@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Premium Experience</title>
+    <title>MS STORE - Final Fixed</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
@@ -14,90 +14,83 @@
             height: 100vh; width: 100vw; overflow: hidden;
         }
 
-        /* --- থ্রি ডট মেনু স্টাইল --- */
+        /* থ্রি ডট মেনু */
         .admin-nav {
-            position: fixed;
-            top: 15px;
-            right: 15px;
-            z-index: 5000;
+            position: fixed; top: 15px; right: 15px; z-index: 5000;
         }
         .three-dots-btn {
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            padding: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: white; font-size: 20px; cursor: pointer; padding: 10px;
+            background: rgba(255, 255, 255, 0.1); border-radius: 50%;
+            width: 40px; height: 40px; display: flex; align-items: center; justify-content: center;
         }
         .admin-dropdown {
-            display: none;
-            position: absolute;
-            right: 0;
-            top: 45px;
-            background: #1e293b;
-            border-radius: 8px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.5);
-            min-width: 150px;
-            overflow: hidden;
+            display: none; position: absolute; right: 0; top: 45px;
+            background: #1e293b; border-radius: 8px; min-width: 150px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.5); overflow: hidden;
         }
-        .admin-dropdown a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 15px;
-            display: block;
-            font-size: 14px;
-        }
-        .admin-dropdown a:hover {
-            background: #2da0a8;
-        }
-        .admin-nav:hover .admin-dropdown {
-            display: block;
-        }
+        .admin-dropdown a { color: white; text-decoration: none; padding: 12px 15px; display: block; font-size: 14px; }
+        .admin-dropdown a:hover { background: #2da0a8; }
+        .admin-nav:hover .admin-dropdown { display: block; }
 
-        /* --- আপনার অরিজিনাল ডিজাইন --- */
+        /* মেইন কন্টেইনার */
         .container {
             background: #fff; position: relative; overflow: hidden;
             width: 768px; max-width: 100%; min-height: 480px; border-radius: 30px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.35);
         }
-        .form-container { position: absolute; top: 0; height: 100%; transition: all 0.6s ease; }
-        .sign-in { left: 0; width: 50%; z-index: 2; }
-        .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; }
-        
-        .container.active .sign-in { transform: translateX(100%); opacity: 0; }
-        .container.active .sign-up { transform: translateX(100%); opacity: 1; z-index: 5; }
+
+        .form-container { 
+            position: absolute; top: 0; height: 100%; 
+            transition: all 0.6s ease-in-out; 
+        }
+
+        /* গুরুত্বপূর্ণ ফিক্স: pointer-events */
+        .sign-in { left: 0; width: 50%; z-index: 2; pointer-events: all; }
+        .container.active .sign-in { 
+            transform: translateX(100%); opacity: 0; 
+            pointer-events: none; /* লগইন পেজ স্লাইড হয়ে গেলে ক্লিক বন্ধ */
+        }
+
+        .sign-up { left: 0; width: 50%; opacity: 0; z-index: 1; pointer-events: none; }
+        .container.active .sign-up { 
+            transform: translateX(100%); opacity: 1; z-index: 5; 
+            pointer-events: all; /* সাইন আপ পেজ সামনে আসলে ক্লিক চালু */
+        }
 
         form {
-            background: #fff; display: flex; align-items: center; justify-content: center;
-            flex-direction: column; padding: 0 40px; height: 100%; text-align: center;
+            background: #fff; display: flex; align-items: center; 
+            justify-content: center; flex-direction: column; 
+            padding: 0 40px; height: 100%; text-align: center;
         }
+
         input {
             background: #eee; border: none; margin: 8px 0; padding: 12px;
             border-radius: 8px; width: 100%; outline: none;
         }
+
         button {
             background: #2da0a8; color: #fff; padding: 10px 45px;
             border-radius: 8px; border: none; font-weight: 600;
             text-transform: uppercase; margin-top: 10px; cursor: pointer;
         }
+
         button.hidden { background: transparent; border: 1px solid #fff; }
 
+        /* টগল ডিজাইন */
         .toggle-container {
             position: absolute; top: 0; left: 50%; width: 50%; height: 100%;
-            overflow: hidden; transition: all 0.6s ease; z-index: 100;
+            overflow: hidden; transition: all 0.6s ease-in-out; z-index: 100;
             border-radius: 150px 0 0 100px;
         }
         .container.active .toggle-container { transform: translateX(-100%); border-radius: 0 150px 100px 0; }
+        
         .toggle {
             background: linear-gradient(to right, #5c6bc0, #2da0a8);
             color: #fff; position: relative; left: -100%; height: 100%; width: 200%;
-            transition: all 0.6s ease;
+            transition: all 0.6s ease-in-out;
         }
         .container.active .toggle { transform: translateX(50%); }
+
         .toggle-panel {
             position: absolute; width: 50%; height: 100%;
             display: flex; align-items: center; justify-content: center;
@@ -107,15 +100,19 @@
         .container.active .toggle-left { transform: translateX(0); }
         .toggle-right { right: 0; }
 
-        /* মোবাইল ভিউ ফিক্স */
+        /* মোবাইল ভিউ */
         @media screen and (max-width: 650px) {
             .container { width: 100vw; height: 100vh; border-radius: 0; }
             .form-container { top: 40%; height: 60%; width: 100%; z-index: 200; }
             .sign-in, .sign-up { left: 0; width: 100%; }
-            .toggle-container { left: 0; top: 0; width: 100%; height: 40%; border-radius: 0 0 40px 40px; z-index: 100; }
+            .container.active .sign-up { transform: translateY(-65%); opacity: 1; }
+            .container.active .sign-in { transform: translateY(-65%); opacity: 0; }
+            
+            .toggle-container {
+                left: 0; top: 0; width: 100%; height: 40%;
+                border-radius: 0 0 40px 40px;
+            }
             .container.active .toggle-container { transform: translateY(150%); }
-            .container.active .sign-up { transform: translateY(-65%); }
-            .container.active .sign-in { transform: translateY(-65%); }
         }
     </style>
 </head>
@@ -169,10 +166,15 @@
         const registerBtn = document.getElementById('register');
         const loginBtn = document.getElementById('login');
 
-        registerBtn.onclick = () => container.classList.add('active');
-        loginBtn.onclick = () => container.classList.remove('active');
+        registerBtn.onclick = () => {
+            container.classList.add('active');
+        };
 
-        // মোবাইল টাচ এর জন্য মেনু ওপেন লজিক
+        loginBtn.onclick = () => {
+            container.classList.remove('active');
+        };
+
+        // মেনু লজিক
         document.querySelector('.three-dots-btn').onclick = function(e) {
             e.stopPropagation();
             let dropdown = document.querySelector('.admin-dropdown');
