@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SportX - Home</title>
+    <title>MS STORE - Home</title>
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -52,23 +52,24 @@
         /* --- স্লাইডার স্টাইল --- */
         .slider-wrapper { padding: 15px 15px 5px 15px; }
         .slider-container {
-            width: 100%; height: 160px; border-radius: 15px;
+            width: 100%; height: 180px; border-radius: 15px;
             overflow: hidden; position: relative; background: var(--glass);
             border: 1px solid var(--border); touch-action: pan-y;
         }
         .slider-track {
             display: flex; width: 300%; height: 100%;
-            transition: transform 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             will-change: transform;
         }
         .slide { width: 33.333%; height: 100%; cursor: pointer; flex-shrink: 0; }
         .slide img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        
         .dots {
-            position: absolute; bottom: 10px; left: 50%;
-            transform: translateX(-50%); display: flex; gap: 6px; pointer-events: none;
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 8px; pointer-events: none;
         }
-        .dot { width: 6px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 50%; transition: 0.3s; }
-        .dot.active { background: var(--primary); width: 15px; border-radius: 4px; }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%; transition: 0.3s; }
+        .dot.active { background: var(--primary); width: 20px; border-radius: 4px; }
 
         .profile-menu { 
             display: none; position: fixed; top: 70px; right: 15px; 
@@ -94,18 +95,23 @@
 
         .container { padding: 0 15px 15px 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; position: relative; }
+        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; position: relative; transition: 0.3s; }
+        .p-card:active { transform: scale(0.95); }
         .p-card img { width: 100%; height: 130px; object-fit: cover; }
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-price { color: var(--primary); font-weight: bold; font-size: 15px; margin-top: 4px; }
-        .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; }
+        .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; z-index: 10; }
 
         @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
         @media (max-width: 480px) { .product-grid { grid-template-columns: 1fr 1fr; gap: 10px; } }
     </style>
 </head>
 <body>
+
+<div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold;">
+    MS STORE Loading...
+</div>
 
 <header>
     <div class="header-top">
@@ -122,7 +128,8 @@
 
 <div class="slider-wrapper">
     <div class="slider-container" id="sliderContainer">
-        <div class="slider-track" id="sliderTrack"></div>
+        <div class="slider-track" id="sliderTrack">
+            </div>
         <div class="dots" id="sliderDots">
             <div class="dot active"></div>
             <div class="dot"></div>
@@ -133,20 +140,20 @@
 
 <div class="profile-menu" id="profileMenu">
     <h3 style="margin:0 0 15px 0; font-size: 18px; color:var(--primary); text-align: center;">My Profile</h3>
-    <div class="id-box" onclick="copyMyID()">
+    <div class="id-box" id="copyIdBtn">
         <div id="u-id" style="font-size: 18px; font-weight: bold; color: white;">#------</div>
     </div>
     <div class="user-data" id="u-name">...</div>
     <div class="user-data" id="u-email">...</div>
-    <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold;" onclick="location.href='my_orders.html'">My Orders</button>
-    <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white;" onclick="logout()">logout</button>
+    <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="location.href='my_orders.html'">My Orders</button>
+    <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white; cursor:pointer;" id="logoutBtn">Logout</button>
 </div>
 
 <div class="cat-grid">
-    <div class="cat-item active" onclick="selectMainCat('All', this)"><i class="fa fa-th-large"></i><span>ALL</span></div>
-    <div class="cat-item" onclick="selectMainCat('Sports', this)"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
-    <div class="cat-item" onclick="selectMainCat('Electronics', this)"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
-    <div class="cat-item" onclick="selectMainCat('Fashion', this)"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
+    <div class="cat-item active" id="cat-all"><i class="fa fa-th-large"></i><span>ALL</span></div>
+    <div class="cat-item" id="cat-sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
+    <div class="cat-item" id="cat-electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
+    <div class="cat-item" id="cat-fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
 </div>
 <div id="subCatMenu" class="sub-cat-container"></div>
 
@@ -170,95 +177,73 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- আপডেটেড স্লাইডার লজিক (Swipe Enabled) ---
-    function initSlider() {
+    // --- ১. সিকিউরিটি চেক (Access Control) ---
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            document.getElementById('loading-screen').style.display = 'none';
+            document.getElementById('u-name').innerText = user.displayName || "User";
+            document.getElementById('u-email').innerText = user.email;
+            document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
+        } else {
+            window.location.href = "index.html";
+        }
+    });
+
+    // --- ২. স্লাইডার লজিক (Fixed & Swipe) ---
+    function setupSlider() {
         const track = document.getElementById('sliderTrack');
-        const container = document.getElementById('sliderContainer');
         const dots = document.querySelectorAll('.dot');
         let current = 0;
         let startX = 0;
         let isDragging = false;
-        let autoSlideTimer;
 
-        // ডাটাবেস থেকে ব্যানার লোড
         onValue(ref(db, 'banners'), (snap) => {
             if (snap.exists()) {
                 const data = snap.val();
                 let slidesHtml = '';
                 for (let i = 1; i <= 3; i++) {
                     const b = data[`banner${i}`] || { img: 'https://via.placeholder.com/800x400?text=MS+Store', link: '#' };
-                    slidesHtml += `<div class="slide" onclick="handleSlideClick('${b.link}')"><img src="${b.img}"></div>`;
+                    slidesHtml += `<div class="slide" onclick="if('${b.link}' !== '#') window.location.href='${b.link}'"><img src="${b.img}"></div>`;
                 }
                 track.innerHTML = slidesHtml;
             }
         });
 
-        window.handleSlideClick = (link) => { if(link !== '#') location.href = link; };
-
-        function updateUI() {
+        const updateSlider = () => {
             track.style.transform = `translateX(-${current * 33.333}%)`;
             dots.forEach((d, i) => d.classList.toggle('active', i === current));
-        }
+        };
 
-        function startAutoSlide() {
-            stopAutoSlide();
-            autoSlideTimer = setInterval(() => {
+        setInterval(() => {
+            if(!isDragging) {
                 current = (current + 1) % 3;
-                updateUI();
-            }, 4000);
-        }
-        function stopAutoSlide() { clearInterval(autoSlideTimer); }
-
-        // Touch Control লজিক
-        container.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            isDragging = true;
-            stopAutoSlide();
-            track.style.transition = 'none'; // ড্র্যাগ করার সময় এনিমেশন বন্ধ
-        }, {passive: true});
-
-        container.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            const moveX = e.touches[0].clientX;
-            const diff = (moveX - startX) / container.offsetWidth * 100;
-            const offset = -(current * 33.333) + (diff / 3);
-            track.style.transform = `translateX(${offset}%)`;
-        }, {passive: true});
-
-        container.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            isDragging = false;
-            track.style.transition = 'transform 0.4s ease-out';
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
-
-            if (Math.abs(diff) > 50) {
-                if (diff > 0 && current < 2) current++;
-                else if (diff < 0 && current > 0) current--;
+                updateSlider();
             }
-            updateUI();
-            startAutoSlide();
-        });
+        }, 4000);
 
-        startAutoSlide();
+        const container = document.getElementById('sliderContainer');
+        container.ontouchstart = (e) => { startX = e.touches[0].clientX; isDragging = true; };
+        container.ontouchmove = (e) => { if(!isDragging) return; };
+        container.ontouchend = (e) => {
+            isDragging = false;
+            let endX = e.changedTouches[0].clientX;
+            if (startX - endX > 50 && current < 2) current++;
+            if (startX - endX < -50 && current > 0) current--;
+            updateSlider();
+        };
     }
-    initSlider();
+    setupSlider();
 
-    // --- প্রোডাক্ট এবং ক্যাটাগরি লজিক ---
+    // --- ৩. প্রোডাক্ট লোডিং ও ফিল্টারিং ---
     let pArray = [];
-    onAuthStateChanged(auth, (user) => {
-        if (user) {
-            document.getElementById('u-name').innerText = user.displayName || "User";
-            document.getElementById('u-email').innerText = user.email;
-            document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
-        } else { location.href = "index.html"; }
-    });
-
     onValue(ref(db, 'products'), (snap) => {
-        const newArray = [];
         if(snap.exists()){
-            snap.forEach(c => { let d = c.val(); d.id = c.key; newArray.push(d); });
-            pArray = newArray;
+            pArray = [];
+            snap.forEach(child => {
+                let d = child.val();
+                d.id = child.key;
+                pArray.push(d);
+            });
             render(pArray);
         }
     });
@@ -275,79 +260,74 @@
             </div>`).join('');
     }
 
+    // সার্চ ফাংশন
+    window.searchFn = () => {
+        let v = document.getElementById('searchInput').value.toLowerCase();
+        render(pArray.filter(p => p.name.toLowerCase().includes(v)));
+    };
+
+    // ক্যাটাগরি লজিক
     const subCats = {
         'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
         'Electronics': ['Mobile Accessories', 'Gadgets', 'Headphones'],
         'Fashion': ["Men's Fashion", "Women's Fashion", "Shoes"]
     };
 
-    window.selectMainCat = (mainCat, el) => {
+    const handleCatSelection = (cat, el) => {
         document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
         el.classList.add('active');
         const subMenu = document.getElementById('subCatMenu');
-        if (mainCat === 'All') { subMenu.style.display = 'none'; render(pArray); } 
-        else { subMenu.style.display = 'flex'; generateSubMenu(mainCat); filterByMainCat(mainCat); }
+
+        if (cat === 'All') {
+            subMenu.style.display = 'none';
+            render(pArray);
+        } else {
+            subMenu.style.display = 'flex';
+            let html = `<div class="sub-cat-btn active" id="sub-all">সব ${cat}</div>`;
+            subCats[cat].forEach(sub => {
+                html += `<div class="sub-cat-btn" data-sub="${sub}">${sub}</div>`;
+            });
+            subMenu.innerHTML = html;
+            
+            // সাব-ক্যাটাগরি ক্লিক ইভেন্ট
+            subMenu.querySelectorAll('.sub-cat-btn').forEach(btn => {
+                btn.onclick = () => {
+                    subMenu.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const subVal = btn.getAttribute('data-sub');
+                    if(!subVal) render(pArray.filter(p => p.mainCategory === cat || p.category === cat));
+                    else render(pArray.filter(p => p.category === subVal));
+                };
+            });
+            render(pArray.filter(p => p.mainCategory === cat || p.category === cat));
+        }
     };
 
-    function generateSubMenu(mainCat) {
-        const subMenu = document.getElementById('subCatMenu');
-        let html = `<div class="sub-cat-btn active" onclick="filterByMainCat('${mainCat}', this)">সব ${mainCat}</div>`;
-        subCats[mainCat].forEach(sub => {
-            html += `<div class="sub-cat-btn" onclick="filterBySubCat('${sub.replace(/'/g, "\\'")}', this)">${sub}</div>`;
-        });
-        subMenu.innerHTML = html;
-    }
+    document.getElementById('cat-all').onclick = function() { handleCatSelection('All', this); };
+    document.getElementById('cat-sports').onclick = function() { handleCatSelection('Sports', this); };
+    document.getElementById('cat-electronics').onclick = function() { handleCatSelection('Electronics', this); };
+    document.getElementById('cat-fashion').onclick = function() { handleCatSelection('Fashion', this); };
 
-    window.filterByMainCat = (m, el) => {
-        if(el) updateSubBtnStyle(el);
-        const f = pArray.filter(p => subCats[m].includes(p.category) || p.category === m);
-        render(f);
+    // --- ৪. প্রোফাইল ও মেনু কন্ট্রোল ---
+    const profileMenu = document.getElementById('profileMenu');
+    document.getElementById('profileTrigger').onclick = (e) => {
+        e.stopPropagation();
+        profileMenu.classList.toggle('show');
     };
 
-    window.filterBySubCat = (s, el) => { updateSubBtnStyle(el); render(pArray.filter(p => p.category === s)); };
-    function updateSubBtnStyle(el) { document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); }
-
-    window.searchFn = () => {
-        let v = document.getElementById('searchInput').value.toLowerCase();
-        render(pArray.filter(p => p.name.toLowerCase().includes(v)));
+    document.onclick = (e) => {
+        if (!profileMenu.contains(e.target)) profileMenu.classList.remove('show');
     };
 
-    const menu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
-    document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
-    window.logout = () => signOut(auth).then(() => location.href = "index.html");
-    window.copyMyID = () => {
+    document.getElementById('logoutBtn').onclick = () => {
+        signOut(auth).then(() => window.location.href = "index.html");
+    };
+
+    document.getElementById('copyIdBtn').onclick = () => {
         const id = document.getElementById('u-id').innerText;
-        navigator.clipboard.writeText(id).then(() => alert("ID কপি হয়েছে: " + id));
+        navigator.clipboard.writeText(id).then(() => alert("ID কপি হয়েছে!"));
     };
+
 </script>
-    <script type="module">
-import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-
-// আপনার কনফিগারেশন
-const firebaseConfig = {
-    apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
-    authDomain: "ms-sp-97f78.firebaseapp.com",
-    projectId: "ms-sp-97f78",
-    databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
-    appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-// ইউজার লগইন করা আছে কিনা চেক করা
-onAuthStateChanged(auth, (user) => {
-    if (!user) {
-        // যদি ইউজার লগইন না থাকে, তবে তাকে মেইন পেজে পাঠিয়ে দাও
-        alert("দয়া করে আগে লগইন করুন!");
-        window.location.href = "index.html";
-    } else {
-        console.log("Welcome:", user.displayName);
-    }
-});
-    </script>
-    
 </body>
 </html>
