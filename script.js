@@ -1,8 +1,19 @@
-// ১. মডিউল ইমপোর্ট এবং কনফিগ আগের মতোই থাকবে...
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, signInWithPopup, GoogleAuthProvider, updateProfile, sendEmailVerification, setPersistence, browserLocalPersistence, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+    getAuth, 
+    signInWithEmailAndPassword, 
+    createUserWithEmailAndPassword, 
+    signInWithPopup, 
+    GoogleAuthProvider, 
+    updateProfile, 
+    sendEmailVerification, 
+    setPersistence, 
+    browserLocalPersistence, 
+    onAuthStateChanged 
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { getDatabase, ref, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+// ফায়ারবেস কনফিগারেশন
 const firebaseConfig = {
     apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
     authDomain: "ms-sp-97f78.firebaseapp.com",
@@ -18,23 +29,28 @@ const provider = new GoogleAuthProvider();
 
 setPersistence(auth, browserLocalPersistence);
 
-// --- লগইন করা থাকলে সরাসরি শপে রিডাইরেক্ট ---
+// ১. কাস্টম প্রফেশনাল পপ-আপ কন্ট্রোল
+window.showModal = (email) => {
+    const modal = document.getElementById('customModal');
+    if(modal) {
+        document.getElementById('modalMessage').innerText = `আমরা ${email} ঠিকানায় একটি সিকিউর লিঙ্ক পাঠিয়েছি। দয়া করে ইনবক্স চেক করে লিঙ্কটি কনফার্ম করুন।`;
+        modal.style.display = 'flex'; // পপ-আপ শো করবে
+    }
+}
+
+window.closeModal = () => {
+    const modal = document.getElementById('customModal');
+    if(modal) modal.style.display = 'none'; // পপ-আপ বন্ধ হবে
+}
+
+// ২. অটো-লগইন রিডাইরেক্ট
 onAuthStateChanged(auth, (user) => {
     if (user) {
-        window.location.href = "shop.html";
+        window.location.href = "shop.html"; // লগইন থাকলে শপ পেজে যাবে
     }
 });
 
-// মডাল কন্ট্রোল ফাংশন
-window.showModal = (email) => {
-    document.getElementById('modalMessage').innerText = `আমরা ${email} ঠিকানায় একটি লিঙ্ক পাঠিয়েছি। দয়া করে ইনবক্স চেক করে লিঙ্কটি ভেরিফাই করুন।`;
-    document.getElementById('customModal').style.display = 'flex';
-}
-window.closeModal = () => {
-    document.getElementById('customModal').style.display = 'none';
-}
-
-// --- সাইন আপ লজিক (ভেরিফিকেশন সহ) ---
+// ৩. সাইন-আপ (Sign Up) এনিমেশন ও ইমেইল ভেরিফিকেশন
 const regForm = document.getElementById('registerForm');
 if (regForm) {
     regForm.addEventListener('submit', (e) => {
@@ -44,10 +60,10 @@ if (regForm) {
         const pass = document.getElementById('regPass').value;
 
         createUserWithEmailAndPassword(auth, email, pass).then((res) => {
-            // ভেরিফিকেশন লিঙ্ক পাঠানো
+            // ইমেইল ভেরিফিকেশন লিঙ্ক পাঠানো
             sendEmailVerification(res.user);
             
-            // কাস্টম প্রফেশনাল পপআপ দেখানো
+            // সুন্দর পপ-আপ দেখানো
             showModal(email);
             
             updateProfile(res.user, { displayName: name }).then(() => {
@@ -55,11 +71,11 @@ if (regForm) {
                     username: name, email: email, role: "customer", joinedAt: serverTimestamp()
                 });
             });
-        }).catch(err => alert("Error: " + err.message));
+        }).catch(err => alert("ত্রুটি: " + err.message));
     });
 }
 
-// --- সাইন ইন লজিক (সরাসরি লগইন হবে, কোনো বাধা নেই) ---
+// ৪. সাইন-ইন (Sign In) লজিক
 const logForm = document.getElementById('loginForm');
 if (logForm) {
     logForm.addEventListener('submit', (e) => {
@@ -68,12 +84,31 @@ if (logForm) {
         const pass = document.getElementById('logPass').value;
         
         signInWithEmailAndPassword(auth, email, pass)
-            .then(() => {
-                // ভেরিফিকেশন চেক না করেই শপে নিয়ে যাবে
-                window.location.href = "shop.html";
-            })
+            .then(() => { window.location.href = "shop.html"; })
             .catch((err) => alert("ভুল ইমেইল বা পাসওয়ার্ড।"));
     });
 }
 
-// গুগল লগইন এবং অন্যান্য এনিমেশন কোড আগের মতোই থাকবে...
+// ৫. স্লাইডিং এনিমেশন (SignUp/SignIn পরিবর্তন)
+const container = document.getElementById('container');
+const registerBtn = document.getElementById('registerBtn');
+const loginBtn = document.getElementById('loginBtn');
+
+if (registerBtn) {
+    registerBtn.addEventListener('click', () => {
+        container.classList.add('active'); // CSS এর মাধ্যমে এনিমেশন ট্রিগার করবে
+    });
+}
+
+if (loginBtn) {
+    loginBtn.addEventListener('click', () => {
+        container.classList.remove('active'); // এনিমেশন রিভার্স করবে
+    });
+}
+
+// ৬. গুগল লগইন
+window.googleLogin = function() {
+    signInWithPopup(auth, provider).then(() => {
+        window.location.href = "shop.html";
+    }).catch((err) => console.log("Login Cancelled"));
+};
