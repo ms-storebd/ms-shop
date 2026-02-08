@@ -2,66 +2,45 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #f4f7f6; margin: 0; padding: 20px; color: #333; }
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
-        .welcome-box { background: #fff; padding: 20px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        body { background: #ecf0f1; font-family: sans-serif; margin: 0; padding: 20px; }
+        .header { background: #2c3e50; color: white; padding: 15px; text-align: center; border-radius: 5px; margin-bottom: 20px; }
+        .stats { display: flex; gap: 20px; justify-content: center; margin-bottom: 20px; }
+        .card { background: white; padding: 20px; border-radius: 10px; text-align: center; flex: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .card h3 { margin: 0; color: #7f8c8d; }
+        .card p { font-size: 24px; font-weight: bold; margin: 10px 0 0; color: #2c3e50; }
+        .btn-box { display: flex; flex-direction: column; gap: 10px; max-width: 400px; margin: 0 auto; }
+        .btn { background: #e74c3c; color: white; padding: 15px; text-decoration: none; border-radius: 5px; text-align: center; font-weight: bold; }
+        .btn-blue { background: #3498db; }
         
-        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .stat-card { background: white; padding: 20px; border-radius: 15px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); border-bottom: 4px solid #00d2ff; }
-        .stat-card i { font-size: 24px; color: #00d2ff; margin-bottom: 10px; }
-        .stat-card h3 { margin: 5px 0; font-size: 24px; color: #2c3e50; }
-        .stat-card p { margin: 0; font-size: 14px; color: #7f8c8d; }
-
-        .menu-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 30px; }
-        .menu-btn { background: #2c3e50; color: white; padding: 15px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; justify-content: space-between; font-weight: 600; transition: 0.3s; }
-        .menu-btn:active { transform: scale(0.98); }
-        .menu-btn i { font-size: 18px; }
-        
-        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        /* লোডিং স্ক্রিন */
+        #auth-check { position: fixed; top:0; left:0; width:100%; height:100%; background:white; display:flex; justify-content:center; align-items:center; z-index:999; }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen">
-        <p>লোড হচ্ছে...</p>
-    </div>
+    <div id="auth-check">নিরাপত্তা যাচাই করা হচ্ছে...</div>
 
     <div class="header">
-        <h2 style="margin:0;">অ্যাডমিন প্যানেল</h2>
-        <button onclick="logout()" style="border:none; background:none; color:#e74c3c; font-weight:bold; cursor:pointer;"><i class="fa fa-sign-out-alt"></i> লগআউট</button>
+        <h1>অ্যাডমিন ড্যাশবোর্ড</h1>
     </div>
 
-    <div class="welcome-box">
-        <h4 style="margin:0; color:#2c3e50;">হ্যালো, অ্যাডমিন!</h4>
-        <p style="margin:5px 0 0; font-size:12px; color:#7f8c8d;">আপনার শপের বর্তমান অবস্থা নিচে দেখুন।</p>
-    </div>
-
-    <div class="stats-grid">
-        <div class="stat-card">
-            <i class="fa fa-shopping-cart"></i>
-            <h3 id="total-orders">0</h3>
-            <p>মোট অর্ডার</p>
+    <div class="stats">
+        <div class="card">
+            <h3>মোট অর্ডার</h3>
+            <p id="o-total">0</p>
         </div>
-        <div class="stat-card" style="border-color: #f1c40f;">
-            <i class="fa fa-clock" style="color:#f1c40f;"></i>
-            <h3 id="pending-orders">0</h3>
-            <p>পেন্ডিং</p>
+        <div class="card">
+            <h3>পেন্ডিং</h3>
+            <p id="o-pending">0</p>
         </div>
     </div>
 
-    <div class="menu-grid">
-        <a href="orders.html" class="menu-btn">
-            <span><i class="fa fa-list-alt"></i> অর্ডার রিকোয়েস্ট দেখুন</span>
-            <i class="fa fa-chevron-right"></i>
-        </a>
-        <a href="add_product.html" class="menu-btn" style="background:#00d2ff;">
-            <span><i class="fa fa-plus-circle"></i> নতুন প্রোডাক্ট যোগ করুন</span>
-            <i class="fa fa-chevron-right"></i>
-        </a>
+    <div class="btn-box">
+        <a href="orders.html" class="btn">অর্ডার রিকোয়েস্ট দেখুন</a>
+        <a href="add_product.html" class="btn btn-blue">নতুন প্রোডাক্ট যোগ করুন</a>
+        <button onclick="logout()" style="margin-top:20px; background:none; border:none; color:#7f8c8d; cursor:pointer; text-decoration:underline;">লগআউট করুন</button>
     </div>
 
 <script type="module">
@@ -81,47 +60,39 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // ১. লগইন চেক (অটোমেটিক)
+    // অটো-লগইন চেক
     onAuthStateChanged(auth, (user) => {
         if (user && user.email === 'tasnimtonni426@gmail.com') {
-            document.getElementById('loading-screen').style.display = "none";
-            loadDashboardStats();
+            document.getElementById('auth-check').style.display = "none";
+            loadStats();
         } else {
-            window.location.href = "login.html"; // লগইন না থাকলে পাঠিয়ে দিবে
+            window.location.href = "login.html";
         }
     });
 
-    // ২. অর্ডার কাউন্ট করার ফাংশন
-    function loadDashboardStats() {
-        const ordersRef = ref(db, 'orders');
-        onValue(ordersRef, (snapshot) => {
+    // ডাটা কাউন্ট করা (আপনার আগের সিস্টেম অনুযায়ী)
+    function loadStats() {
+        onValue(ref(db, 'orders'), (snapshot) => {
             if (snapshot.exists()) {
-                const data = snapshot.val();
-                const allKeys = Object.keys(data);
+                const orders = snapshot.val();
+                const keys = Object.keys(orders);
+                document.getElementById('o-total').innerText = keys.length;
                 
-                // মোট অর্ডার সংখ্যা
-                document.getElementById('total-orders').innerText = allKeys.length;
-
-                // পেন্ডিং অর্ডার সংখ্যা বের করা
-                let pendingCount = 0;
-                allKeys.forEach(key => {
-                    if(data[key].status === 'Pending') {
-                        pendingCount++;
-                    }
+                let pending = 0;
+                keys.forEach(k => {
+                    if(orders[k].status === 'Pending') pending++;
                 });
-                document.getElementById('pending-orders').innerText = pendingCount;
+                document.getElementById('o-pending').innerText = pending;
             } else {
-                document.getElementById('total-orders').innerText = "0";
-                document.getElementById('pending-orders').innerText = "0";
+                document.getElementById('o-total').innerText = "0";
+                document.getElementById('o-pending').innerText = "0";
             }
         });
     }
 
-    // লগআউট ফাংশন
+    // লগআউট
     window.logout = () => {
-        signOut(auth).then(() => {
-            window.location.href = "login.html";
-        });
+        signOut(auth).then(() => { window.location.href = "login.html"; });
     };
 </script>
 </body>
