@@ -68,9 +68,11 @@ if (regForm) {
 
         // এই সেটিংসটি ইমেইলের বাটনকে আপনার গিটহাব সাইটে ফিরিয়ে আনবে
         const actionCodeSettings = {
-            url: 'https://tasnimtonni426-ui.github.io/shop.html', 
-            handleCodeInApp: true,
-        };
+    // এখানে /ms-shop/ যোগ করা হয়েছে
+    url: 'https://tasnimtonni426-ui.github.io/ms-shop/shop.html', 
+    handleCodeInApp: true,
+};
+
 
         createUserWithEmailAndPassword(auth, email, pass).then((res) => {
             // ভেরিফিকেশন ইমেইল পাঠানো
