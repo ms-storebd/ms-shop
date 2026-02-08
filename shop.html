@@ -177,7 +177,7 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- ১. সিকিউরিটি চেক (Access Control) ---
+    // --- ১. সিকিউরিটি চেক ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
@@ -189,7 +189,7 @@
         }
     });
 
-    // --- ২. স্লাইডার লজিক (Fixed & Swipe) ---
+    // --- ২. স্লাইডার লজিক ---
     function setupSlider() {
         const track = document.getElementById('sliderTrack');
         const dots = document.querySelectorAll('.dot');
@@ -260,13 +260,11 @@
             </div>`).join('');
     }
 
-    // সার্চ ফাংশন
     window.searchFn = () => {
         let v = document.getElementById('searchInput').value.toLowerCase();
         render(pArray.filter(p => p.name.toLowerCase().includes(v)));
     };
 
-    // ক্যাটাগরি লজিক
     const subCats = {
         'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
         'Electronics': ['Mobile Accessories', 'Gadgets', 'Headphones'],
@@ -289,17 +287,18 @@
             });
             subMenu.innerHTML = html;
             
-            // সাব-ক্যাটাগরি ক্লিক ইভেন্ট
             subMenu.querySelectorAll('.sub-cat-btn').forEach(btn => {
                 btn.onclick = () => {
                     subMenu.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const subVal = btn.getAttribute('data-sub');
-                    if(!subVal) render(pArray.filter(p => p.mainCategory === cat || p.category === cat));
+                    // সংশোধিত ফিল্টারিং লজিক
+                    if(!subVal) render(pArray.filter(p => subCats[cat].includes(p.category)));
                     else render(pArray.filter(p => p.category === subVal));
                 };
             });
-            render(pArray.filter(p => p.mainCategory === cat || p.category === cat));
+            // শুরুতে মেইন ক্যাটাগরির সব প্রোডাক্ট দেখানো
+            render(pArray.filter(p => subCats[cat].includes(p.category)));
         }
     };
 
@@ -308,26 +307,18 @@
     document.getElementById('cat-electronics').onclick = function() { handleCatSelection('Electronics', this); };
     document.getElementById('cat-fashion').onclick = function() { handleCatSelection('Fashion', this); };
 
-    // --- ৪. প্রোফাইল ও মেনু কন্ট্রোল ---
+    // --- ৪. কন্ট্রোল ---
     const profileMenu = document.getElementById('profileMenu');
     document.getElementById('profileTrigger').onclick = (e) => {
         e.stopPropagation();
         profileMenu.classList.toggle('show');
     };
-
-    document.onclick = (e) => {
-        if (!profileMenu.contains(e.target)) profileMenu.classList.remove('show');
-    };
-
-    document.getElementById('logoutBtn').onclick = () => {
-        signOut(auth).then(() => window.location.href = "index.html");
-    };
-
+    document.onclick = (e) => { if (!profileMenu.contains(e.target)) profileMenu.classList.remove('show'); };
+    document.getElementById('logoutBtn').onclick = () => { signOut(auth).then(() => window.location.href = "index.html"); };
     document.getElementById('copyIdBtn').onclick = () => {
         const id = document.getElementById('u-id').innerText;
         navigator.clipboard.writeText(id).then(() => alert("ID কপি হয়েছে!"));
     };
-
 </script>
 </body>
 </html>
