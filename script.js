@@ -9,7 +9,7 @@ import {
     updateProfile, 
     sendEmailVerification, 
     setPersistence, 
-    browserLocalPersistence, // LocalPersistence ব্যবহার করা হয়েছে যাতে অটো-লগইন থাকে
+    browserLocalPersistence, 
     onAuthStateChanged,
     signOut 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -23,19 +23,25 @@ const firebaseConfig = {
     appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
 };
 
-// ইনিশিয়ালাইজেশন
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 const provider = new GoogleAuthProvider();
 
-// --- অটো-লগইন সেটিংস (বারবার লগইন লাগবে না) ---
 setPersistence(auth, browserLocalPersistence);
 
-// --- সিকিউরিটি চেক: লগইন থাকলে সরাসরি শপে পাঠিয়ে দাও ---
+// --- পেজ সিকিউরিটি চেক ---
 onAuthStateChanged(auth, (user) => {
-    if (user && user.emailVerified) {
-        window.location.href = "shop.html";
+    if (user) {
+        if (user.emailVerified) {
+            // যদি ভেরিফাইড থাকে তবেই শপে যাবে
+            if(window.location.pathname.includes("index.html") || window.location.pathname === "/") {
+                window.location.href = "shop.html";
+            }
+        } else {
+            // ভেরিফাইড না থাকলে লগআউট করে ইনডেক্স পেজে রাখবে
+            signOut(auth);
+        }
     }
 });
 
@@ -43,31 +49,27 @@ const container = document.getElementById('container');
 const registerBtn = document.getElementById('registerBtn');
 const loginBtn = document.getElementById('loginBtn');
 
-// ডাটাবেসে ইউজার ডাটা সেভ
 function writeUserData(userId, name, email) {
     set(ref(db, 'users/' + userId), {
         username: name,
         email: email,
         lastLogin: serverTimestamp(),
         role: "customer"
-    }).catch(err => console.error("Database Error:", err));
+    });
 }
 
-// এনিমেশন লজিক
 if (registerBtn) registerBtn.addEventListener('click', () => container.classList.add('active'));
 if (loginBtn) loginBtn.addEventListener('click', () => container.classList.remove('active'));
 
-// গুগল লগইন
+// গুগল লগইন (গুগল ইমেইল সাধারণত ভেরিফাইড থাকে)
 window.googleLogin = function() {
-    signInWithPopup(auth, provider)
-        .then((result) => {
-            writeUserData(result.user.uid, result.user.displayName, result.user.email);
-            window.location.href = "shop.html";
-        })
-        .catch((err) => console.log("Login Cancelled"));
+    signInWithPopup(auth, provider).then((result) => {
+        writeUserData(result.user.uid, result.user.displayName, result.user.email);
+        window.location.href = "shop.html";
+    });
 };
 
-// ইমেইল সাইন আপ (ইমেইল ভেরিফিকেশন সহ)
+// --- সাইন আপ লজিক ---
 const regForm = document.getElementById('registerForm');
 if (regForm) {
     regForm.addEventListener('submit', (e) => {
@@ -76,30 +78,22 @@ if (regForm) {
         const email = document.getElementById('regEmail').value;
         const pass = document.getElementById('regPass').value;
 
-        if(pass.length < 6) {
-            alert("নিরাপত্তার জন্য পাসওয়ার্ড অন্তত ৬ অক্ষরের হতে হবে!");
-            return;
-        }
-        
         createUserWithEmailAndPassword(auth, email, pass).then((res) => {
-            // ১. ভেরিফিকেশন ইমেইল পাঠানো
+            // ১. ভেরিফিকেশন লিঙ্ক পাঠানো
             sendEmailVerification(res.user).then(() => {
-                alert("আপনার জিমেইলে একটি ভেরিফিকেশন লিঙ্ক পাঠানো হয়েছে। লিঙ্কটি কনফার্ম করে তারপর লগইন করুন।");
+                // ২. পেন্ডিং পপআপ শো করা
+                showVerificationPopup(email);
                 
-                // ২. প্রোফাইল আপডেট ও ডাটাবেসে সেভ
                 updateProfile(res.user, { displayName: name }).then(() => {
                     writeUserData(res.user.uid, name, email);
-                    // ভেরিফাই না করা পর্যন্ত লগআউট করে রাখা ভালো
-                    signOut(auth).then(() => {
-                        location.reload(); 
-                    });
+                    signOut(auth); // ভেরিফাই না করা পর্যন্ত সেশন অফ
                 });
             });
-        }).catch(err => alert("ব্যর্থ: " + err.message));
+        }).catch(err => alert("Error: " + err.message));
     });
 }
 
-// ইমেইল লগইন (ভেরিফিকেশন চেক সহ)
+// --- লগইন লজিক ---
 const logForm = document.getElementById('loginForm');
 if (logForm) {
     logForm.addEventListener('submit', (e) => {
@@ -107,20 +101,29 @@ if (logForm) {
         const email = document.getElementById('logEmail').value;
         const pass = document.getElementById('logPass').value;
         
-        signInWithEmailAndPassword(auth, email, pass)
-            .then((res) => {
-                // চেক করো ইমেইল ভেরিফাইড কি না
-                if (res.user.emailVerified) {
-                    window.location.href = "shop.html";
-                } else {
-                    alert("আপনার ইমেইলটি এখনো ভেরিফাই করা হয়নি। জিমেইল চেক করুন।");
-                    signOut(auth);
-                }
-            })
-            .catch((err) => {
-                alert("ভুল ইমেইল বা পাসওয়ার্ড অথবা ভেরিফিকেশন বাকি।");
-            });
+        signInWithEmailAndPassword(auth, email, pass).then((res) => {
+            if (res.user.emailVerified) {
+                window.location.href = "shop.html";
+            } else {
+                // ভেরিফাই না করা থাকলে আবার পপআপ দেখাবে
+                showVerificationPopup(email);
+                signOut(auth);
+            }
+        }).catch(() => alert("ভুল ইমেইল/পাসওয়ার্ড অথবা একাউন্ট ভেরিফাই করা নেই।"));
     });
+}
+
+// --- ভেরিফিকেশন পেন্ডিং পপআপ ফাংশন ---
+function showVerificationPopup(email) {
+    const message = `
+        ভেরিফিকেশন পেন্ডিং! 📩
+        
+        আমরা ${email} ঠিকানায় একটি লিঙ্ক পাঠিয়েছি। 
+        দয়া করে আপনার ইনবক্স (বা স্প্যাম) চেক করে লিঙ্কে ক্লিক করুন। 
+        
+        ভেরিফাই করার পর আবার লগইন করার চেষ্টা করুন।
+    `;
+    alert(message); // আপনি চাইলে এখানে কাস্টম সুইট এলার্ট (SweetAlert) ব্যবহার করতে পারেন
 }
 
 // মেনু কন্ট্রোল
