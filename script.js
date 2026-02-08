@@ -66,9 +66,8 @@ if (regForm) {
         const email = document.getElementById('regEmail').value;
         const pass = document.getElementById('regPass').value;
 
-        // এই সেটিংসটি ইমেইলের বাটনকে আপনার গিটহাব সাইটে ফিরিয়ে আনবে
         const actionCodeSettings = {
-    // এখানে /ms-shop/ যোগ করা হয়েছে
+    // সঠিক এবং ফুল লিঙ্ক
     url: 'https://tasnimtonni426-ui.github.io/ms-shop/shop.html', 
     handleCodeInApp: true,
 };
