@@ -49,7 +49,6 @@
         .search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
         .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 0; display: flex; align-items: center; }
 
-        /* --- স্লাইডার স্টাইল --- */
         .slider-wrapper { padding: 15px 15px 5px 15px; }
         .slider-container {
             width: 100%; height: 180px; border-radius: 15px;
@@ -157,8 +156,7 @@
 
 <div class="slider-wrapper">
     <div class="slider-container" id="sliderContainer">
-        <div class="slider-track" id="sliderTrack">
-            </div>
+        <div class="slider-track" id="sliderTrack"></div>
         <div class="dots" id="sliderDots">
             <div class="dot active"></div>
             <div class="dot"></div>
@@ -190,7 +188,7 @@
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut, setPersistence, browserLocalPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
@@ -206,25 +204,45 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- ১. সিকিউরিটি চেক ---
+    // --- অটো-লগইন সিকিউরিটি চেক ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            // ইউজার লগইন আছে
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('u-name').innerText = user.displayName || "User";
             document.getElementById('u-email').innerText = user.email;
             document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
+            
+            // ডাটা লোড শুরু
+            setupSlider();
+            fetchProducts();
         } else {
+            // লগইন নেই, রিডাইরেক্ট টু লগইন পেজ
             window.location.href = "index.html";
         }
     });
 
-    // --- ২. স্লাইডার লজিক ---
+    let pArray = [];
+    function fetchProducts() {
+        onValue(ref(db, 'products'), (snap) => {
+            if(snap.exists()){
+                pArray = [];
+                snap.forEach(child => {
+                    let d = child.val();
+                    d.id = child.key;
+                    pArray.push(d);
+                });
+                render(pArray);
+            }
+        });
+    }
+
     function setupSlider() {
         const track = document.getElementById('sliderTrack');
         const dots = document.querySelectorAll('.dot');
         let current = 0;
-        let startX = 0;
         let isDragging = false;
+        let startX = 0;
 
         onValue(ref(db, 'banners'), (snap) => {
             if (snap.exists()) {
@@ -243,16 +261,10 @@
             dots.forEach((d, i) => d.classList.toggle('active', i === current));
         };
 
-        setInterval(() => {
-            if(!isDragging) {
-                current = (current + 1) % 3;
-                updateSlider();
-            }
-        }, 4000);
+        setInterval(() => { if(!isDragging) { current = (current + 1) % 3; updateSlider(); } }, 4000);
 
         const container = document.getElementById('sliderContainer');
         container.ontouchstart = (e) => { startX = e.touches[0].clientX; isDragging = true; };
-        container.ontouchmove = (e) => { if(!isDragging) return; };
         container.ontouchend = (e) => {
             isDragging = false;
             let endX = e.changedTouches[0].clientX;
@@ -261,21 +273,6 @@
             updateSlider();
         };
     }
-    setupSlider();
-
-    // --- ৩. প্রোডাক্ট লোডিং ও ফিল্টারিং ---
-    let pArray = [];
-    onValue(ref(db, 'products'), (snap) => {
-        if(snap.exists()){
-            pArray = [];
-            snap.forEach(child => {
-                let d = child.val();
-                d.id = child.key;
-                pArray.push(d);
-            });
-            render(pArray);
-        }
-    });
 
     function render(data) {
         document.getElementById('p-list').innerHTML = data.map(p => `
@@ -311,9 +308,7 @@
         } else {
             subMenu.style.display = 'flex';
             let html = `<div class="sub-cat-btn active" id="sub-all">সব ${cat}</div>`;
-            subCats[cat].forEach(sub => {
-                html += `<div class="sub-cat-btn" data-sub="${sub}">${sub}</div>`;
-            });
+            subCats[cat].forEach(sub => { html += `<div class="sub-cat-btn" data-sub="${sub}">${sub}</div>`; });
             subMenu.innerHTML = html;
             
             subMenu.querySelectorAll('.sub-cat-btn').forEach(btn => {
@@ -321,12 +316,10 @@
                     subMenu.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                     const subVal = btn.getAttribute('data-sub');
-                    // সংশোধিত ফিল্টারিং লজিক
                     if(!subVal) render(pArray.filter(p => subCats[cat].includes(p.category)));
                     else render(pArray.filter(p => p.category === subVal));
                 };
             });
-            // শুরুতে মেইন ক্যাটাগরির সব প্রোডাক্ট দেখানো
             render(pArray.filter(p => subCats[cat].includes(p.category)));
         }
     };
@@ -336,12 +329,8 @@
     document.getElementById('cat-electronics').onclick = function() { handleCatSelection('Electronics', this); };
     document.getElementById('cat-fashion').onclick = function() { handleCatSelection('Fashion', this); };
 
-    // --- ৪. কন্ট্রোল ---
     const profileMenu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => {
-        e.stopPropagation();
-        profileMenu.classList.toggle('show');
-    };
+    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); profileMenu.classList.toggle('show'); };
     document.onclick = (e) => { if (!profileMenu.contains(e.target)) profileMenu.classList.remove('show'); };
     document.getElementById('logoutBtn').onclick = () => { signOut(auth).then(() => window.location.href = "index.html"); };
     document.getElementById('copyIdBtn').onclick = () => {
