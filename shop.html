@@ -189,56 +189,132 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getDatabase, ref, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, onValue, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // আপনার কনফিগ এখানে... (আগের মতোই থাকবে)
-    const firebaseConfig = { /* ... */ };
+    const firebaseConfig = {
+        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+        authDomain: "ms-sp-97f78.firebaseapp.com",
+        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+        projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
+        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+    };
+
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    // --- পেজ লোড হওয়ার সাথে সাথে চেক ---
     onAuthStateChanged(auth, async (user) => {
+        const loadingScreen = document.getElementById('loading-screen');
+
         if (user) {
-            // ১. ফায়ারবেস সার্ভার থেকে লেটেস্ট স্ট্যাটাস টেনে আনা
             try {
-                await reload(user); 
-            } catch (err) {
-                console.error("স্ট্যাটাস আপডেট করতে সমস্যা:", err);
-            }
+                // ১. জিমেইল স্ট্যাটাস আপডেট করার জন্য রিলোড (Timeout সহ)
+                await Promise.race([
+                    reload(user),
+                    new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), 3500))
+                ]).catch(() => console.log("Reload timed out, checking current status..."));
 
-            // ২. এবার চেক করা ইউজার ভেরিফাইড কি না
-            if (user.emailVerified) {
-                // ৩. ভেরিফাইড হলেই কেবল ডাটাবেজে চেক/সেভ করা হবে
-                const userRef = ref(db, 'users/' + user.uid);
-                const snapshot = await get(userRef);
+                if (user.emailVerified) {
+                    // ২. ভেরিফাইড ইউজার হলে তথ্য সেট করা
+                    document.getElementById('u-name').innerText = user.displayName || "User";
+                    document.getElementById('u-email').innerText = user.email;
+                    document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
 
-                if (!snapshot.exists()) {
-                    await set(userRef, {
-                        username: user.displayName || "New User",
-                        email: user.email,
-                        role: "customer",
-                        joinedAt: serverTimestamp()
+                    // ৩. ডাটাবেজে ইউজার সেভ (শুধুমাত্র ভেরিফাইড হলে)
+                    const userRef = ref(db, 'users/' + user.uid);
+                    get(userRef).then((snap) => {
+                        if (!snap.exists()) {
+                            set(userRef, {
+                                username: user.displayName || "New User",
+                                email: user.email,
+                                role: "customer",
+                                joinedAt: serverTimestamp()
+                            });
+                        }
                     });
-                }
 
-                // লোডিং স্ক্রিন বন্ধ করে হোম পেজ দেখান
-                document.getElementById('loading-screen').style.display = 'none';
-                document.getElementById('u-name').innerText = user.displayName || "User";
-                
-                // আপনার বাকি ফাংশনগুলো কল করুন
-                setupSlider();
-                fetchProducts();
-            } else {
-                // ৪. যদি ভেরিফাইড না হয়, তবে লগআউট করে লগইন পেজে পাঠান
-                alert("আপনার ইমেইল এখনও ভেরিফাই করা হয়নি। জিমেইল চেক করে লিঙ্কে ক্লিক করুন।");
-                await signOut(auth);
-                window.location.href = "index.html"; 
+                    // ৪. স্লাইডার ও প্রোডাক্ট লোড করা
+                    setupSlider();
+                    fetchProducts();
+                    
+                    // ৫. সব কাজ শেষে লোডিং স্ক্রিন বন্ধ
+                    loadingScreen.style.display = 'none';
+
+                } else {
+                    // ইমেইল ভেরিফাই না থাকলে সরাসরি বের করে দেওয়া
+                    alert("আপনার ইমেইল ভেরিফাই করা হয়নি। জিমেইল চেক করুন!");
+                    await signOut(auth);
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                loadingScreen.style.display = 'none'; // এরর হলেও যেন ইউজার লোডিং স্ক্রিন না দেখে
             }
         } else {
             window.location.href = "index.html";
         }
     });
+
+    // --- স্লাইডার ফাংশন ---
+    function setupSlider() {
+        const track = document.getElementById('sliderTrack');
+        const dots = document.querySelectorAll('.dot');
+        let current = 0;
+
+        onValue(ref(db, 'banners'), (snap) => {
+            if (snap.exists()) {
+                const data = snap.val();
+                let html = '';
+                for (let i = 1; i <= 3; i++) {
+                    const b = data[`banner${i}`] || { img: 'https://via.placeholder.com/800x400', link: '#' };
+                    html += `<div class="slide" onclick="if('${b.link}'!=='#') window.location.href='${b.link}'"><img src="${b.img}"></div>`;
+                }
+                if(track) track.innerHTML = html;
+            }
+        });
+        // স্লাইডার মুভমেন্টের বাকি কোড এখানে থাকবে...
+    }
+
+    // --- প্রোডাক্ট ফাংশন ---
+    let pArray = [];
+    function fetchProducts() {
+        onValue(ref(db, 'products'), (snap) => {
+            const list = document.getElementById('p-list');
+            if(snap.exists()){
+                pArray = [];
+                snap.forEach(child => {
+                    let d = child.val();
+                    d.id = child.key;
+                    pArray.push(d);
+                });
+                render(pArray);
+            }
+        });
+    }
+
+    function render(data) {
+        const list = document.getElementById('p-list');
+        if(!list) return;
+        list.innerHTML = data.map(p => `
+            <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
+                ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
+                <img src="${p.img}" loading="lazy">
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price} ৳</div>
+                </div>
+            </div>`).join('');
+    }
+
+    // গ্লোবাল ফাংশন কানেক্ট করা (টাইপ মডিউলের জন্য প্রয়োজন)
+    window.searchFn = () => {
+        let v = document.getElementById('searchInput').value.toLowerCase();
+        render(pArray.filter(p => p.name.toLowerCase().includes(v)));
+    };
 </script>
+    
     
     
 </body>
