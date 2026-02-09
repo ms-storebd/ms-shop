@@ -189,183 +189,56 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut, reload } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getDatabase, ref, onValue, get, child, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
-        authDomain: "ms-sp-97f78.firebaseapp.com",
-        databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
-        projectId: "ms-sp-97f78",
-        storageBucket: "ms-sp-97f78.appspot.com",
-        appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
-    };
-
+    // আপনার কনফিগ এখানে... (আগের মতোই থাকবে)
+    const firebaseConfig = { /* ... */ };
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- অথেন্টিকেশন লজিক ---
     onAuthStateChanged(auth, async (user) => {
         if (user) {
-            // ১. ভেরিফিকেশন আপডেট করা
-            await reload(user).catch(() => {}); 
+            // ১. ফায়ারবেস সার্ভার থেকে লেটেস্ট স্ট্যাটাস টেনে আনা
+            try {
+                await reload(user); 
+            } catch (err) {
+                console.error("স্ট্যাটাস আপডেট করতে সমস্যা:", err);
+            }
 
+            // ২. এবার চেক করা ইউজার ভেরিফাইড কি না
             if (user.emailVerified) {
+                // ৩. ভেরিফাইড হলেই কেবল ডাটাবেজে চেক/সেভ করা হবে
+                const userRef = ref(db, 'users/' + user.uid);
+                const snapshot = await get(userRef);
+
+                if (!snapshot.exists()) {
+                    await set(userRef, {
+                        username: user.displayName || "New User",
+                        email: user.email,
+                        role: "customer",
+                        joinedAt: serverTimestamp()
+                    });
+                }
+
+                // লোডিং স্ক্রিন বন্ধ করে হোম পেজ দেখান
                 document.getElementById('loading-screen').style.display = 'none';
                 document.getElementById('u-name').innerText = user.displayName || "User";
-                document.getElementById('u-email').innerText = user.email;
-                document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
                 
-                // ডাটাবেজে ইউজার সেভ
-                const userRef = ref(db, 'users/' + user.uid);
-                get(userRef).then((snap) => {
-                    if (!snap.exists()) {
-                        set(userRef, {
-                            username: user.displayName || "New User",
-                            email: user.email,
-                            role: "customer",
-                            joinedAt: serverTimestamp()
-                        });
-                    }
-                });
-
+                // আপনার বাকি ফাংশনগুলো কল করুন
                 setupSlider();
                 fetchProducts();
             } else {
-                alert("আপনার ইমেইল ভেরিফাই করা হয়নি। জিমেইল চেক করুন!");
-                window.location.href = "index.html";
+                // ৪. যদি ভেরিফাইড না হয়, তবে লগআউট করে লগইন পেজে পাঠান
+                alert("আপনার ইমেইল এখনও ভেরিফাই করা হয়নি। জিমেইল চেক করে লিঙ্কে ক্লিক করুন।");
+                await signOut(auth);
+                window.location.href = "index.html"; 
             }
         } else {
             window.location.href = "index.html";
         }
     });
-
-    // --- স্লাইডার ফাংশন ---
-    function setupSlider() {
-        const track = document.getElementById('sliderTrack');
-        const dots = document.querySelectorAll('.dot');
-        let current = 0;
-        let isDragging = false;
-        let startX = 0;
-
-        onValue(ref(db, 'banners'), (snap) => {
-            if (snap.exists()) {
-                const data = snap.val();
-                let slidesHtml = '';
-                for (let i = 1; i <= 3; i++) {
-                    const b = data[`banner${i}`] || { img: 'https://via.placeholder.com/800x400?text=MS+Store', link: '#' };
-                    slidesHtml += `<div class="slide" onclick="if('${b.link}' !== '#') window.location.href='${b.link}'"><img src="${b.img}"></div>`;
-                }
-                track.innerHTML = slidesHtml;
-            }
-        });
-
-        const updateSlider = () => {
-            if(!track) return;
-            track.style.transform = `translateX(-${current * 33.333}%)`;
-            dots.forEach((d, i) => d.classList.toggle('active', i === current));
-        };
-
-        setInterval(() => { if(!isDragging) { current = (current + 1) % 3; updateSlider(); } }, 4000);
-
-        const container = document.getElementById('sliderContainer');
-        container.ontouchstart = (e) => { startX = e.touches[0].clientX; isDragging = true; };
-        container.ontouchend = (e) => {
-            isDragging = false;
-            let endX = e.changedTouches[0].clientX;
-            if (startX - endX > 50 && current < 2) current++;
-            if (startX - endX < -50 && current > 0) current--;
-            updateSlider();
-        };
-    }
-
-    // --- প্রোডাক্ট ফাংশন ---
-    let pArray = [];
-    function fetchProducts() {
-        onValue(ref(db, 'products'), (snap) => {
-            if(snap.exists()){
-                pArray = [];
-                snap.forEach(child => {
-                    let d = child.val();
-                    d.id = child.key;
-                    pArray.push(d);
-                });
-                render(pArray);
-            }
-        });
-    }
-
-    function render(data) {
-        document.getElementById('p-list').innerHTML = data.map(p => `
-            <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
-                ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
-                <img src="${p.img}" loading="lazy">
-                <div class="p-info">
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price} ৳</div>
-                </div>
-            </div>`).join('');
-    }
-
-    // --- বাটনগুলোর জন্য গ্লোবাল ফাংশন (window. দিয়ে কানেক্ট করা) ---
-    window.searchFn = () => {
-        let v = document.getElementById('searchInput').value.toLowerCase();
-        render(pArray.filter(p => p.name.toLowerCase().includes(v)));
-    };
-
-    const subCats = {
-        'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
-        'Electronics': ['Mobile Accessories', 'Gadgets', 'Headphones'],
-        'Fashion': ["Men's Fashion", "Women's Fashion", "Shoes"]
-    };
-
-    window.handleCatSelection = (cat, el) => {
-        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-        el.classList.add('active');
-        const subMenu = document.getElementById('subCatMenu');
-
-        if (cat === 'All') {
-            subMenu.style.display = 'none';
-            render(pArray);
-        } else {
-            subMenu.style.display = 'flex';
-            let html = `<div class="sub-cat-btn active" id="sub-all">সব ${cat}</div>`;
-            subCats[cat].forEach(sub => { html += `<div class="sub-cat-btn" data-sub="${sub}">${sub}</div>`; });
-            subMenu.innerHTML = html;
-            
-            subMenu.querySelectorAll('.sub-cat-btn').forEach(btn => {
-                btn.onclick = () => {
-                    subMenu.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const subVal = btn.getAttribute('data-sub');
-                    if(!subVal) render(pArray.filter(p => subCats[cat].includes(p.category)));
-                    else render(pArray.filter(p => p.category === subVal));
-                };
-            });
-            render(pArray.filter(p => subCats[cat].includes(p.category)));
-        }
-    };
-
-    // ক্যাটাগরি বাটন ক্লিক লিসেনার
-    document.getElementById('cat-all').onclick = function() { window.handleCatSelection('All', this); };
-    document.getElementById('cat-sports').onclick = function() { window.handleCatSelection('Sports', this); };
-    document.getElementById('cat-electronics').onclick = function() { window.handleCatSelection('Electronics', this); };
-    document.getElementById('cat-fashion').onclick = function() { window.handleCatSelection('Fashion', this); };
-
-    // প্রোফাইল মেনু লজিক
-    const profileMenu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); profileMenu.classList.toggle('show'); };
-    document.onclick = (e) => { if (!profileMenu.contains(e.target)) profileMenu.classList.remove('show'); };
-    
-    document.getElementById('logoutBtn').onclick = () => { signOut(auth).then(() => window.location.href = "index.html"); };
-    
-    document.getElementById('copyIdBtn').onclick = () => {
-        const id = document.getElementById('u-id').innerText;
-        navigator.clipboard.writeText(id).then(() => alert("ID কপি হয়েছে!"));
-    };
-                                 </script>
-    
-
+</script>
     
     
 </body>
