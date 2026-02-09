@@ -203,17 +203,19 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
+    // --- অটো-ভেরিফিকেশন চেক লজিক ---
     onAuthStateChanged(auth, (user) => {
         if (user) {
+            // রিফ্রেশ করা যাতে লেটেস্ট ভেরিফিকেশন স্ট্যাটাস পাওয়া যায়
             user.reload().then(() => {
                 if (user.emailVerified) {
-                    // ভেরিফাইড হলে ডাটা লোড হবে
+                    // ভেরিফাইড ইউজার
                     document.getElementById('loading-screen').style.display = 'none';
                     document.getElementById('u-name').innerText = user.displayName || "User";
                     document.getElementById('u-email').innerText = user.email;
                     document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
                     
-                    // প্রথমবারের জন্য ডাটাবেজে ইউজার সেভ করার লজিক
+                    // প্রথমবার ডাটাবেজে ডাটা সেভ
                     const dbRef = ref(db);
                     get(child(dbRef, `users/${user.uid}`)).then((snapshot) => {
                         if (!snapshot.exists()) {
@@ -229,8 +231,17 @@
                     setupSlider();
                     fetchProducts();
                 } else {
-                    alert("আপনার ইমেইল ভেরিফাই করা হয়নি। দয়া করে জিমেইল চেক করুন।");
-                    window.location.href = "index.html"; 
+                    // যদি ভেরিফাই না থাকে, ১.৫ সেকেন্ড পর আবার চেক করবে (সিঙ্ক ইস্যু সমাধানের জন্য)
+                    setTimeout(() => {
+                        user.reload().then(() => {
+                            if (user.emailVerified) {
+                                window.location.reload(); // ভেরিফাইড হলে পেজ রিফ্রেশ করে ভেতরে ঢুকাবে
+                            } else {
+                                alert("আপনার ইমেইল ভেরিফাই করা হয়নি। দয়া করে জিমেইল চেক করুন।");
+                                window.location.href = "index.html"; 
+                            }
+                        });
+                    }, 1500);
                 }
             });
         } else {
