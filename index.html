@@ -3,126 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MS STORE - Premium Experience</title>
+    <title>MS STORE - Login</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
-
+    
     <style>
-        /* --- পুরনো সব ইনপুট জোর করে হাইড করা --- */
-        #registerForm input, #loginForm input, 
-        #registerForm button:not(.google-btn), 
-        #loginForm button:not(.google-btn),
-        #registerForm h1, #loginForm h1 {
-            display: none !important;
+        :root {
+            --primary: #00d2ff;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
         }
 
-        /* গুগল বাটন ডিজাইন */
-        .google-btn {
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100% !important;
-            padding: 18px !important;
-            margin-top: 20px !important;
-            background: white !important;
-            color: #333 !important;
-            border-radius: 20px !important;
-            border: 1px solid #ddd !important;
-            font-weight: 700 !important;
-            font-size: 16px !important;
-            cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-            transition: 0.3s ease;
-            z-index: 100;
+        body {
+            margin: 0; padding: 0;
+            font-family: 'Montserrat', sans-serif;
+            background: #070b14;
+            height: 100vh;
+            display: flex; align-items: center; justify-content: center;
+            color: white; overflow: hidden;
         }
 
-        .google-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(0,0,0,0.15) !important;
+        /* ব্যাকগ্রাউন্ডে প্রিমিয়াম গ্লো এফেক্ট */
+        body::before {
+            content: '';
+            position: absolute;
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0, 210, 255, 0.15) 0%, transparent 70%);
+            top: -100px; right: -100px; z-index: -1;
         }
 
-        .welcome-title {
-            display: block !important;
-            font-size: 24px;
-            font-weight: 800;
-            color: #1f2937;
-            margin-bottom: 10px;
-        }
-
-        .welcome-desc {
-            display: block !important;
-            color: #64748b;
-            font-size: 14px;
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        /* ড্রপডাউন মেনু কাজ করার জন্য */
-        .admin-dropdown.show {
-            display: block !important;
-            animation: fadeIn 0.3s ease;
+        .login-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            padding: 50px 30px;
+            border-radius: 40px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 90%; max-width: 400px;
+            text-align: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+            animation: fadeIn 0.8s ease;
         }
 
         @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
+            from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        .brand-name {
+            font-size: 36px;
+            font-weight: 900;
+            color: var(--primary);
+            letter-spacing: 3px;
+            margin-bottom: 10px;
+        }
+
+        .brand-tagline {
+            color: #94a3b8;
+            font-size: 14px;
+            margin-bottom: 40px;
+            font-weight: 400;
+        }
+
+        .google-btn {
+            width: 100%;
+            padding: 16px;
+            background: white;
+            color: #1e293b;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            font-weight: 700;
+            display: flex; align-items: center; justify-content: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .google-btn:hover {
+            transform: scale(1.03);
+            box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2);
+        }
+
+        .google-btn img { width: 24px; }
+
+        /* অ্যাডমিন মেনু */
+        .admin-nav {
+            position: fixed; top: 20px; right: 20px; z-index: 1000;
+        }
+        .three-dots-btn {
+            color: #475569; font-size: 20px; cursor: pointer; padding: 10px;
+        }
+        .admin-dropdown {
+            display: none; position: absolute; right: 0; top: 40px;
+            background: #1e293b; border-radius: 12px; border: 1px solid rgba(255,255,255,0.1);
+            width: 160px; overflow: hidden;
+        }
+        .admin-dropdown a {
+            display: block; padding: 12px 15px; color: white; text-decoration: none; font-size: 13px; transition: 0.3s;
+        }
+        .admin-dropdown a:hover { background: var(--primary); color: #070b14; }
+        .admin-dropdown.show { display: block; }
     </style>
 </head>
 <body>
 
     <div class="admin-nav">
-        <div class="three-dots-btn" id="menuToggle" style="cursor: pointer;">
+        <div class="three-dots-btn" id="menuToggle">
             <i class="fa fa-ellipsis-v"></i>
         </div>
         <div class="admin-dropdown" id="dropdownMenu">
-            <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Login</a>
+            <a href="admin_login.html"><i class="fa fa-user-shield"></i> Admin Access</a>
         </div>
     </div>
 
-    <div class="container" id="container">
-        <div class="form-container sign-up-container">
-            <form onsubmit="return false;">
-                <span class="welcome-title">নতুন অ্যাকাউন্ট</span>
-                <span class="welcome-desc">শপিং শুরু করতে গুগল দিয়ে সাইন-আপ করুন।</span>
-                <button type="button" class="google-btn" id="googleSignUpBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25"> Google Sign Up
-                </button>
-            </form>
-        </div>
+    <div class="login-card">
+        <div class="brand-name">MS STORE</div>
+        <div class="brand-tagline">Quality You Can Trust</div>
+        
+        <p style="color: #cbd5e1; font-size: 15px; margin-bottom: 25px;">Shopping শুরু করতে আপনার Google অ্যাকাউন্ট ব্যবহার করুন।</p>
+        
+        <button class="google-btn" id="googleLoginBtn">
+            <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="Google">
+            Google দিয়ে লগইন করুন
+        </button>
 
-        <div class="form-container sign-in-container">
-            <form onsubmit="return false;">
-                <span class="welcome-title">ফিরে আসায় স্বাগতম</span>
-                <span class="welcome-desc">সহজ লগইন করতে নিচের বাটনটি ব্যবহার করুন।</span>
-                <button type="button" class="google-btn" id="googleSignInBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25"> Google Sign In
-                </button>
-            </form>
-        </div>
-
-        <div class="toggle-container">
-            <div class="toggle">
-                <div class="toggle-panel toggle-left">
-                    <div class="brand-inside">
-                        <h1 class="brand-name">MS STORE</h1>
-                    </div>
-                    <h1>একদম নতুন?</h1>
-                    <p>আপনার প্রোফাইল নেই? সাইন আপ করুন।</p>
-                    <button class="hidden" id="loginBtn">Back to Login</button>
-                </div>
-                <div class="toggle-panel toggle-right">
-                    <div class="brand-inside">
-                        <h1 class="brand-name">MS STORE</h1>
-                    </div>
-                    <h1>স্বাগতম বন্ধু!</h1>
-                    <p>নতুন অ্যাকাউন্ট তৈরি করতে এখানে ক্লিক করুন।</p>
-                    <button class="hidden" id="registerBtn">Create Account</button>
-                </div>
-            </div>
-        </div>
+        <p style="margin-top: 30px; font-size: 11px; color: #475569; letter-spacing: 0.5px;">SECURE & ENCRYPTED ACCESS</p>
     </div>
 
     <script type="module">
@@ -143,38 +149,25 @@
         const provider = new GoogleAuthProvider();
 
         // গুগল লগইন ফাংশন
-        const login = () => {
+        document.getElementById('googleLoginBtn').onclick = () => {
             signInWithPopup(auth, provider)
             .then(() => window.location.href = "shop.html")
-            .catch((e) => alert("Error: " + e.message));
+            .catch((e) => console.log(e.message));
         };
 
-        // সব বাটনের ক্লিক ইভেন্ট সেট করা (১০০% কাজ করবে)
-        window.onload = () => {
-            const container = document.getElementById('container');
-            
-            // সাইন আপ / সাইন ইন স্যুইচ বাটন
-            document.getElementById('registerBtn').onclick = () => container.classList.add("active");
-            document.getElementById('loginBtn').onclick = () => container.classList.remove("active");
-
-            // গুগল লগইন বাটন
-            document.getElementById('googleSignInBtn').onclick = login;
-            document.getElementById('googleSignUpBtn').onclick = login;
-
-            // অ্যাডমিন মেনু টগল
-            const menuToggle = document.getElementById('menuToggle');
-            const dropdown = document.getElementById('dropdownMenu');
-            menuToggle.onclick = (e) => {
-                e.stopPropagation();
-                dropdown.classList.toggle('show');
-            };
-            document.onclick = () => dropdown.classList.remove('show');
-        };
-
-        // অটো রিডাইরেক্ট যদি আগে থেকে লগইন থাকে
+        // অটো চেক
         onAuthStateChanged(auth, (user) => {
             if (user) window.location.href = "shop.html";
         });
+
+        // অ্যাডমিন ড্রপডাউন লজিক
+        const menuToggle = document.getElementById('menuToggle');
+        const dropdown = document.getElementById('dropdownMenu');
+        menuToggle.onclick = (e) => {
+            e.stopPropagation();
+            dropdown.classList.toggle('show');
+        };
+        window.onclick = () => dropdown.classList.remove('show');
     </script>
 </body>
 </html>
