@@ -79,7 +79,7 @@
         .profile-menu.show { display: block; animation: slideIn 0.3s ease; }
 
         .id-box { background: rgba(0, 210, 255, 0.1); border: 1px dashed var(--primary); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 15px; cursor: pointer; }
-        .user-data { background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px; font-size: 13px; }
+        .user-data { background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px; font-size: 13px; word-wrap: break-word; }
 
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; margin-top: 5px; }
         .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
@@ -87,10 +87,6 @@
         .cat-item span { font-size: 11px; font-weight: 500; color: #cbd5e1; }
         .cat-item.active { background: var(--primary); border-color: var(--primary); }
         .cat-item.active i, .cat-item.active span { color: #0f172a; }
-
-        .sub-cat-container { display: none; overflow-x: auto; white-space: nowrap; padding: 0 15px 15px; gap: 10px; scrollbar-width: none; }
-        .sub-cat-btn { display: inline-block; background: rgba(255, 255, 255, 0.08); border: 1px solid var(--border); color: #94a3b8; padding: 6px 15px; border-radius: 20px; font-size: 12px; cursor: pointer; }
-        .sub-cat-btn.active { background: var(--primary); color: #0f172a; border-color: var(--primary); font-weight: 600; }
 
         .container { padding: 0 15px 15px 15px; }
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
@@ -111,13 +107,9 @@
             width: 60px;
             height: 60px;
             border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 9999;
-            text-decoration: none;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 9999; text-decoration: none;
             animation: pulse-green 2s infinite;
         }
         @keyframes pulse-green {
@@ -133,8 +125,10 @@
 <body>
 
 <div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; text-align: center; padding: 20px;">
-    <div id="loading-text">MS STORE Loading...</div>
-    <div id="verify-msg" style="display: none; font-size: 14px; color: #cbd5e1; margin-top: 15px; font-weight: normal;">আপনার জিমেইল চেক করে লিঙ্কটিতে ক্লিক করুন।<br>ভেরিফাই হওয়া মাত্রই পেজটি ওপেন হবে।</div>
+    <div id="loading-text" style="font-size: 20px; letter-spacing: 2px;">MS STORE</div>
+    <div id="verify-msg" style="display: none; font-size: 14px; color: #cbd5e1; margin-top: 15px; font-weight: normal; line-height: 1.6;">
+        আপনার জিমেইল চেক করে লিঙ্কটিতে ক্লিক করুন।<br>ভেরিফাই হওয়া মাত্রই অটোমেটিক হোম পেজ ওপেন হবে।
+    </div>
 </div>
 
 <header>
@@ -144,7 +138,7 @@
     </div>
     <div class="search-container">
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন..." onkeyup="searchFn()">
+            <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন...">
             <i class="fa fa-search"></i>
         </div>
     </div>
@@ -170,21 +164,22 @@
     <div class="id-box" id="copyIdBtn">
         <div id="u-id" style="font-size: 18px; font-weight: bold; color: white;">#------</div>
     </div>
-    <div class="user-data" id="u-name">...</div>
+    <div class="user-data" id="u-name">লুড হচ্ছে...</div>
     <div class="user-data" id="u-email">...</div>
     <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold; cursor:pointer;" onclick="location.href='my_orders.html'">My Orders</button>
     <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white; cursor:pointer;" id="logoutBtn">Logout</button>
 </div>
 
 <div class="cat-grid">
-    <div class="cat-item active" id="cat-all"><i class="fa fa-th-large"></i><span>ALL</span></div>
-    <div class="cat-item" id="cat-sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
-    <div class="cat-item" id="cat-electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
-    <div class="cat-item" id="cat-fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
+    <div class="cat-item active" data-cat="all"><i class="fa fa-th-large"></i><span>ALL</span></div>
+    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
+    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
+    <div class="cat-item" data-cat="fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
 </div>
-<div id="subCatMenu" class="sub-cat-container"></div>
 
-<div class="container"><div class="product-grid" id="p-list"></div></div>
+<div class="container">
+    <div class="product-grid" id="p-list"></div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -204,43 +199,44 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // --- অটোমেটিক ভেরিফিকেশন লজিক ---
+    let pArray = [];
+
+    // --- অথেন্টিকেশন এবং অটো-লগইন লজিক ---
     onAuthStateChanged(auth, async (user) => {
-        const loadingScreen = document.getElementById('loading-screen');
         const verifyMsg = document.getElementById('verify-msg');
 
         if (user) {
-            // যদি ইউজার আগে থেকেই ভেরিফাইড থাকে
+            // ১. একবার সার্ভার থেকে চেক করা (Reload)
+            await reload(user).catch(() => {});
+
             if (user.emailVerified) {
                 initApp(user);
             } else {
-                // ভেরিফাইড না হলে জিমেইল চেক করার মেসেজ দেখাবে
+                // ভেরিফাইড না হলে মেসেজ দেখানো এবং অটো চেক শুরু
                 verifyMsg.style.display = 'block';
                 
-                // প্রতি ২ সেকেন্ড পর পর সার্ভার চেক করবে ইউজার লিঙ্কে ক্লিক করেছে কি না
                 const checkInterval = setInterval(async () => {
-                    await reload(user);
+                    await reload(user).catch(() => {});
                     if (auth.currentUser.emailVerified) {
                         clearInterval(checkInterval);
                         initApp(auth.currentUser);
                     }
-                }, 2000);
+                }, 3000); // প্রতি ৩ সেকেন্ডে চেক করবে
             }
         } else {
             window.location.href = "index.html";
         }
     });
 
-    // মেইন অ্যাপ শুরু করার ফাংশন
     async function initApp(user) {
         document.getElementById('loading-screen').style.display = 'none';
         
-        // প্রোফাইল তথ্য সেট করা
+        // প্রোফাইল তথ্য
         document.getElementById('u-name').innerText = user.displayName || "User";
         document.getElementById('u-email').innerText = user.email;
         document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
 
-        // ডাটাবেজে ইউজার সেভ (শুধুমাত্র ভেরিফাইড হলে)
+        // ডাটাবেজে ইউজার সেভ (যদি না থাকে)
         const userRef = ref(db, 'users/' + user.uid);
         get(userRef).then((snap) => {
             if (!snap.exists()) {
@@ -256,7 +252,7 @@
         setupSlider();
         fetchProducts();
         setupProfileMenu();
-        setupCategories();
+        setupEvents();
     }
 
     function setupSlider() {
@@ -276,15 +272,13 @@
             }
         });
 
-        // স্লাইডার অটো মুভমেন্ট
         setInterval(() => {
             current = (current + 1) % 3;
             if(track) track.style.transform = `translateX(-${current * 33.333}%)`;
             dots.forEach((d, i) => d.classList.toggle('active', i === current));
-        }, 4000);
+        }, 5000);
     }
 
-    let pArray = [];
     function fetchProducts() {
         onValue(ref(db, 'products'), (snap) => {
             if(snap.exists()){
@@ -331,24 +325,24 @@
         };
     }
 
-    function setupCategories() {
-        const cats = ['all', 'sports', 'electronics', 'fashion'];
-        cats.forEach(id => {
-            const el = document.getElementById('cat-' + id);
-            if(el) el.onclick = () => {
+    function setupEvents() {
+        // সার্চ ফাংশন
+        document.getElementById('searchInput').onkeyup = (e) => {
+            let v = e.target.value.toLowerCase();
+            render(pArray.filter(p => p.name.toLowerCase().includes(v)));
+        };
+
+        // ক্যাটাগরি ফিল্টার
+        document.querySelectorAll('.cat-item').forEach(item => {
+            item.onclick = () => {
                 document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-                el.classList.add('active');
-                if(id === 'all') render(pArray);
-                else render(pArray.filter(p => p.category && p.category.toLowerCase().includes(id)));
+                item.classList.add('active');
+                const cat = item.getAttribute('data-cat');
+                if(cat === 'all') render(pArray);
+                else render(pArray.filter(p => p.category && p.category.toLowerCase() === cat));
             }
         });
     }
-
-    window.searchFn = () => {
-        let v = document.getElementById('searchInput').value.toLowerCase();
-        render(pArray.filter(p => p.name.toLowerCase().includes(v)));
-    };
 </script>
 </body>
-    </html>
-    
+</html>
