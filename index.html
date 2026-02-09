@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* --- আগের ইনপুট এবং বাটনগুলো জোর করে হাইড করা --- */
+        /* --- পুরনো সব ইনপুট জোর করে হাইড করা --- */
         #registerForm input, #loginForm input, 
         #registerForm button:not(.google-btn), 
         #loginForm button:not(.google-btn),
@@ -17,7 +17,7 @@
             display: none !important;
         }
 
-        /* গুগল বাটনকে সুন্দর ও বড় করে মাঝখানে আনা */
+        /* গুগল বাটন ডিজাইন */
         .google-btn {
             display: flex !important;
             align-items: center;
@@ -34,7 +34,8 @@
             font-size: 16px !important;
             cursor: pointer;
             box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
-            transition: 0.3s;
+            transition: 0.3s ease;
+            z-index: 100;
         }
 
         .google-btn:hover {
@@ -42,33 +43,38 @@
             box-shadow: 0 15px 25px rgba(0,0,0,0.15) !important;
         }
 
-        /* নতুন ওয়েলকাম টেক্সট যোগ করা */
-        .google-login-box {
-            text-align: center;
-            width: 100%;
-        }
-
         .welcome-title {
             display: block !important;
             font-size: 24px;
             font-weight: 800;
             color: #1f2937;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .welcome-desc {
             display: block !important;
             color: #64748b;
             font-size: 14px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             line-height: 1.5;
+        }
+
+        /* ড্রপডাউন মেনু কাজ করার জন্য */
+        .admin-dropdown.show {
+            display: block !important;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
     </style>
 </head>
 <body>
 
     <div class="admin-nav">
-        <div class="three-dots-btn" id="menuToggle">
+        <div class="three-dots-btn" id="menuToggle" style="cursor: pointer;">
             <i class="fa fa-ellipsis-v"></i>
         </div>
         <div class="admin-dropdown" id="dropdownMenu">
@@ -78,21 +84,21 @@
 
     <div class="container" id="container">
         <div class="form-container sign-up-container">
-            <form id="registerForm">
-                <span class="welcome-title">Create Account</span>
-                <span class="welcome-desc">সহজ ও নিরাপদ কেনাকাটার জন্য গুগল দিয়ে অ্যাকাউন্ট তৈরি করুন।</span>
+            <form onsubmit="return false;">
+                <span class="welcome-title">নতুন অ্যাকাউন্ট</span>
+                <span class="welcome-desc">শপিং শুরু করতে গুগল দিয়ে সাইন-আপ করুন।</span>
                 <button type="button" class="google-btn" id="googleSignUpBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25" alt="G"/> Google Sign Up
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25"> Google Sign Up
                 </button>
             </form>
         </div>
 
         <div class="form-container sign-in-container">
-            <form id="loginForm">
-                <span class="welcome-title">Welcome Back</span>
-                <span class="welcome-desc">আবারো আমাদের সাথে যুক্ত হতে গুগল দিয়ে লগইন করুন।</span>
+            <form onsubmit="return false;">
+                <span class="welcome-title">ফিরে আসায় স্বাগতম</span>
+                <span class="welcome-desc">সহজ লগইন করতে নিচের বাটনটি ব্যবহার করুন।</span>
                 <button type="button" class="google-btn" id="googleSignInBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25" alt="G"/> Google Sign In
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25"> Google Sign In
                 </button>
             </form>
         </div>
@@ -102,20 +108,18 @@
                 <div class="toggle-panel toggle-left">
                     <div class="brand-inside">
                         <h1 class="brand-name">MS STORE</h1>
-                        <p class="brand-tagline">Quality You Can Trust</p>
                     </div>
-                    <h1>Join Us!</h1>
-                    <p>আপনার কি এখনো অ্যাকাউন্ট নেই?</p>
+                    <h1>একদম নতুন?</h1>
+                    <p>আপনার প্রোফাইল নেই? সাইন আপ করুন।</p>
                     <button class="hidden" id="loginBtn">Back to Login</button>
                 </div>
                 <div class="toggle-panel toggle-right">
                     <div class="brand-inside">
                         <h1 class="brand-name">MS STORE</h1>
-                        <p class="brand-tagline">Elevate Your Lifestyle</p>
                     </div>
-                    <h1>Hello!</h1>
-                    <p>আপনার যাত্রা শুরু করতে সাইন-আপ করুন</p>
-                    <button class="hidden" id="registerBtn">Go to Sign Up</button>
+                    <h1>স্বাগতম বন্ধু!</h1>
+                    <p>নতুন অ্যাকাউন্ট তৈরি করতে এখানে ক্লিক করুন।</p>
+                    <button class="hidden" id="registerBtn">Create Account</button>
                 </div>
             </div>
         </div>
@@ -138,24 +142,39 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        const handleGoogleLogin = () => {
+        // গুগল লগইন ফাংশন
+        const login = () => {
             signInWithPopup(auth, provider)
-                .then(() => window.location.href = "shop.html")
-                .catch((err) => alert("Login Error: " + err.message));
+            .then(() => window.location.href = "shop.html")
+            .catch((e) => alert("Error: " + e.message));
         };
 
-        document.getElementById('googleSignInBtn').onclick = handleGoogleLogin;
-        document.getElementById('googleSignUpBtn').onclick = handleGoogleLogin;
+        // সব বাটনের ক্লিক ইভেন্ট সেট করা (১০০% কাজ করবে)
+        window.onload = () => {
+            const container = document.getElementById('container');
+            
+            // সাইন আপ / সাইন ইন স্যুইচ বাটন
+            document.getElementById('registerBtn').onclick = () => container.classList.add("active");
+            document.getElementById('loginBtn').onclick = () => container.classList.remove("active");
 
-        // অটো লগইন চেক
+            // গুগল লগইন বাটন
+            document.getElementById('googleSignInBtn').onclick = login;
+            document.getElementById('googleSignUpBtn').onclick = login;
+
+            // অ্যাডমিন মেনু টগল
+            const menuToggle = document.getElementById('menuToggle');
+            const dropdown = document.getElementById('dropdownMenu');
+            menuToggle.onclick = (e) => {
+                e.stopPropagation();
+                dropdown.classList.toggle('show');
+            };
+            document.onclick = () => dropdown.classList.remove('show');
+        };
+
+        // অটো রিডাইরেক্ট যদি আগে থেকে লগইন থাকে
         onAuthStateChanged(auth, (user) => {
             if (user) window.location.href = "shop.html";
         });
-
-        // অ্যানিমেশন স্যুইচ লজিক
-        const container = document.getElementById('container');
-        document.getElementById('registerBtn').onclick = () => container.classList.add("active");
-        document.getElementById('loginBtn').onclick = () => container.classList.remove("active");
     </script>
 </body>
 </html>
