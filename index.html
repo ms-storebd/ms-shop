@@ -39,7 +39,6 @@
             100% { opacity: 1; transform: scale(1) translateY(0); }
         }
 
-        /* ব্যাকগ্রাউন্ডে নীল আভা */
         .modal-glow {
             position: absolute;
             top: -50%; left: -50%;
@@ -50,7 +49,6 @@
 
         .modal-body { position: relative; z-index: 2; }
 
-        /* আইকন বক্স ও পালস অ্যানিমেশন */
         .icon-box {
             position: relative;
             width: 90px; height: 90px;
@@ -91,7 +89,6 @@
             margin-bottom: 35px;
         }
 
-        /* প্রিমিয়াম কালারফুল বাটন */
         .modal-confirm-btn {
             background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
             color: white;
@@ -107,9 +104,28 @@
             box-shadow: 0 10px 20px -5px rgba(0, 210, 255, 0.4);
         }
 
-        .modal-confirm-btn:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 15px 25px -5px rgba(0, 210, 255, 0.5);
+        /* গুগল বাটনের জন্য বিশেষ স্টাইল */
+        .google-login-center {
+            margin-top: 20px;
+            padding: 18px !important;
+            font-size: 18px !important;
+            border-radius: 20px !important;
+            background: white !important;
+            color: #222 !important;
+            width: 100% !important;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            border: none;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        /* অতিরিক্ত ইমেইল ইনপুট লুকাতে সাহায্য করবে */
+        form input, form button[type="submit"] {
+            display: none !important;
         }
     </style>
 </head>
@@ -123,11 +139,10 @@
                     <i class="fa-solid fa-paper-plane"></i>
                     <div class="pulse-ring"></div>
                 </div>
-                <h2>Verify Your Email</h2>
-                <p id="modalMessage">আমরা আপনার জিমেইলে একটি সিকিউর ভেরিফিকেশন লিঙ্ক পাঠিয়েছি। দয়া করে আপনার ইনবক্স চেক করে লিঙ্কটি কনফার্ম করুন।</p>
+                <h2>Success!</h2>
+                <p id="modalMessage">লগইন সফল হয়েছে। আপনাকে শপে নিয়ে যাওয়া হচ্ছে...</p>
                 <button class="modal-confirm-btn" onclick="closeModal()">
-                    <span>Got it, Thanks!</span>
-                    <i class="fa-solid fa-circle-check"></i>
+                    <span>OK</span>
                 </button>
             </div>
         </div>
@@ -144,26 +159,23 @@
 
     <div class="container" id="container">
         <div class="form-container sign-up-container">
-            <form id="registerForm">
-                <h1>Create Account</h1>
-                <input type="text" id="regName" placeholder="Full Name" required>
-                <input type="email" id="regEmail" placeholder="Email" required>
-                <input type="password" id="regPass" placeholder="Password" required>
-                <button type="submit">Sign Up</button>
-                <button type="button" class="google-btn" onclick="googleLogin()">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="G"/> Google Sign Up
+            <form>
+                <h1 style="margin-bottom: 20px;">Welcome Friend!</h1>
+                <p style="color: #666; margin-bottom: 30px;">আমাদের প্রিমিয়াম সেবা উপভোগ করতে গুগল দিয়ে জয়েন করুন।</p>
+                <button type="button" class="google-login-center" id="googleSignUpBtn">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28" alt="G"/> 
+                    Google Sign Up
                 </button>
             </form>
         </div>
 
         <div class="form-container sign-in-container">
-            <form id="loginForm">
-                <h1>Sign In</h1>
-                <input type="email" id="logEmail" placeholder="Email" required>
-                <input type="password" id="logPass" placeholder="Password" required>
-                <button type="submit">Sign In</button>
-                <button type="button" class="google-btn" onclick="googleLogin()">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" alt="G"/> Google Sign In
+            <form>
+                <h1 style="margin-bottom: 20px;">Welcome Back!</h1>
+                <p style="color: #666; margin-bottom: 30px;">দ্রুত লগইন করতে নিচের বাটনটি ব্যবহার করুন।</p>
+                <button type="button" class="google-login-center" id="googleSignInBtn">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28" alt="G"/> 
+                    Google Sign In
                 </button>
             </form>
         </div>
@@ -175,8 +187,8 @@
                         <h1 class="brand-name">MS STORE</h1>
                         <p class="brand-tagline">Quality You Can Trust</p>
                     </div>
-                    <h1>Welcome Back!</h1>
-                    <p>To keep connected with us please login</p>
+                    <h1>Join Us!</h1>
+                    <p>নতুন অ্যাকাউন্ট তৈরি করতে চান?</p>
                     <button class="hidden" id="loginBtn">Back to Login</button>
                 </div>
                 <div class="toggle-panel toggle-right">
@@ -184,14 +196,63 @@
                         <h1 class="brand-name">MS STORE</h1>
                         <p class="brand-tagline">Elevate Your Lifestyle</p>
                     </div>
-                    <h1>Hello, Friend!</h1>
-                    <p>Enter your details and start journey with us</p>
-                    <button class="hidden" id="registerBtn">Go to Sign Up</button>
+                    <h1>Hello!</h1>
+                    <p>আবারো ফিরে আসার জন্য ধন্যবাদ</p>
+                    <button class="hidden" id="registerBtn">Create Account</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
+            authDomain: "ms-sp-97f78.firebaseapp.com",
+            databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
+            projectId: "ms-sp-97f78",
+            storageBucket: "ms-sp-97f78.appspot.com",
+            appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+
+        // গুগল লগইন ফাংশন
+        const handleGoogleLogin = () => {
+            signInWithPopup(auth, provider)
+                .then(() => {
+                    window.location.href = "shop.html";
+                }).catch((error) => {
+                    alert("লগইন ব্যর্থ হয়েছে: " + error.message);
+                });
+        };
+
+        // বাটন গুলোতে ইভেন্ট সেট করা
+        document.getElementById('googleSignInBtn').onclick = handleGoogleLogin;
+        document.getElementById('googleSignUpBtn').onclick = handleGoogleLogin;
+
+        // অটো লগইন চেক
+        onAuthStateChanged(auth, (user) => {
+            if (user) window.location.href = "shop.html";
+        });
+
+        // অ্যানিমেশন লজিক (কন্টেইনার স্যুইচ করা)
+        const container = document.getElementById('container');
+        const registerBtn = document.getElementById('registerBtn');
+        const loginBtn = document.getElementById('loginBtn');
+
+        registerBtn.addEventListener('click', () => {
+            container.classList.add("active");
+        });
+
+        loginBtn.addEventListener('click', () => {
+            container.classList.remove("active");
+        });
+    </script>
 </body>
-</html>
+    </html>
+    
