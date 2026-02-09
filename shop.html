@@ -187,62 +187,57 @@
 <div class="container"><div class="product-grid" id="p-list"></div></div>
 
 <script type="module">
-    // --- উন্নত অথেন্টিকেশন এবং ভেরিফিকেশন চেক ---
-onAuthStateChanged(auth, async (user) => {
+// --- দ্রুত লোডিং এবং ভেরিফিকেশন চেক ---
+onAuthStateChanged(auth, (user) => {
+    const loadingScreen = document.getElementById('loading-screen');
+
     if (user) {
-        try {
-            // ১. ভেরিফিকেশন স্ট্যাটাস জোরপূর্বক আপডেট করা
-            await user.reload(); 
-            
-            // নতুন করে ইউজার অবজেক্ট নেওয়া (আপডেটেড স্ট্যাটাস সহ)
-            const updatedUser = auth.currentUser;
-
-            if (updatedUser.emailVerified) {
-                // ২. ইউজার ভেরিফাইড হলে লোডিং স্ক্রিন বন্ধ হবে
-                document.getElementById('loading-screen').style.display = 'none';
-                
-                // প্রোফাইল ডাটা দেখানো
-                document.getElementById('u-name').innerText = updatedUser.displayName || "User";
-                document.getElementById('u-email').innerText = updatedUser.email;
-                document.getElementById('u-id').innerText = "#" + updatedUser.uid.slice(-6).toUpperCase();
-
-                // ৩. শুধুমাত্র ভেরিফাইড হলেই ডাটাবেজে ইউজার প্রোফাইল তৈরি হবে
-                const userRef = ref(db, 'users/' + updatedUser.uid);
-                const snapshot = await get(userRef);
-                
-                if (!snapshot.exists()) {
-                    await set(userRef, {
-                        username: updatedUser.displayName || "New User",
-                        email: updatedUser.email,
-                        role: "customer",
-                        verified: true, // ডাটাবেজে স্ট্যাটাস রাখা
-                        joinedAt: serverTimestamp()
-                    });
-                    console.log("Verified User Saved to DB");
+        // ১. সরাসরি ভেরিফিকেশন চেক (পেজ আটকে থাকবে না)
+        if (user.emailVerified) {
+            loadShopData(user);
+        } else {
+            // ২. জিমেইল থেকে ফিরলে স্ট্যাটাস আপডেট হতে ১ সেকেন্ড সময় দিন
+            user.reload().then(() => {
+                if (user.emailVerified) {
+                    loadShopData(user);
+                } else {
+                    alert("আপনার ইমেইল ভেরিফাই করা হয়নি। দয়া করে জিমেইল চেক করুন।");
+                    window.location.href = "index.html";
                 }
-
-                setupSlider();
-                fetchProducts();
-            } else {
-                // ৪. যদি ভেরিফাইড না হয়, তবে ১.৫ সেকেন্ড পর আরেকবার চেক করবে (সরাসরি বের করে দিবে না)
-                setTimeout(async () => {
-                    await user.reload();
-                    if (auth.currentUser.emailVerified) {
-                        window.location.reload(); // ভেরিফাইড হয়ে গেলে পেজ রিলোড হবে
-                    } else {
-                        alert("আপনার ইমেইল ভেরিফাই করা হয়নি। দয়া করে জিমেইল চেক করুন।");
-                        window.location.href = "index.html";
-                    }
-                }, 1500);
-            }
-        } catch (error) {
-            console.error("Auth Error:", error);
+            }).catch(() => {
+                // এরর হলেও লোডিং স্ক্রিন সরিয়ে দিন যাতে ইউজার আটকে না থাকে
+                loadingScreen.style.display = 'none';
+            });
         }
     } else {
         window.location.href = "index.html";
     }
 });
-    
+
+// ৩. ডাটা লোড করার আলাদা ফাংশন (যাতে কোড পরিষ্কার থাকে)
+function loadShopData(user) {
+    document.getElementById('loading-screen').style.display = 'none';
+    document.getElementById('u-name').innerText = user.displayName || "User";
+    document.getElementById('u-email').innerText = user.email;
+    document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
+
+    // ডাটাবেজে ইউজার প্রোফাইল সেভ (ব্যাকগ্রাউন্ডে হবে)
+    const userRef = ref(db, 'users/' + user.uid);
+    get(userRef).then((snapshot) => {
+        if (!snapshot.exists()) {
+            set(userRef, {
+                username: user.displayName || "New User",
+                email: user.email,
+                role: "customer",
+                joinedAt: serverTimestamp()
+            });
+        }
+    });
+
+    setupSlider();
+    fetchProducts();
+    }
+                        
 
     </script>
     
