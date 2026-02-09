@@ -201,27 +201,30 @@
 
     let pArray = [];
 
-    // --- অথেন্টিকেশন এবং অটো-লগইন লজিক ---
+    // --- এডিটেড অথেন্টিকেশন লজিক ---
     onAuthStateChanged(auth, async (user) => {
         const verifyMsg = document.getElementById('verify-msg');
 
         if (user) {
-            // ১. একবার সার্ভার থেকে চেক করা (Reload)
+            // ১. ক্যাশ ক্লিয়ার করে সার্ভার থেকে ফ্রেশ ডাটা আনা
             await reload(user).catch(() => {});
 
-            if (user.emailVerified) {
-                initApp(user);
+            // ২. আপডেট হওয়ার পর পুনরায় চেক
+            if (auth.currentUser.emailVerified) {
+                initApp(auth.currentUser);
             } else {
-                // ভেরিফাইড না হলে মেসেজ দেখানো এবং অটো চেক শুরু
                 verifyMsg.style.display = 'block';
                 
+                // ৩. প্রতি ২ সেকেন্ডে সার্ভার রিলোড করে স্ট্যাটাস চেক করবে
                 const checkInterval = setInterval(async () => {
-                    await reload(user).catch(() => {});
+                    await reload(auth.currentUser).catch(() => {});
+                    
                     if (auth.currentUser.emailVerified) {
                         clearInterval(checkInterval);
-                        initApp(auth.currentUser);
+                        // ৪. ভেরিফাই হওয়া মাত্রই পেজ হার্ড রিফ্রেশ দিবে যাতে প্রোফাইল চলে আসে
+                        window.location.reload(); 
                     }
-                }, 3000); // প্রতি ৩ সেকেন্ডে চেক করবে
+                }, 2000); 
             }
         } else {
             window.location.href = "index.html";
@@ -231,23 +234,22 @@
     async function initApp(user) {
         document.getElementById('loading-screen').style.display = 'none';
         
-        // প্রোফাইল তথ্য
+        // প্রোফাইল তথ্য সেট
         document.getElementById('u-name').innerText = user.displayName || "User";
         document.getElementById('u-email').innerText = user.email;
         document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
 
-        // ডাটাবেজে ইউজার সেভ (যদি না থাকে)
+        // ডাটাবেজে ইউজার ডাটা সিঙ্ক
         const userRef = ref(db, 'users/' + user.uid);
-        get(userRef).then((snap) => {
-            if (!snap.exists()) {
-                set(userRef, {
-                    username: user.displayName || "New User",
-                    email: user.email,
-                    role: "customer",
-                    joinedAt: serverTimestamp()
-                });
-            }
-        });
+        const snap = await get(userRef);
+        if (!snap.exists()) {
+            await set(userRef, {
+                username: user.displayName || "New User",
+                email: user.email,
+                role: "customer",
+                joinedAt: serverTimestamp()
+            });
+        }
 
         setupSlider();
         fetchProducts();
@@ -255,6 +257,7 @@
         setupEvents();
     }
 
+    // --- স্লাইডার, প্রোডাক্ট এবং অন্যান্য ফাংশন অপরিবর্তিত ---
     function setupSlider() {
         const track = document.getElementById('sliderTrack');
         const dots = document.querySelectorAll('.dot');
@@ -326,13 +329,11 @@
     }
 
     function setupEvents() {
-        // সার্চ ফাংশন
         document.getElementById('searchInput').onkeyup = (e) => {
             let v = e.target.value.toLowerCase();
             render(pArray.filter(p => p.name.toLowerCase().includes(v)));
         };
 
-        // ক্যাটাগরি ফিল্টার
         document.querySelectorAll('.cat-item').forEach(item => {
             item.onclick = () => {
                 document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
