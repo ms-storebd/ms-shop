@@ -9,144 +9,63 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        /* --- উন্নত ও প্রফেশনাল পপ-আপ (Modal) ডিজাইন --- */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(7, 11, 20, 0.85); /* ডার্ক গ্লাস এফেক্ট */
-            backdrop-filter: blur(12px);
-            z-index: 10000;
-            align-items: center; justify-content: center;
+        /* --- আগের ইনপুট এবং বাটনগুলো জোর করে হাইড করা --- */
+        #registerForm input, #loginForm input, 
+        #registerForm button:not(.google-btn), 
+        #loginForm button:not(.google-btn),
+        #registerForm h1, #loginForm h1 {
+            display: none !important;
         }
 
-        .modal-content {
-            position: relative;
-            background: linear-gradient(145deg, #111827, #1f2937);
-            padding: 45px 30px;
-            border-radius: 35px;
-            border: 1px solid rgba(0, 210, 255, 0.3);
-            text-align: center;
-            max-width: 420px;
-            width: 90%;
-            box-shadow: 0 25px 60px -15px rgba(0, 0, 0, 0.7);
-            overflow: hidden;
-            animation: modalPopUp 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        @keyframes modalPopUp {
-            0% { opacity: 0; transform: scale(0.8) translateY(40px); }
-            100% { opacity: 1; transform: scale(1) translateY(0); }
-        }
-
-        .modal-glow {
-            position: absolute;
-            top: -50%; left: -50%;
-            width: 200%; height: 200%;
-            background: radial-gradient(circle, rgba(0, 210, 255, 0.08) 0%, transparent 70%);
-            z-index: 1;
-        }
-
-        .modal-body { position: relative; z-index: 2; }
-
-        .icon-box {
-            position: relative;
-            width: 90px; height: 90px;
-            background: rgba(0, 210, 255, 0.1);
-            border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            margin: 0 auto 25px;
-            color: #00d2ff;
-            font-size: 40px;
-            border: 1px solid rgba(0, 210, 255, 0.2);
-        }
-
-        .pulse-ring {
-            position: absolute;
-            width: 100%; height: 100%;
-            border-radius: 50%;
-            border: 2px solid #00d2ff;
-            animation: pulseIcon 2s infinite;
-        }
-
-        @keyframes pulseIcon {
-            0% { transform: scale(1); opacity: 0.5; }
-            100% { transform: scale(1.6); opacity: 0; }
-        }
-
-        .modal-content h2 {
-            color: #fff;
-            font-size: 26px;
-            font-weight: 800;
-            margin-bottom: 12px;
-            letter-spacing: 0.5px;
-        }
-
-        .modal-content p {
-            color: #94a3b8;
-            line-height: 1.6;
-            font-size: 15px;
-            margin-bottom: 35px;
-        }
-
-        .modal-confirm-btn {
-            background: linear-gradient(135deg, #00d2ff 0%, #3a7bd5 100%);
-            color: white;
-            border: none;
-            padding: 16px 30px;
-            border-radius: 18px;
-            font-weight: 700;
-            font-size: 16px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            width: 100%;
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: 0 10px 20px -5px rgba(0, 210, 255, 0.4);
-        }
-
-        /* গুগল বাটনের জন্য বিশেষ স্টাইল */
-        .google-login-center {
-            margin-top: 20px;
-            padding: 18px !important;
-            font-size: 18px !important;
-            border-radius: 20px !important;
-            background: white !important;
-            color: #222 !important;
-            width: 100% !important;
+        /* গুগল বাটনকে সুন্দর ও বড় করে মাঝখানে আনা */
+        .google-btn {
             display: flex !important;
             align-items: center;
             justify-content: center;
-            gap: 15px;
-            border: none;
-            font-weight: 700;
+            gap: 12px;
+            width: 100% !important;
+            padding: 18px !important;
+            margin-top: 20px !important;
+            background: white !important;
+            color: #333 !important;
+            border-radius: 20px !important;
+            border: 1px solid #ddd !important;
+            font-weight: 700 !important;
+            font-size: 16px !important;
             cursor: pointer;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1) !important;
+            transition: 0.3s;
         }
 
-        /* অতিরিক্ত ইমেইল ইনপুট লুকাতে সাহায্য করবে */
-        form input, form button[type="submit"] {
-            display: none !important;
+        .google-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(0,0,0,0.15) !important;
+        }
+
+        /* নতুন ওয়েলকাম টেক্সট যোগ করা */
+        .google-login-box {
+            text-align: center;
+            width: 100%;
+        }
+
+        .welcome-title {
+            display: block !important;
+            font-size: 24px;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 15px;
+        }
+
+        .welcome-desc {
+            display: block !important;
+            color: #64748b;
+            font-size: 14px;
+            margin-bottom: 25px;
+            line-height: 1.5;
         }
     </style>
 </head>
 <body>
-
-    <div id="customModal" class="modal-overlay">
-        <div class="modal-content">
-            <div class="modal-glow"></div>
-            <div class="modal-body">
-                <div class="icon-box">
-                    <i class="fa-solid fa-paper-plane"></i>
-                    <div class="pulse-ring"></div>
-                </div>
-                <h2>Success!</h2>
-                <p id="modalMessage">লগইন সফল হয়েছে। আপনাকে শপে নিয়ে যাওয়া হচ্ছে...</p>
-                <button class="modal-confirm-btn" onclick="closeModal()">
-                    <span>OK</span>
-                </button>
-            </div>
-        </div>
-    </div>
 
     <div class="admin-nav">
         <div class="three-dots-btn" id="menuToggle">
@@ -159,23 +78,21 @@
 
     <div class="container" id="container">
         <div class="form-container sign-up-container">
-            <form>
-                <h1 style="margin-bottom: 20px;">Welcome Friend!</h1>
-                <p style="color: #666; margin-bottom: 30px;">আমাদের প্রিমিয়াম সেবা উপভোগ করতে গুগল দিয়ে জয়েন করুন।</p>
-                <button type="button" class="google-login-center" id="googleSignUpBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28" alt="G"/> 
-                    Google Sign Up
+            <form id="registerForm">
+                <span class="welcome-title">Create Account</span>
+                <span class="welcome-desc">সহজ ও নিরাপদ কেনাকাটার জন্য গুগল দিয়ে অ্যাকাউন্ট তৈরি করুন।</span>
+                <button type="button" class="google-btn" id="googleSignUpBtn">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25" alt="G"/> Google Sign Up
                 </button>
             </form>
         </div>
 
         <div class="form-container sign-in-container">
-            <form>
-                <h1 style="margin-bottom: 20px;">Welcome Back!</h1>
-                <p style="color: #666; margin-bottom: 30px;">দ্রুত লগইন করতে নিচের বাটনটি ব্যবহার করুন।</p>
-                <button type="button" class="google-login-center" id="googleSignInBtn">
-                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28" alt="G"/> 
-                    Google Sign In
+            <form id="loginForm">
+                <span class="welcome-title">Welcome Back</span>
+                <span class="welcome-desc">আবারো আমাদের সাথে যুক্ত হতে গুগল দিয়ে লগইন করুন।</span>
+                <button type="button" class="google-btn" id="googleSignInBtn">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="25" alt="G"/> Google Sign In
                 </button>
             </form>
         </div>
@@ -188,7 +105,7 @@
                         <p class="brand-tagline">Quality You Can Trust</p>
                     </div>
                     <h1>Join Us!</h1>
-                    <p>নতুন অ্যাকাউন্ট তৈরি করতে চান?</p>
+                    <p>আপনার কি এখনো অ্যাকাউন্ট নেই?</p>
                     <button class="hidden" id="loginBtn">Back to Login</button>
                 </div>
                 <div class="toggle-panel toggle-right">
@@ -197,8 +114,8 @@
                         <p class="brand-tagline">Elevate Your Lifestyle</p>
                     </div>
                     <h1>Hello!</h1>
-                    <p>আবারো ফিরে আসার জন্য ধন্যবাদ</p>
-                    <button class="hidden" id="registerBtn">Create Account</button>
+                    <p>আপনার যাত্রা শুরু করতে সাইন-আপ করুন</p>
+                    <button class="hidden" id="registerBtn">Go to Sign Up</button>
                 </div>
             </div>
         </div>
@@ -221,17 +138,12 @@
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        // গুগল লগইন ফাংশন
         const handleGoogleLogin = () => {
             signInWithPopup(auth, provider)
-                .then(() => {
-                    window.location.href = "shop.html";
-                }).catch((error) => {
-                    alert("লগইন ব্যর্থ হয়েছে: " + error.message);
-                });
+                .then(() => window.location.href = "shop.html")
+                .catch((err) => alert("Login Error: " + err.message));
         };
 
-        // বাটন গুলোতে ইভেন্ট সেট করা
         document.getElementById('googleSignInBtn').onclick = handleGoogleLogin;
         document.getElementById('googleSignUpBtn').onclick = handleGoogleLogin;
 
@@ -240,19 +152,10 @@
             if (user) window.location.href = "shop.html";
         });
 
-        // অ্যানিমেশন লজিক (কন্টেইনার স্যুইচ করা)
+        // অ্যানিমেশন স্যুইচ লজিক
         const container = document.getElementById('container');
-        const registerBtn = document.getElementById('registerBtn');
-        const loginBtn = document.getElementById('loginBtn');
-
-        registerBtn.addEventListener('click', () => {
-            container.classList.add("active");
-        });
-
-        loginBtn.addEventListener('click', () => {
-            container.classList.remove("active");
-        });
+        document.getElementById('registerBtn').onclick = () => container.classList.add("active");
+        document.getElementById('loginBtn').onclick = () => container.classList.remove("active");
     </script>
 </body>
-    </html>
-    
+</html>
