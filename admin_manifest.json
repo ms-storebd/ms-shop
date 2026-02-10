@@ -1,0 +1,16 @@
+{
+  "name": "MS Admin Panel",
+  "short_name": "Admin MS",
+  "start_url": "admin_login.html",
+  "display": "standalone",
+  "background_color": "#001a2c",
+  "theme_color": "#00d2ff",
+  "icons": [
+    {
+      "src": "https://img.icons8.com/fluency/144/shield-lock.png", 
+      "sizes": "144x144",
+      "type": "image/png"
+    }
+  ]
+}
+
