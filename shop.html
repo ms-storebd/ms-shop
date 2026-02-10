@@ -295,19 +295,9 @@
                     render(pArray);
                 } else {
                     const filtered = pArray.filter(p => {
-                        const pCat = (p.category || "").toLowerCase();
-                        
-                        // লজিক: মেইন ক্যাটাগরির সাথে সাব-ক্যাটাগরিগুলোকে ম্যাপ করা
-                        if (selectedCat === 'sports') {
-                            return pCat === 'sports' || pCat === 'jersey' || pCat === 'boots' || pCat === 'sports equipment';
-                        }
-                        if (selectedCat === 'electronics') {
-                            return pCat === 'electronics' || pCat === 'device' || pCat === 'mobile accessories' || pCat === 'gadgets' || pCat === 'headphones';
-                        }
-                        if (selectedCat === 'fashion') {
-                            return pCat === 'fashion' || pCat === "men's fashion" || pCat === "women's fashion" || pCat === "shoes";
-                        }
-                        return pCat === selectedCat;
+                        // ডাটাবেসে থাকা ক্যাটাগরিকে ছোট হাতের অক্ষরে কনভার্ট করে ফিল্টার করা হচ্ছে
+                        // যাতে 'Sports' এবং 'sports' এর মধ্যে কোনো পার্থক্য না থাকে।
+                        return p.category && p.category.toLowerCase() === selectedCat;
                     });
                     render(filtered);
                 }
