@@ -9,163 +9,72 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
     
     <style>
-        :root {
-            --deep-sky: #001a2c; /* Deep Sky Blue Dark base */
-            --accent: #00d2ff;
-            --glass: rgba(255, 255, 255, 0.03);
-            --border: rgba(255, 255, 255, 0.1);
-        }
+    /* মাউস ফলোয়ার গ্লো */
+    .cursor-glow {
+        position: fixed;
+        width: 300px;
+        height: 300px;
+        background: radial-gradient(circle, rgba(0, 210, 255, 0.1), transparent 70%);
+        border-radius: 50%;
+        pointer-events: none;
+        z-index: 0;
+        transform: translate(-50%, -50%);
+        transition: 0.1s linear;
+    }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+    /* টেক্সট এনিমেশন - টাইপিং ইফেক্ট বা গ্রেডিয়েন্ট এনিমেশন */
+    .hero-text h1 {
+        background: linear-gradient(90deg, #fff, var(--accent), #fff);
+        background-size: 200% auto;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shine 3s linear infinite;
+    }
 
-        body {
-            font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at top right, #003d5b, #001a2c, #000a12);
-            color: white;
-            min-height: 100vh;
-            overflow-x: hidden;
-        }
+    @keyframes shine {
+        to { background-position: 200% center; }
+    }
 
-        /* --- Header --- */
-        nav {
-            padding: 25px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            position: fixed;
-            width: 100%;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
+    /* শপ স্ট্যাটাস (Trust Builder) */
+    .live-status {
+        margin-top: 15px;
+        font-size: 13px;
+        color: #22c55e;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        justify-content: center;
+        font-weight: 500;
+    }
+    .live-dot {
+        width: 8px;
+        height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        animation: pulse 1.5s infinite;
+    }
+    @keyframes pulse {
+        0% { transform: scale(1); opacity: 1; }
+        100% { transform: scale(2.5); opacity: 0; }
+    }
+</style>
 
-        .logo {
-            font-size: 26px;
-            font-weight: 900;
-            color: var(--accent);
-            letter-spacing: 2px;
-            text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
-        }
+<div class="cursor-glow" id="cursorGlow"></div>
 
-        /* --- Hero Container --- */
-        .hero {
-            padding-top: 120px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-        }
+<div class="live-status">
+    <div class="live-dot"></div>
+    <span>১২ জন এই মুহূর্তে কেনাকাটা করছেন</span>
+</div>
 
-        /* --- ইউনিক স্লাইডার উইন্ডো (Floating Style) --- */
-        .slider-window {
-            width: 90%;
-            max-width: 800px;
-            height: 350px;
-            border-radius: 30px;
-            overflow: hidden;
-            position: relative;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.6);
-            border: 1px solid var(--border);
-            margin-bottom: 40px;
-            background: var(--glass);
-        }
-
-        .swiper { width: 100%; height: 100%; }
-        .swiper-slide img {
-            width: 100%; height: 100%;
-            object-fit: cover;
-            filter: brightness(0.8);
-        }
-
-        .slide-overlay {
-            position: absolute;
-            bottom: 0; left: 0; width: 100%;
-            padding: 40px 20px 20px;
-            background: linear-gradient(transparent, rgba(0,26,44,0.9));
-            text-align: left;
-        }
-
-        .slide-overlay h2 { font-size: 24px; color: var(--accent); }
-
-        /* --- Content Styling --- */
-        .hero-text h1 {
-            font-size: clamp(2rem, 10vw, 4.5rem);
-            font-weight: 900;
-            line-height: 1;
-            margin-bottom: 15px;
-            background: linear-gradient(to bottom, #fff, #888);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-text p {
-            font-size: 1.1rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto 40px;
-            font-weight: 300;
-        }
-
-        /* --- লগইন বাটন --- */
-        .login-section { margin-bottom: 60px; }
-        .google-btn {
-            background: white;
-            color: #001a2c;
-            padding: 18px 45px;
-            border-radius: 100px;
-            font-weight: 700;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-            display: flex; align-items: center; gap: 15px;
-            transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
-            box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2);
-        }
-
-        .google-btn:hover {
-            transform: scale(1.05) translateY(-5px);
-            box-shadow: 0 20px 40px rgba(0, 210, 255, 0.4);
-        }
-
-        /* --- Features Grid --- */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 20px;
-            width: 90%;
-            max-width: 900px;
-            margin-bottom: 50px;
-        }
-
-        .f-card {
-            background: var(--glass);
-            padding: 30px 20px;
-            border-radius: 24px;
-            border: 1px solid var(--border);
-            transition: 0.4s;
-        }
-
-        .f-card:hover { background: rgba(255,255,255,0.07); transform: translateY(-10px); }
-        .f-card i { font-size: 1.8rem; color: var(--accent); margin-bottom: 15px; display: block; }
-        .f-card h3 { font-size: 0.85rem; letter-spacing: 1px; font-weight: 600; }
-
-        /* --- Admin UI --- */
-        .three-dots-btn { width: 45px; height: 45px; background: var(--glass); display: grid; place-items: center; border-radius: 15px; cursor: pointer; border: 1px solid var(--border); }
-        .admin-dropdown {
-            display: none; position: absolute; right: 5%; top: 90px;
-            background: #001a2c; border: 1px solid var(--border);
-            width: 200px; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 40px rgba(0,0,0,0.5);
-        }
-        .admin-dropdown a { display: block; padding: 15px 20px; color: white; text-decoration: none; font-size: 14px; transition: 0.3s; }
-        .admin-dropdown a:hover { background: var(--accent); color: black; }
-        .admin-dropdown.show { display: block; animation: slideDown 0.3s ease; }
-
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media (max-width: 768px) {
-            .features-grid { grid-template-columns: 1fr; }
-            .slider-window { height: 250px; }
-        }
-    </style>
+<script>
+    // মাউস গ্লো লজিক
+    const glow = document.getElementById('cursorGlow');
+    document.addEventListener('mousemove', (e) => {
+        glow.style.left = e.clientX + 'px';
+        glow.style.top = e.clientY + 'px';
+    });
+</script>
+    
 </head>
 <body>
 
