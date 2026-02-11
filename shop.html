@@ -213,8 +213,9 @@
                 let html = '';
                 const bannerKeys = ['banner1', 'banner2', 'banner3'];
                 bannerKeys.forEach(key => {
-                    const b = data[key] || { img: 'https://via.placeholder.com/800x400', link: '#' };
-                    html += `<div class="slide" onclick="if('${b.link}'!=='#') window.location.href='${b.link}'"><img src="${b.img}"></div>`;
+                    if(data[key]) {
+                        html += `<div class="slide" onclick="window.location.href='${data[key].link || '#'}'"><img src="${data[key].img}"></div>`;
+                    }
                 });
                 track.innerHTML = html;
             }
@@ -226,7 +227,10 @@
                 current = (current + 1) % slides.length;
                 track.style.transform = `translateX(-${current * 33.333}%)`;
                 const dots = dotsContainer.querySelectorAll('.dot');
-                dots.forEach((d, i) => d.classList.toggle('active', i === current));
+                if(dots[current]) {
+                    dots.forEach(d => d.classList.remove('active'));
+                    dots[current].classList.add('active');
+                }
             }
         }, 4000);
     }
@@ -247,6 +251,10 @@
 
     function render(data) {
         const list = document.getElementById('p-list');
+        if (data.length === 0) {
+            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 20px; color: #94a3b8;">এই ক্যাটাগরিতে কোনো পণ্য নেই।</div>`;
+            return;
+        }
         list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
                 ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
@@ -263,15 +271,17 @@
         const trigger = document.getElementById('profileTrigger');
         trigger.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
         document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
-        document.getElementById('logoutBtn').onclick = () => signOut(auth);
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.href="index.html");
     }
 
     function setupEvents() {
+        // সার্চ ফাংশন
         document.getElementById('searchInput').oninput = (e) => {
             let v = e.target.value.toLowerCase();
             render(pArray.filter(p => p.name.toLowerCase().includes(v)));
         };
 
+        // ক্যাটাগরি ফিল্টার - এইখানে পরিবর্তন করা হয়েছে
         document.querySelectorAll('.cat-item').forEach(item => {
             item.onclick = () => {
                 document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
@@ -283,11 +293,12 @@
                     render(pArray);
                 } else {
                     const filtered = pArray.filter(p => {
-                        // ডাটাবেস থেকে আসা ডাটা যাতে ভুল না হয় তাই একাধিক নাম চেক করা হচ্ছে
-                        const pCat = (p.category || p.Category || p.cat || "").toLowerCase();
-                        const pSubCat = (p.subCategory || p.SubCategory || "").toLowerCase();
+                        // ডাটাবেসের ক্যাটাগরি এবং সাব-ক্যাটাগরি উভয়ই চেক করবে
+                        // trims() ব্যবহার করা হয়েছে যাতে কোনো স্পেস থাকলেও সমস্যা না হয়
+                        const mainCat = (p.category || "").toString().toLowerCase().trim();
+                        const subCat = (p.subCategory || "").toString().toLowerCase().trim();
                         
-                        return pCat === selectedCat || pSubCat === selectedCat;
+                        return mainCat === selectedCat || subCat === selectedCat;
                     });
                     render(filtered);
                 }
@@ -295,5 +306,6 @@
         });
     }
 </script>
+    
 </body>
 </html>
