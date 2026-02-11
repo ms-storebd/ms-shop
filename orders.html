@@ -2,194 +2,296 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Management - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>MS STORE - Home</title>
+
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        :root { 
-            --primary: #00d2ff; --dark: #0f172a; --pending: #f1c40f; 
-            --shipped: #3498db; --delivered: #2ecc71; --danger: #e74c3c; --bg: #f8fafc;
+        :root {
+            --primary: #00d2ff;
+            --secondary: #3a7bd5;
+            --dark: #0f172a;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
         }
-        body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #334155; }
-        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; background: white; padding: 18px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
-        .search-box { display: flex; align-items: center; background: white; padding: 12px 18px; border-radius: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 20px; border: 1px solid #e2e8f0; }
-        .search-box input { border: none; outline: none; width: 100%; margin-left: 10px; font-size: 14px; background: transparent; }
-        .tab-menu { display: flex; background: #e2e8f0; border-radius: 14px; padding: 4px; gap: 4px; margin-bottom: 20px; }
-        .tab { flex: 1; text-align: center; padding: 10px 5px; cursor: pointer; border-radius: 10px; font-size: 12px; font-weight: 600; color: #64748b; }
-        .tab.active { background: white; color: var(--dark); box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        .order-card { background: white; border-radius: 20px; padding: 20px; margin-bottom: 20px; border: 1px solid #e2e8f0; position: relative; border-left: 5px solid var(--status-color, #ccc); }
-        .card-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
-        .order-id { font-size: 11px; font-weight: 700; color: #94a3b8; }
-        .status-pill { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: 700; text-transform: uppercase; background: #f1f5f9; }
-        .p-name { font-size: 17px; font-weight: 600; color: var(--dark); margin: 0 0 5px 0; }
-        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; padding: 15px 0; border-top: 1px solid #f1f5f9; }
-        .info-item { font-size: 13px; color: #475569; display: flex; align-items: center; gap: 8px; }
-        .address-section { background: #f8fafc; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; }
-        .trx-bar { display: flex; align-items: center; justify-content: space-between; background: #f0f9ff; padding: 12px 15px; border-radius: 12px; margin-bottom: 15px; font-size: 13px; cursor: pointer; }
-        .total-section { display: flex; justify-content: space-between; padding-top: 15px; border-top: 1px dashed #e2e8f0; }
-        .amount { font-size: 18px; font-weight: 700; }
-        .s-btns { display: grid; grid-template-columns: repeat(4, 1fr); gap: 5px; margin-top: 15px; }
-        .s-btn { padding: 8px 2px; border-radius: 8px; border: 1px solid #ddd; background: white; font-size: 10px; font-weight: bold; cursor: pointer; }
-        .s-btn.active-Pending { background: var(--pending); color: white; }
-        .s-btn.active-Shipped { background: var(--shipped); color: white; }
-        .s-btn.active-Delivered { background: var(--delivered); color: white; }
-        .s-btn.active-Cancelled { background: var(--danger); color: white; }
-        .toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 10px 24px; border-radius: 30px; display: none; z-index: 9999; }
-        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 9999; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: #0f172a; color: white; min-height: 100vh; overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
+        
+        header { 
+            background: rgba(15, 23, 42, 0.98); 
+            backdrop-filter: blur(15px); 
+            padding: 12px 15px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 12px;
+            position: sticky; 
+            top: 0; 
+            z-index: 5000; 
+            border-bottom: 1px solid var(--border); 
+            box-sizing: border-box;
+        }
+
+        .header-top { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .logo { font-size: 22px; font-weight: bold; color: var(--primary); letter-spacing: 1px; }
+        .search-container { width: 100%; }
+        .search-box { position: relative; width: 100%; }
+        .search-box input { 
+            width: 100%; padding: 10px 40px 10px 15px; border-radius: 12px; 
+            border: 1px solid var(--border); background: var(--glass); 
+            color: white; font-size: 14px; outline: none; box-sizing: border-box; transition: 0.3s;
+        }
+        .search-box input:focus { border-color: var(--primary); background: rgba(255,255,255,0.08); }
+        .search-box i { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--primary); }
+        .profile-btn { font-size: 32px; cursor: pointer; color: var(--primary); background: none; border: none; padding: 0; display: flex; align-items: center; }
+
+        .slider-wrapper { padding: 15px 15px 5px 15px; }
+        .slider-container {
+            width: 100%; height: 180px; border-radius: 15px;
+            overflow: hidden; position: relative; background: var(--glass);
+            border: 1px solid var(--border); touch-action: pan-y;
+        }
+        .slider-track {
+            display: flex; width: 300%; height: 100%;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            will-change: transform;
+        }
+        .slide { width: 33.333%; height: 100%; cursor: pointer; flex-shrink: 0; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
+        
+        .dots {
+            position: absolute; bottom: 12px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 8px; pointer-events: none;
+        }
+        .dot { width: 8px; height: 8px; background: rgba(255,255,255,0.3); border-radius: 50%; transition: 0.3s; }
+        .dot.active { background: var(--primary); width: 20px; border-radius: 4px; }
+
+        .profile-menu { 
+            display: none; position: fixed; top: 70px; right: 15px; 
+            width: 260px; background: #1e293b; border-radius: 20px; 
+            padding: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); 
+            z-index: 6000; border: 1px solid var(--border); 
+        }
+        .profile-menu.show { display: block; animation: slideIn 0.3s ease; }
+
+        .id-box { background: rgba(0, 210, 255, 0.1); border: 1px dashed var(--primary); padding: 12px; border-radius: 12px; text-align: center; margin-bottom: 15px; cursor: pointer; }
+        .user-data { background:rgba(0,0,0,0.2); padding:8px; border-radius:8px; margin-bottom:10px; font-size: 13px; word-wrap: break-word; }
+
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; margin-top: 5px; }
+        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
+        .cat-item i { font-size: 20px; color: var(--primary); margin-bottom: 5px; display: block; }
+        .cat-item span { font-size: 11px; font-weight: 500; color: #cbd5e1; }
+        .cat-item.active { background: var(--primary); border-color: var(--primary); }
+        .cat-item.active i, .cat-item.active span { color: #0f172a; }
+
+        .container { padding: 0 15px 15px 15px; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
+        .p-card { background: var(--glass); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; cursor: pointer; position: relative; transition: 0.3s; }
+        .p-card img { width: 100%; height: 130px; object-fit: cover; }
+        .p-info { padding: 10px; }
+        .p-name { font-size: 13px; font-weight: 600; color: #f1f5f9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .p-price { color: var(--primary); font-weight: bold; font-size: 15px; margin-top: 4px; }
+        .sold-badge { position: absolute; top: 8px; left: 8px; background: #ef4444; color: white; font-size: 10px; padding: 2px 8px; border-radius: 6px; font-weight: bold; z-index: 10; }
+
+        .whatsapp-helpline {
+            position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white;
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 32px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); z-index: 9999; text-decoration: none; animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(37, 211, 102, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+        }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
-    <div id="loading-screen"><p>নিরাপত্তা যাচাই করা হচ্ছে...</p></div>
-    <div class="toast" id="copyToast">কপি করা হয়েছে!</div>
+<div id="loading-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--primary); font-weight: bold; font-size: 20px;">
+    MS STORE
+</div>
 
-    <div class="header">
-        <button onclick="location.href='admin_dashboard.html'" style="border:none; background:none; font-size:20px; cursor:pointer;"><i class="fa fa-arrow-left"></i></button>
-        <h2 style="margin:0; font-size:18px;">অর্ডার ম্যানেজমেন্ট</h2>
+<header>
+    <div class="header-top">
+        <div class="logo">MS STORE</div> 
+        <button class="profile-btn" id="profileTrigger"><i class="fa fa-user-circle"></i></button>
     </div>
-
-    <div class="search-box">
-        <i class="fa fa-search"></i>
-        <input type="text" id="orderSearch" placeholder="আইডি বা নাম দিয়ে খুঁজুন..." onkeyup="handleSearch()">
+    <div class="search-container">
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন...">
+            <i class="fa fa-search"></i>
+        </div>
     </div>
+</header>
 
-    <div class="tab-menu">
-        <div class="tab active" onclick="switchTab('Pending', this)">পেন্ডিং</div>
-        <div class="tab" onclick="switchTab('Shipped', this)">শিফট</div>
-        <div class="tab" onclick="switchTab('Delivered', this)">ডেলিভারি</div>
-        <div class="tab" onclick="switchTab('Cancelled', this)">ক্যানসেল</div>
+<a href="https://wa.me/8801319474450" class="whatsapp-helpline" target="_blank"><i class="fab fa-whatsapp"></i></a>
+
+<div class="slider-wrapper">
+    <div class="slider-container">
+        <div class="slider-track" id="sliderTrack"></div>
+        <div class="dots" id="sliderDots">
+            <div class="dot active"></div>
+            <div class="dot"></div>
+            <div class="dot"></div>
+        </div>
     </div>
+</div>
 
-    <div id="orders-list">অর্ডার লোড হচ্ছে...</div>
+<div class="profile-menu" id="profileMenu">
+    <h3 style="margin:0 0 15px 0; color:var(--primary); text-align: center;">My Profile</h3>
+    <div class="id-box" id="copyIdBtn"><div id="u-id" style="font-size: 18px; font-weight: bold;">#------</div></div>
+    <div class="user-data" id="u-name">Loading...</div>
+    <div class="user-data" id="u-email">...</div>
+    <button style="width:100%; margin-top:20px; padding:12px; background:var(--primary); border:none; border-radius:12px; font-weight:bold;" onclick="location.href='my_orders.html'">My Orders</button>
+    <button style="width:100%; margin-top:10px; padding:10px; background:#e74c3c; border:none; border-radius:12px; color:white;" id="logoutBtn">Logout</button>
+</div>
+
+<div class="cat-grid">
+    <div class="cat-item active" data-cat="all"><i class="fa fa-th-large"></i><span>ALL</span></div>
+    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
+    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
+    <div class="cat-item" data-cat="fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
+</div>
+
+<div class="container">
+    <div class="product-grid" id="p-list"></div>
+</div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getDatabase, ref, onValue, get, set, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
         authDomain: "ms-sp-97f78.firebaseapp.com",
         databaseURL: "https://ms-sp-97f78-default-rtdb.firebaseio.com",
         projectId: "ms-sp-97f78",
+        storageBucket: "ms-sp-97f78.appspot.com",
         appId: "1:880638162029:web:b99af5b5518b3e16a13b64"
     };
 
     const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
     const auth = getAuth(app);
+    const db = getDatabase(app);
 
-    let currentTab = 'Pending';
-    let allOrders = {};
+    let pArray = [];
 
-    // গ্লোবাল অটো-লগইন চেক
-    onAuthStateChanged(auth, (user) => {
-        if (user && user.email === 'tasnimtonni426@gmail.com') {
-            document.getElementById('loading-screen').style.display = "none";
-            loadOrders();
+    onAuthStateChanged(auth, async (user) => {
+        if (user) {
+            document.getElementById('loading-screen').style.display = 'none';
+            initApp(user);
         } else {
-            // যদি লগইন না থাকে, তবে লগইন পেজে পাঠিয়ে দেবে
-            window.location.href = "login.html";
+            window.location.href = "index.html";
         }
     });
 
-    function loadOrders() {
-        onValue(ref(db, 'orders'), (snapshot) => {
-            allOrders = snapshot.exists() ? snapshot.val() : {};
-            renderOrders();
-        });
-    }
+    async function initApp(user) {
+        document.getElementById('u-name').innerText = user.displayName || "Google User";
+        document.getElementById('u-email').innerText = user.email;
+        document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
 
-    window.switchTab = (status, el) => {
-        currentTab = status;
-        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-        el.classList.add('active');
-        renderOrders();
-    };
-
-    window.handleSearch = () => {
-        const q = document.getElementById('orderSearch').value.toUpperCase();
-        renderOrders(q);
-    };
-
-    window.copyText = (text) => {
-        if(!text) return;
-        navigator.clipboard.writeText(text).then(() => {
-            const toast = document.getElementById('copyToast');
-            toast.style.display = 'block';
-            setTimeout(() => { toast.style.display = 'none'; }, 2000);
-        });
-    };
-
-    function renderOrders(filter = "") {
-        const list = document.getElementById('orders-list');
-        list.innerHTML = "";
-        let count = 0;
-
-        Object.keys(allOrders).reverse().forEach(id => {
-            const o = allOrders[id];
-            const userName = (o.userName || "").toUpperCase();
-            const orderIdShort = id.slice(-6).toUpperCase();
-            
-            if (o.status === currentTab || filter !== "") {
-                if (userName.includes(filter) || orderIdShort.includes(filter)) {
-                    count++;
-                    list.appendChild(createOrderCard(id, o));
-                }
+        const userRef = ref(db, 'users/' + user.uid);
+        get(userRef).then((snap) => {
+            if (!snap.exists()) {
+                set(userRef, {
+                    username: user.displayName || "Google User",
+                    email: user.email,
+                    role: "customer",
+                    joinedAt: serverTimestamp()
+                });
             }
         });
-        if (count === 0) list.innerHTML = `<div style="text-align:center; padding:50px; color:#94a3b8;">কোনো অর্ডার পাওয়া যায়নি</div>`;
+
+        setupSlider();
+        fetchProducts();
+        setupProfileMenu();
+        setupEvents();
     }
 
-    function createOrderCard(id, o) {
-        const card = document.createElement('div');
-        card.className = 'order-card';
-        const color = getCol(o.status);
-        card.style.setProperty('--status-color', color);
-        
-        card.innerHTML = `
-            <div class="card-top">
-                <span class="order-id">ID: #${id.slice(-6).toUpperCase()}</span>
-                <span class="status-pill" style="color:${color}">${o.status}</span>
-            </div>
-            <h3 class="p-name">${o.productName || 'লোড হচ্ছে...'}</h3>
-            <span style="font-size:12px; color:var(--primary); font-weight:600;">Size: ${o.productSize || 'N/A'}</span>
-            <div class="info-grid">
-                <div class="info-item"><i class="fa fa-user"></i> ${o.userName || 'N/A'}</div>
-                <div class="info-item" onclick="copyText('${o.userPhone}')" style="font-weight:bold; color:var(--dark);">
-                    <i class="fa fa-phone"></i> ${o.userPhone || 'N/A'}
+    function setupSlider() {
+        const track = document.getElementById('sliderTrack');
+        const dots = document.querySelectorAll('.dot');
+        let current = 0;
+
+        onValue(ref(db, 'banners'), (snap) => {
+            if (snap.exists()) {
+                const data = snap.val();
+                let html = '';
+                for (let i = 1; i <= 3; i++) {
+                    const b = data[`banner${i}`] || { img: 'https://via.placeholder.com/800x400', link: '#' };
+                    html += `<div class="slide" onclick="if('${b.link}'!=='#') window.location.href='${b.link}'"><img src="${b.img}"></div>`;
+                }
+                track.innerHTML = html;
+            }
+        });
+
+        setInterval(() => {
+            current = (current + 1) % 3;
+            track.style.transform = `translateX(-${current * 33.333}%)`;
+            dots.forEach((d, i) => d.classList.toggle('active', i === current));
+        }, 4000);
+    }
+
+    function fetchProducts() {
+        onValue(ref(db, 'products'), (snap) => {
+            pArray = [];
+            if(snap.exists()){
+                snap.forEach(child => {
+                    let d = child.val();
+                    d.id = child.key;
+                    pArray.push(d);
+                });
+                render(pArray);
+            }
+        });
+    }
+
+    function render(data) {
+        const list = document.getElementById('p-list');
+        list.innerHTML = data.map(p => `
+            <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
+                ${p.stock <= 0 ? '<div class="sold-badge">Sold Out</div>' : ''}
+                <img src="${p.img}" loading="lazy">
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price} ৳</div>
                 </div>
-            </div>
-            <div class="address-section">
-                <div style="font-size:13px; line-height:1.5;"><b>ঠিকানা:</b> ${o.address || 'N/A'}, ${o.area || ''}, ${o.district || ''}</div>
-            </div>
-            <div class="trx-bar" onclick="copyText('${o.trxID}')">
-                <span><b>${o.paymentMethod || 'Pay'}:</b> ${o.trxID || 'N/A'}</span>
-                <i class="fa fa-copy"></i>
-            </div>
-            <div class="total-section">
-                <span style="color:#94a3b8; font-size:13px;">Total Amount:</span>
-                <span class="amount">${o.totalAmount || o.price || 0} ৳</span>
-            </div>
-            <div class="s-btns">
-                <button class="s-btn ${o.status==='Pending'?'active-Pending':''}" onclick="updateStatus('${id}','Pending')">Pending</button>
-                <button class="s-btn ${o.status==='Shipped'?'active-Shipped':''}" onclick="updateStatus('${id}','Shipped')">Shipped</button>
-                <button class="s-btn ${o.status==='Delivered'?'active-Delivered':''}" onclick="updateStatus('${id}','Delivered')">Delivered</button>
-                <button class="s-btn ${o.status==='Cancelled'?'active-Cancelled':''}" onclick="updateStatus('${id}','Cancelled')">Cancel</button>
-            </div>
-        `;
-        return card;
+            </div>`).join('');
     }
 
-    window.updateStatus = (id, s) => { 
-        update(ref(db, 'orders/' + id), { status: s });
-    };
-    
-    function getCol(s) { 
-        if(s==='Pending') return '#f1c40f';
-        if(s==='Shipped') return '#3498db';
-        if(s==='Delivered') return '#2ecc71';
-        return '#e74c3c';
+    function setupProfileMenu() {
+        const menu = document.getElementById('profileMenu');
+        const trigger = document.getElementById('profileTrigger');
+        
+        trigger.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+        document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
+
+        document.getElementById('logoutBtn').onclick = () => signOut(auth).then(() => location.href="index.html");
+        document.getElementById('copyIdBtn').onclick = () => {
+            navigator.clipboard.writeText(document.getElementById('u-id').innerText).then(() => alert("ID Copied!"));
+        };
+    }
+
+    function setupEvents() {
+        document.getElementById('searchInput').oninput = (e) => {
+            let v = e.target.value.toLowerCase();
+            render(pArray.filter(p => p.name.toLowerCase().includes(v)));
+        };
+
+        document.querySelectorAll('.cat-item').forEach(item => {
+            item.onclick = () => {
+                document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                const cat = item.getAttribute('data-cat');
+                render(cat === 'all' ? pArray : pArray.filter(p => p.category?.toLowerCase() === cat));
+            }
+        });
     }
 </script>
 </body>
