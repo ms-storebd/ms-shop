@@ -32,32 +32,27 @@
         .slide { width: 33.333%; height: 100%; flex-shrink: 0; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* মেইন ক্যাটাগরি গ্রিড - যা আপনি চেয়েছিলেন */
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
         .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
         .cat-item.active { background: var(--primary); color: #0f172a; border-color: var(--primary); }
         .cat-item i { font-size: 20px; display: block; margin-bottom: 5px; }
         .cat-item span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 
-        /* সাব-ক্যাটাগরি বাটন ডিজাইন */
+        /* সাব-ক্যাটাগরি বাটন ডিজাইন - এটি মেইন ক্যাটাগরির নিচে শো করবে */
         #sub-cat-container { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
-        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
+        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; }
         .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 210, 255, 0.1); }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 15px; }
-        .p-card { background: var(--glass); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; position: relative; }
+        .p-card { background: var(--glass); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
         .p-card img { width: 100%; height: 120px; object-fit: cover; }
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
         .p-price { color: var(--primary); font-weight: bold; margin-top: 5px; }
 
-        /* প্রোফাইল মেনু */
         .profile-menu { display: none; position: fixed; top: 70px; right: 15px; width: 260px; background: #1e293b; border-radius: 20px; padding: 20px; z-index: 6000; border: 1px solid var(--border); }
         .profile-menu.show { display: block; }
-
-        /* হোয়াটসঅ্যাপ হেল্পলাইন */
         .whatsapp-helpline { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 9999; }
-
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; }
     </style>
 </head>
@@ -71,8 +66,7 @@
         <button class="profile-btn" id="profileTrigger"><i class="fa fa-user-circle"></i></button>
     </div>
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন...">
-        <i class="fa fa-search" style="position:absolute; right:15px; top:12px; color:var(--primary);"></i>
+        <input type="text" id="searchInput" placeholder="Search products...">
     </div>
 </header>
 
@@ -92,8 +86,7 @@
 <div class="product-grid" id="p-list"></div>
 
 <div class="profile-menu" id="profileMenu">
-    <div id="u-name" style="font-weight: bold; margin-bottom: 5px;">User</div>
-    <div id="u-email" style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">Email</div>
+    <div id="u-name" style="font-weight: bold; margin-bottom: 10px;">User</div>
     <button id="logoutBtn" style="width:100%; padding:10px; background:#ef4444; border:none; color:white; border-radius:10px; cursor:pointer;">Logout</button>
 </div>
 
@@ -122,20 +115,16 @@
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('u-name').innerText = user.displayName || "User";
-            document.getElementById('u-email').innerText = user.email;
             fetchProducts();
             fetchBanners();
-        } else {
-            window.location.href = "index.html";
-        }
+        } else { window.location.href = "index.html"; }
     });
 
     function fetchBanners() {
         onValue(ref(db, 'banners'), (snap) => {
             if (snap.exists()) {
                 const d = snap.val();
-                const track = document.getElementById('sliderTrack');
-                track.innerHTML = ['banner1', 'banner2', 'banner3'].map(k => d[k] ? `<div class="slide"><img src="${d[k].img}"></div>` : '').join('');
+                document.getElementById('sliderTrack').innerHTML = ['banner1', 'banner2', 'banner3'].map(k => d[k] ? `<div class="slide"><img src="${d[k].img}"></div>` : '').join('');
             }
         });
     }
@@ -155,33 +144,30 @@
     function render(data) {
         const list = document.getElementById('p-list');
         if (data.length === 0) {
-            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;">No Products Found!</div>`;
+            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">কোনো পণ্য পাওয়া যায়নি।</div>`;
             return;
         }
         list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
                 <img src="${p.img}">
-                <div class="p-info">
-                    <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price} ৳</div>
-                </div>
+                <div class="p-info"><div class="p-name">${p.name}</div><div class="p-price">${p.price} ৳</div></div>
             </div>`).join('');
     }
 
-    // ১০০% সমাধান লজিক: মেইন এবং সাব-ক্যাটাগরি লিঙ্ক
+    // ১০০% সলিউশন লজিক: মেইন এবং সাব-ক্যাটাগরি লিঙ্ক করা
     document.querySelectorAll('.cat-item').forEach(item => {
         item.onclick = () => {
             document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
             
-            const selectedMain = item.getAttribute('data-cat').toLowerCase();
+            const selectedMain = item.getAttribute('data-cat').toLowerCase().trim();
             const subBox = document.getElementById('sub-cat-container');
             subBox.innerHTML = ""; 
 
             if (selectedMain === 'all') {
                 render(pArray);
             } else {
-                // মেইন ক্যাটাগরি ফিল্টার: ডাটাবেসের category/Category/cat সব চেক করবে
+                // স্মার্ট ফিল্টার: যা ছোট/বড় হাতের অক্ষর এবং স্পেসের ভুল ধরবে না
                 const filtered = pArray.filter(p => {
                     const dbCat = (p.category || p.Category || p.cat || "").toString().toLowerCase().trim();
                     return dbCat === selectedMain;
@@ -189,9 +175,8 @@
 
                 render(filtered);
 
-                // মেইন ক্যাটাগরির ভেতর থেকে সাব-ক্যাটাগরি খুঁজে বাটন বানানো
+                // সাব-ক্যাটাগরি বাটন তৈরি
                 const subCats = [...new Set(filtered.map(p => p.subCategory || p.subcat || p.Sub).filter(s => s))];
-                
                 subCats.forEach(scName => {
                     const btn = document.createElement('div');
                     btn.className = 'sub-cat-btn';
@@ -199,11 +184,8 @@
                     btn.onclick = () => {
                         document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
-                        // সাব-ক্যাটাগরি অনুযায়ী আবার ফিল্টার
-                        const finalData = filtered.filter(p => 
-                            (p.subCategory || p.subcat || p.Sub) === scName
-                        );
-                        render(finalData);
+                        const final = filtered.filter(p => (p.subCategory || p.subcat || p.Sub) === scName);
+                        render(final);
                     };
                     subBox.appendChild(btn);
                 });
@@ -211,16 +193,14 @@
         };
     });
 
-    // সার্চ লজিক
     document.getElementById('searchInput').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         render(pArray.filter(p => p.name.toLowerCase().includes(val)));
     };
 
-    // প্রোফাইল কন্ট্রোল
-    const pMenu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); pMenu.classList.toggle('show'); };
-    document.onclick = () => pMenu.classList.remove('show');
+    const menu = document.getElementById('profileMenu');
+    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
+    document.onclick = () => menu.classList.remove('show');
     document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
 </script>
