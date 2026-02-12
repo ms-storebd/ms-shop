@@ -4,43 +4,61 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>MS STORE - Final Fix</title>
+
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
         :root { --primary: #00d2ff; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
-        body { font-family: 'Poppins', sans-serif; margin: 0; background: #0f172a; color: white; }
-        header { background: rgba(15, 23, 42, 0.98); padding: 15px; border-bottom: 1px solid var(--border); }
-        .search-box input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--glass); color: white; box-sizing: border-box; }
+        body { font-family: 'Poppins', sans-serif; margin: 0; background: #0f172a; color: white; min-height: 100vh; }
         
-        /* মেইন ক্যাটাগরি বাটন স্টাইল */
-        .cat-grid { display: flex; gap: 10px; padding: 15px; overflow-x: auto; scrollbar-width: none; }
-        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 10px 20px; text-align: center; cursor: pointer; white-space: nowrap; transition: 0.3s; }
-        .cat-item.active { background: var(--primary); color: #0f172a; font-weight: bold; }
+        header { background: rgba(15, 23, 42, 0.98); padding: 15px; position: sticky; top: 0; z-index: 5000; border-bottom: 1px solid var(--border); }
+        .search-box input { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid var(--border); background: var(--glass); color: white; box-sizing: border-box; outline: none; }
+
+        .slider-container { width: 92%; height: 160px; margin: 15px auto; border-radius: 15px; overflow: hidden; position: relative; border: 1px solid var(--border); }
+        .slider-track { display: flex; width: 300%; height: 100%; transition: transform 0.5s ease; }
+        .slide { width: 33.333%; height: 100%; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+
+        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
+        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 10px 5px; text-align: center; cursor: pointer; transition: 0.3s; color: #cbd5e1; }
+        .cat-item.active { background: var(--primary); color: #0f172a; border-color: var(--primary); font-weight: bold; }
+        .cat-item i { font-size: 20px; display: block; margin-bottom: 5px; }
+        .cat-item span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 
         /* সাব-ক্যাটাগরি বাটন স্টাইল */
         #sub-cat-container { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
-        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; }
-        .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); }
+        #sub-cat-container::-webkit-scrollbar { display: none; }
+        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
+        .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 210, 255, 0.1); }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 15px; }
-        .p-card { background: var(--glass); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; }
+        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 0 15px 15px 15px; }
+        .p-card { background: var(--glass); border-radius: 15px; border: 1px solid var(--border); overflow: hidden; animation: fadeIn 0.5s ease; }
         .p-card img { width: 100%; height: 120px; object-fit: cover; }
         .p-info { padding: 10px; }
         .p-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-price { color: var(--primary); font-weight: bold; margin-top: 5px; }
+        .p-price { color: var(--primary); font-weight: bold; margin-top: 5px; display: block; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
 <header>
     <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Search products...">
+        <input type="text" id="searchInput" placeholder="পছন্দের পণ্যটি খুঁজুন...">
     </div>
 </header>
 
-<div class="cat-grid" id="main-cat-box">
-    <div class="cat-item active" onclick="filterMain('all', this)">ALL</div>
+<div class="slider-container">
+    <div class="slider-track" id="sliderTrack"></div>
+</div>
+
+<div class="cat-grid">
+    <div class="cat-item active" data-cat="all"><i class="fa fa-th-large"></i><span>ALL</span></div>
+    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
+    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
+    <div class="cat-item" data-cat="fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
 </div>
 
 <div id="sub-cat-container"></div>
@@ -64,7 +82,7 @@
     const db = getDatabase(app);
     let pArray = [];
 
-    // ১. প্রোডাক্ট লোড এবং অটো ক্যাটাগরি তৈরি
+    // পণ্য ডাটা ফেচ করা
     onValue(ref(db, 'products'), (snap) => {
         pArray = [];
         if(snap.exists()){
@@ -73,71 +91,83 @@
                 d.id = child.key;
                 pArray.push(d);
             });
-            generateCategories(); // ডাটাবেস থেকে ক্যাটাগরি বাটন তৈরি
             render(pArray);
         }
     });
 
-    function generateCategories() {
-        const catBox = document.getElementById('main-cat-box');
-        // ডাটাবেসে থাকা সকল ক্যাটাগরি খুঁজে বের করা
-        const categories = [...new Set(pArray.map(p => (p.category || p.Category || p.cat || "Unknown").trim()))];
-        
-        let html = '<div class="cat-item active" onclick="window.filterMain(\'all\', this)">ALL</div>';
-        categories.forEach(cat => {
-            html += `<div class="cat-item" onclick="window.filterMain('${cat}', this)">${cat.toUpperCase()}</div>`;
-        });
-        catBox.innerHTML = html;
-    }
-
-    window.filterMain = function(selectedCat, element) {
-        // UI Update
-        document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
-        element.classList.add('active');
-        
-        const subBox = document.getElementById('sub-cat-container');
-        subBox.innerHTML = ""; 
-
-        if (selectedCat === 'all') {
-            render(pArray);
-        } else {
-            // মেইন ফিল্টার
-            const filtered = pArray.filter(p => (p.category || p.Category || p.cat || "").trim() === selectedCat);
-            render(filtered);
-
-            // সাব-ক্যাটাগরি বাটন তৈরি
-            const subCats = [...new Set(filtered.map(p => p.subCategory || p.subcat || "").filter(s => s))];
-            subCats.forEach(sc => {
-                const btn = document.createElement('div');
-                btn.className = 'sub-cat-btn';
-                btn.innerText = sc;
-                btn.onclick = () => {
-                    document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
-                    btn.classList.add('active');
-                    const final = filtered.filter(p => (p.subCategory || p.subcat) === sc);
-                    render(final);
-                };
-                subBox.appendChild(btn);
-            });
+    // স্লাইডার
+    onValue(ref(db, 'banners'), (snap) => {
+        if (snap.exists()) {
+            const d = snap.val();
+            const track = document.getElementById('sliderTrack');
+            track.innerHTML = ['banner1', 'banner2', 'banner3'].map(k => d[k] ? `<div class="slide"><img src="${d[k].img}"></div>` : '').join('');
         }
-    }
+    });
 
     function render(data) {
         const list = document.getElementById('p-list');
         if (data.length === 0) {
-            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px;">No products found!</div>`;
+            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 50px; color: #94a3b8;">কোনো পণ্য পাওয়া যায়নি!</div>`;
             return;
         }
         list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
-                <img src="${p.img}">
+                <img src="${p.img}" loading="lazy">
                 <div class="p-info">
                     <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price} ৳</div>
+                    <span class="p-price">${p.price} ৳</span>
                 </div>
             </div>`).join('');
     }
 
+    // ১০০% সমস্যা সমাধান লজিক
+    document.querySelectorAll('.cat-item').forEach(item => {
+        item.onclick = () => {
+            // UI Update (Main Cat)
+            document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
+            item.classList.add('active');
+            
+            const selectedMainCat = item.getAttribute('data-cat').toLowerCase();
+            const subBox = document.getElementById('sub-cat-container');
+            subBox.innerHTML = ""; // আগের সাব-ক্যাটাগরি মুছে ফেলা
+
+            if (selectedMainCat === 'all') {
+                render(pArray);
+            } else {
+                // ডাটাবেস থেকে যেকোনো ফরম্যাটে (category/cat/Category) মেইন ক্যাটাগরি ফিল্টার
+                const filtered = pArray.filter(p => {
+                    const dbCat = (p.category || p.Category || p.cat || "").toString().toLowerCase().trim();
+                    return dbCat === selectedMainCat;
+                });
+
+                render(filtered);
+
+                // সাব-ক্যাটাগরি বাটন তৈরি করা (অটোমেটিক)
+                const subCats = [...new Set(filtered.map(p => p.subCategory || p.subcat || p.Sub).filter(s => s))];
+                
+                if (subCats.length > 0) {
+                    subCats.forEach(scName => {
+                        const btn = document.createElement('div');
+                        btn.className = 'sub-cat-btn';
+                        btn.innerText = scName;
+                        btn.onclick = () => {
+                            // সাব-ক্যাটাগরি বাটন এক্টিভ করা
+                            document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
+                            btn.classList.add('active');
+                            
+                            const finalData = filtered.filter(p => 
+                                (p.subCategory || p.subcat || p.Sub) === scName
+                            );
+                            render(finalData);
+                        };
+                        subBox.appendChild(btn);
+                    });
+                }
+            }
+        };
+    });
+
+    // সার্চ ফাংশন
     document.getElementById('searchInput').oninput = (e) => {
         const val = e.target.value.toLowerCase();
         render(pArray.filter(p => p.name.toLowerCase().includes(val)));
