@@ -38,7 +38,6 @@
         .cat-item i { font-size: 20px; display: block; margin-bottom: 5px; }
         .cat-item span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 
-        /* সাব-ক্যাটাগরি বাটন ডিজাইন - এটি মেইন ক্যাটাগরির নিচে শো করবে */
         #sub-cat-container { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
         .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; }
         .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 210, 255, 0.1); }
@@ -137,7 +136,9 @@
                 d.id = child.key;
                 pArray.push(d);
             });
-            render(pArray);
+            // পেজ লোড হওয়ার পর ডিফল্টভাবে 'all' দেখাবে
+            const activeCat = document.querySelector('.cat-item.active').getAttribute('data-cat');
+            applyFilter(activeCat);
         });
     }
 
@@ -154,42 +155,47 @@
             </div>`).join('');
     }
 
-    // ১০০% সলিউশন লজিক: মেইন এবং সাব-ক্যাটাগরি লিঙ্ক করা
+    // ফিল্টার করার মেইন ফাংশন
+    function applyFilter(mainCat) {
+        const subBox = document.getElementById('sub-cat-container');
+        subBox.innerHTML = ""; 
+
+        if (mainCat === 'all') {
+            render(pArray);
+        } else {
+            // ডাটাবেসের category ফিল্ডের সাথে মিলানো (বড়/ছোট হাতের অক্ষর হ্যান্ডেল করা হয়েছে)
+            const filtered = pArray.filter(p => {
+                const dbCat = (p.category || "").toString().toLowerCase().trim();
+                return dbCat === mainCat.toLowerCase();
+            });
+
+            render(filtered);
+
+            // সাব-ক্যাটাগরি বাটন তৈরি (অটোমেটিক)
+            const subCats = [...new Set(filtered.map(p => p.subCategory).filter(s => s))];
+            
+            subCats.forEach(scName => {
+                const btn = document.createElement('div');
+                btn.className = 'sub-cat-btn';
+                btn.innerText = scName;
+                btn.onclick = () => {
+                    document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                    const final = filtered.filter(p => p.subCategory === scName);
+                    render(final);
+                };
+                subBox.appendChild(btn);
+            });
+        }
+    }
+
+    // ক্যাটাগরি ক্লিকের ইভেন্ট
     document.querySelectorAll('.cat-item').forEach(item => {
         item.onclick = () => {
             document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
-            
-            const selectedMain = item.getAttribute('data-cat').toLowerCase().trim();
-            const subBox = document.getElementById('sub-cat-container');
-            subBox.innerHTML = ""; 
-
-            if (selectedMain === 'all') {
-                render(pArray);
-            } else {
-                // স্মার্ট ফিল্টার: যা ছোট/বড় হাতের অক্ষর এবং স্পেসের ভুল ধরবে না
-                const filtered = pArray.filter(p => {
-                    const dbCat = (p.category || p.Category || p.cat || "").toString().toLowerCase().trim();
-                    return dbCat === selectedMain;
-                });
-
-                render(filtered);
-
-                // সাব-ক্যাটাগরি বাটন তৈরি
-                const subCats = [...new Set(filtered.map(p => p.subCategory || p.subcat || p.Sub).filter(s => s))];
-                subCats.forEach(scName => {
-                    const btn = document.createElement('div');
-                    btn.className = 'sub-cat-btn';
-                    btn.innerText = scName;
-                    btn.onclick = () => {
-                        document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
-                        btn.classList.add('active');
-                        const final = filtered.filter(p => (p.subCategory || p.subcat || p.Sub) === scName);
-                        render(final);
-                    };
-                    subBox.appendChild(btn);
-                });
-            }
+            const selectedMain = item.getAttribute('data-cat');
+            applyFilter(selectedMain);
         };
     });
 
