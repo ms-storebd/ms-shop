@@ -10,7 +10,6 @@
         :root { --primary: #00d2ff; --secondary: #3a7bd5; --dark: #0f172a; --danger: #ff4757; --bg: #f1f5f9; --success: #2ecc71; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 15px; color: #334155; }
         
-        /* আপনার সব অরিজিনাল স্টাইল নিচে হুবহু আছে */
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
         .stat-box { background: var(--dark); color: white; padding: 15px; border-radius: 18px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .stat-box b { font-size: 24px; display: block; color: var(--primary); }
@@ -50,8 +49,6 @@
         .btn-del { background: #fff1f2; color: #f43f5e; }
 
         .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 10px 20px; border-radius: 30px; display: none; z-index: 9999; font-size: 13px; }
-        
-        /* নতুন অথেনটিকেশন লোডার */
         #auth-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; display: flex; justify-content: center; align-items: center; z-index: 10000; }
     </style>
 </head>
@@ -169,7 +166,6 @@
         }
     };
 
-    // --- অথেনটিকেশন চেক ---
     onAuthStateChanged(auth, (user) => {
         if (user && user.email === 'tasnimtonni426@gmail.com') {
             document.getElementById('auth-loader').style.display = 'none';
@@ -201,7 +197,7 @@
                         <div class="p-item">
                             <img src="${p.img}">
                             <div class="p-info">
-                                <span class="cat-tag">${p.category}</span>
+                                <span class="cat-tag">${p.category} | ${p.subCategory || ''}</span>
                                 <b>${p.name}</b>
                                 <small>${p.price} ৳ | স্টক: ${p.stock}</small>
                             </div>
@@ -280,10 +276,11 @@
             const p = s.val();
             document.getElementById('edit-id').value = id;
             document.getElementById('p-name').value = p.name;
-            let foundMain = "";
-            for(let main in subCategories) { if(subCategories[main].includes(p.category)) foundMain = main; }
-            document.getElementById('p-main-category').value = foundMain;
-            updateSubCats(p.category);
+            
+            // মেইন ক্যাটাগরি সেট করা
+            document.getElementById('p-main-category').value = p.category;
+            updateSubCats(p.subCategory); // সাব-ক্যাটাগরি পপুলেট করা
+            
             document.getElementById('p-price').value = p.price;
             document.getElementById('p-stock').value = p.stock;
             document.getElementById('p-img').value = p.img;
@@ -311,19 +308,34 @@
 
     function getFormData() {
         const name = document.getElementById('p-name').value,
-              cat = document.getElementById('p-category').value,
+              mainCat = document.getElementById('p-main-category').value,
+              subCat = document.getElementById('p-category').value,
               price = document.getElementById('p-price').value,
               stock = document.getElementById('p-stock').value,
               img = document.getElementById('p-img').value,
               desc = document.getElementById('p-desc').value,
               sizeInput = document.getElementById('p-sizes').value;
-        if(!name || !cat || !price || !stock || !img) {
+              
+        if(!name || !mainCat || !subCat || !price || !stock || !img) {
             showToast("⚠️ সব ঘর পূরণ করুন!");
             return null;
         }
+        
         let sizeList = [];
         if(sizeInput.trim() !== "") sizeList = sizeInput.split(',').map(s => s.trim());
-        return { name, category: cat, price: parseInt(price), stock: parseInt(stock), img, description: desc, sizes: sizeList };
+
+        // ডাটাবেস স্ট্রাকচার ফিক্স: category তে মেইন নাম যাবে, subCategory তে সাব-নাম যাবে
+        return { 
+            name, 
+            category: mainCat, 
+            subCategory: subCat, 
+            price: parseInt(price), 
+            stock: parseInt(stock), 
+            img, 
+            description: desc, 
+            sizes: sizeList,
+            date: new Date().toLocaleDateString('en-GB') 
+        };
     }
 
     window.clearForm = () => {
@@ -340,4 +352,5 @@
     };
 </script>
 </body>
-</html>
+            </html>
+                                                                                                                                                                             
