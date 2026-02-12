@@ -32,16 +32,16 @@
         .slide { width: 33.333%; height: 100%; flex-shrink: 0; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* মেইন ক্যাটাগরি গ্রিড */
+        /* মেইন ক্যাটাগরি গ্রিড - যা আপনি চেয়েছিলেন */
         .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
-        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; }
+        .cat-item { background: var(--glass); border: 1px solid var(--border); border-radius: 12px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; }
         .cat-item.active { background: var(--primary); color: #0f172a; border-color: var(--primary); }
         .cat-item i { font-size: 20px; display: block; margin-bottom: 5px; }
         .cat-item span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
 
-        /* সাব-ক্যাটাগরি কন্টেইনার */
+        /* সাব-ক্যাটাগরি বাটন ডিজাইন */
         #sub-cat-container { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
-        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; }
+        .sub-cat-btn { background: var(--glass); border: 1px solid var(--border); padding: 6px 15px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #cbd5e1; transition: 0.3s; }
         .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 210, 255, 0.1); }
 
         .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 15px; }
@@ -54,10 +54,9 @@
         /* প্রোফাইল মেনু */
         .profile-menu { display: none; position: fixed; top: 70px; right: 15px; width: 260px; background: #1e293b; border-radius: 20px; padding: 20px; z-index: 6000; border: 1px solid var(--border); }
         .profile-menu.show { display: block; }
-        .user-info { margin-bottom: 15px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
 
         /* হোয়াটসঅ্যাপ হেল্পলাইন */
-        .whatsapp-helpline { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 9999; box-shadow: 0 4px 15px rgba(0,0,0,0.3); }
+        .whatsapp-helpline { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 9999; }
 
         #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0f172a; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 20px; }
     </style>
@@ -93,12 +92,9 @@
 <div class="product-grid" id="p-list"></div>
 
 <div class="profile-menu" id="profileMenu">
-    <div class="user-info">
-        <div id="u-name" style="font-weight: bold;">User Name</div>
-        <div id="u-email" style="font-size: 12px; color: #94a3b8;">Email</div>
-        <div id="u-id" style="font-size: 11px; color: var(--primary); margin-top: 5px;">ID</div>
-    </div>
-    <button id="logoutBtn" style="width:100%; padding:10px; background:#ef4444; border:none; color:white; border-radius:10px; cursor: pointer;">Logout</button>
+    <div id="u-name" style="font-weight: bold; margin-bottom: 5px;">User</div>
+    <div id="u-email" style="font-size: 12px; color: #94a3b8; margin-bottom: 15px;">Email</div>
+    <button id="logoutBtn" style="width:100%; padding:10px; background:#ef4444; border:none; color:white; border-radius:10px; cursor:pointer;">Logout</button>
 </div>
 
 <a href="https://wa.me/8801319474450" class="whatsapp-helpline"><i class="fab fa-whatsapp"></i></a>
@@ -125,9 +121,8 @@
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
-            document.getElementById('u-name').innerText = user.displayName || "Google User";
+            document.getElementById('u-name').innerText = user.displayName || "User";
             document.getElementById('u-email').innerText = user.email;
-            document.getElementById('u-id').innerText = "#" + user.uid.slice(-6).toUpperCase();
             fetchProducts();
             fetchBanners();
         } else {
@@ -141,21 +136,8 @@
                 const d = snap.val();
                 const track = document.getElementById('sliderTrack');
                 track.innerHTML = ['banner1', 'banner2', 'banner3'].map(k => d[k] ? `<div class="slide"><img src="${d[k].img}"></div>` : '').join('');
-                startAutoSlider();
             }
         });
-    }
-
-    function startAutoSlider() {
-        let current = 0;
-        setInterval(() => {
-            const track = document.getElementById('sliderTrack');
-            const slides = track.querySelectorAll('.slide');
-            if(slides.length > 1) {
-                current = (current + 1) % slides.length;
-                track.style.transform = `translateX(-${current * 33.333}%)`;
-            }
-        }, 4000);
     }
 
     function fetchProducts() {
@@ -173,12 +155,12 @@
     function render(data) {
         const list = document.getElementById('p-list');
         if (data.length === 0) {
-            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; color: #94a3b8;">কোনো পণ্য পাওয়া যায়নি।</div>`;
+            list.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px;">No Products Found!</div>`;
             return;
         }
         list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
-                <img src="${p.img}" loading="lazy">
+                <img src="${p.img}">
                 <div class="p-info">
                     <div class="p-name">${p.name}</div>
                     <div class="p-price">${p.price} ৳</div>
@@ -186,28 +168,30 @@
             </div>`).join('');
     }
 
-    // ১০০% ফিক্সড ক্যাটাগরি ও সাব-ক্যাটাগরি লজিক
+    // ১০০% সমাধান লজিক: মেইন এবং সাব-ক্যাটাগরি লিঙ্ক
     document.querySelectorAll('.cat-item').forEach(item => {
         item.onclick = () => {
             document.querySelectorAll('.cat-item').forEach(i => i.classList.remove('active'));
             item.classList.add('active');
             
-            const selectedMainCat = item.getAttribute('data-cat').toLowerCase();
+            const selectedMain = item.getAttribute('data-cat').toLowerCase();
             const subBox = document.getElementById('sub-cat-container');
             subBox.innerHTML = ""; 
 
-            if (selectedMainCat === 'all') {
+            if (selectedMain === 'all') {
                 render(pArray);
             } else {
-                // মেইন ক্যাটাগরি ফিল্টার (যেকোনো ফরম্যাট চেক করবে)
+                // মেইন ক্যাটাগরি ফিল্টার: ডাটাবেসের category/Category/cat সব চেক করবে
                 const filtered = pArray.filter(p => {
                     const dbCat = (p.category || p.Category || p.cat || "").toString().toLowerCase().trim();
-                    return dbCat === selectedMainCat;
+                    return dbCat === selectedMain;
                 });
+
                 render(filtered);
 
-                // অটোমেটিক সাব-ক্যাটাগরি বাটন জেনারেশন
+                // মেইন ক্যাটাগরির ভেতর থেকে সাব-ক্যাটাগরি খুঁজে বাটন বানানো
                 const subCats = [...new Set(filtered.map(p => p.subCategory || p.subcat || p.Sub).filter(s => s))];
+                
                 subCats.forEach(scName => {
                     const btn = document.createElement('div');
                     btn.className = 'sub-cat-btn';
@@ -215,7 +199,10 @@
                     btn.onclick = () => {
                         document.querySelectorAll('.sub-cat-btn').forEach(b => b.classList.remove('active'));
                         btn.classList.add('active');
-                        const finalData = filtered.filter(p => (p.subCategory || p.subcat || p.Sub) === scName);
+                        // সাব-ক্যাটাগরি অনুযায়ী আবার ফিল্টার
+                        const finalData = filtered.filter(p => 
+                            (p.subCategory || p.subcat || p.Sub) === scName
+                        );
                         render(finalData);
                     };
                     subBox.appendChild(btn);
@@ -230,10 +217,10 @@
         render(pArray.filter(p => p.name.toLowerCase().includes(val)));
     };
 
-    // প্রোফাইল মেনু কন্ট্রোল
-    const menu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
-    document.onclick = (e) => { if (!menu.contains(e.target)) menu.classList.remove('show'); };
+    // প্রোফাইল কন্ট্রোল
+    const pMenu = document.getElementById('profileMenu');
+    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); pMenu.classList.toggle('show'); };
+    document.onclick = () => pMenu.classList.remove('show');
     document.getElementById('logoutBtn').onclick = () => signOut(auth);
 
 </script>
