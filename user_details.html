@@ -11,7 +11,6 @@
             --dark: #0f172a; 
             --success: #2ecc71; 
             --danger: #e74c3c; 
-            --warning: #f1c40f; 
         }
         body { font-family: 'Poppins', sans-serif; background: #f1f5f9; margin: 0; padding: 15px; }
         
@@ -20,68 +19,57 @@
 
         .search-container { background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 20px; }
         .search-box { display: flex; gap: 10px; margin-top: 10px; }
-        .search-box input { flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 14px; transition: 0.3s; }
-        .search-box input:focus { border-color: var(--primary); }
+        .search-box input { flex: 1; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; font-size: 14px; }
         .search-box button { background: var(--dark); color: white; border: none; padding: 0 20px; border-radius: 12px; cursor: pointer; font-weight: bold; }
 
-        #profile-card { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); animation: slideUp 0.4s ease; }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        #profile-card { display: none; background: white; border-radius: 20px; padding: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
 
-        .user-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; }
-        .user-header h3 { margin: 0; color: var(--dark); }
-        .user-header p { margin: 5px 0 0; font-size: 13px; color: #64748b; }
-
+        .user-header { border-bottom: 1px solid #eee; padding-bottom: 15px; margin-bottom: 15px; text-align: center; }
+        #u-img { width: 70px; height: 70px; border-radius: 50%; border: 3px solid var(--primary); margin-bottom: 10px; }
+        
         .stat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 20px; }
         .stat-item { padding: 15px 5px; border-radius: 15px; text-align: center; color: white; }
         .stat-item b { font-size: 18px; display: block; }
-        .stat-item small { font-size: 10px; text-transform: uppercase; font-weight: bold; opacity: 0.9; }
+        .stat-item small { font-size: 10px; font-weight: bold; opacity: 0.9; }
 
-        .history-title { font-size: 15px; font-weight: bold; color: var(--dark); margin-bottom: 10px; }
         .order-row { background: #f8fafc; padding: 12px; border-radius: 12px; margin-bottom: 10px; border-left: 4px solid var(--dark); display: flex; justify-content: space-between; align-items: center; }
-        .order-info b { font-size: 13px; display: block; color: var(--dark); }
-        .order-info small { font-size: 11px; color: #64748b; }
         .order-status { font-size: 10px; font-weight: bold; padding: 4px 8px; border-radius: 6px; }
 
-        #loading { display: none; text-align: center; padding: 20px; color: var(--dark); font-weight: bold; }
+        #loading { display: none; text-align: center; padding: 20px; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <button class="back-btn" onclick="location.href='admin_dashboard.html'"><i class="fa fa-arrow-left"></i></button>
-        <h2 style="margin:0; font-size:18px;">ইউজার ইন্সাইটস</h2>
+        <h2 style="margin:0; font-size:18px;">ইউজার ডিটেইলস</h2>
     </div>
 
     <div class="search-container">
-        <label style="font-size: 13px; font-weight: bold; color: #64748b;">ইউজার আইডি দিয়ে খুঁজুন (শেষ ৮ বা ৬ অক্ষর)</label>
+        <label style="font-size: 13px; font-weight: bold; color: #64748b;">ইউজার আইডি দিন (যেমন: MS-B3COXED3)</label>
         <div class="search-box">
-            <input type="text" id="userInput" placeholder="উদা: MS-A1B2C3D4">
+            <input type="text" id="userInput" placeholder="MS-XXXXXXXX">
             <button onclick="searchUser()"><i class="fa fa-search"></i></button>
         </div>
     </div>
 
-    <div id="loading">অনুসন্ধান করা হচ্ছে...</div>
+    <div id="loading">ডাটা খোঁজা হচ্ছে...</div>
 
     <div id="profile-card">
         <div class="user-header">
-            <h3 id="u-name">লোডিং...</h3>
-            <p id="u-email">---</p>
-            <p id="u-id" style="color: var(--primary); font-weight: bold; font-size: 12px; margin-top: 5px;"></p>
+            <img src="https://cdn-icons-png.flaticon.com/512/149/149071.png" id="u-img">
+            <h3 id="u-name">...</h3>
+            <p id="u-email">...</p>
+            <p id="u-id-display" style="color: var(--primary); font-weight: bold; font-size: 14px; margin-top: 5px;"></p>
         </div>
 
         <div class="stat-grid">
-            <div class="stat-item" style="background: var(--dark);">
-                <b id="total-o">0</b><small>মোট অর্ডার</small>
-            </div>
-            <div class="stat-item" style="background: var(--success);">
-                <b id="done-o">0</b><small>ডেলিভারি</small>
-            </div>
-            <div class="stat-item" style="background: var(--danger);">
-                <b id="cancel-o">0</b><small>ক্যানসেল</small>
-            </div>
+            <div class="stat-item" style="background: var(--dark);"><b id="total-o">0</b><small>অর্ডার</small></div>
+            <div class="stat-item" style="background: var(--success);"><b id="done-o">0</b><small>সফল</small></div>
+            <div class="stat-item" style="background: var(--danger);"><b id="cancel-o">0</b><small>বাতিল</small></div>
         </div>
 
-        <div class="history-title">অর্ডার হিস্ট্রি:</div>
+        <div style="font-weight: bold; margin-bottom: 10px;">অর্ডার হিস্ট্রি:</div>
         <div id="user-history"></div>
     </div>
 
@@ -102,11 +90,8 @@
     const db = getDatabase(app);
 
     window.searchUser = async () => {
-        let inputId = document.getElementById('userInput').value.trim().toUpperCase();
-        if(!inputId) return alert("অনুগ্রহ করে একটি আইডি লিখুন!");
-        
-        // যদি ইউজার MS- আইডি লিখে থাকে তা রিমুভ করা
-        if(inputId.startsWith("MS-")) inputId = inputId.replace("MS-", "");
+        let input = document.getElementById('userInput').value.trim().toUpperCase();
+        if(!input) return alert("আইডি লিখুন!");
 
         const loading = document.getElementById('loading');
         const profile = document.getElementById('profile-card');
@@ -114,26 +99,27 @@
         loading.style.display = 'block';
         profile.style.display = 'none';
 
+        // ইনপুট থেকে MS- বাদ দিয়ে শুধু লাস্ট ৮ ডিজিট নেওয়া
+        let searchTag = input.replace("MS-", "");
+
         try {
-            // ১. প্রথমে ইউজার ডাটা খোঁজা
             const usersRef = ref(db, 'users');
             const userSnap = await get(usersRef);
-            let foundUserId = null;
+            let foundFullUid = null;
             let userData = null;
 
             if (userSnap.exists()) {
                 userSnap.forEach(child => {
-                    const fullId = child.key.toUpperCase();
-                    // আইডির শেষ অংশ ম্যাচ করা (৮ অক্ষর বা ৬ অক্ষর)
-                    if (fullId.endsWith(inputId)) {
-                        foundUserId = child.key;
+                    const fullUid = child.key; // ফায়ারবেসের আসল লম্বা আইডি
+                    // আসল আইডির শেষ ৮ ডিজিট চেক করা
+                    if (fullUid.toUpperCase().endsWith(searchTag)) {
+                        foundFullUid = fullUid;
                         userData = child.val();
                     }
                 });
             }
 
-            if (foundUserId) {
-                // ২. যদি ইউজার পাওয়া যায়, তার অর্ডারগুলো খোঁজা
+            if (foundFullUid) {
                 const ordersRef = ref(db, 'orders');
                 const orderSnap = await get(ordersRef);
                 
@@ -143,58 +129,53 @@
                 if (orderSnap.exists()) {
                     orderSnap.forEach(child => {
                         const o = child.val();
-                        if (o.userId === foundUserId || o.uid === foundUserId) {
+                        if (o.userId === foundFullUid || o.uid === foundFullUid) {
                             userOrders.push(o);
                             total++;
-                            if(o.status === 'Delivered' || o.status === 'Completed') done++;
+                            if(['Delivered', 'Completed', 'Success'].includes(o.status)) done++;
                             if(o.status === 'Cancelled') cancel++;
                         }
                     });
                 }
 
-                // ৩. স্ক্রিনে ডাটা দেখানো
                 loading.style.display = 'none';
                 profile.style.display = 'block';
                 
-                document.getElementById('u-name').innerText = userData.displayName || userData.name || "নাম পাওয়া যায়নি";
-                document.getElementById('u-email').innerText = userData.email || "ইমেইল পাওয়া যায়নি";
-                document.getElementById('u-id').innerText = "ইউজার আইডি: MS-" + foundUserId.slice(-8).toUpperCase();
+                document.getElementById('u-name').innerText = userData.displayName || "নাম নেই";
+                document.getElementById('u-email').innerText = userData.email || "ইমেইল নেই";
+                document.getElementById('u-id-display').innerText = "MS-" + foundFullUid.slice(-8).toUpperCase();
                 document.getElementById('total-o').innerText = total;
                 document.getElementById('done-o').innerText = done;
                 document.getElementById('cancel-o').innerText = cancel;
 
                 const historyDiv = document.getElementById('user-history');
-                if(userOrders.length > 0) {
-                    historyDiv.innerHTML = userOrders.reverse().map(order => `
+                historyDiv.innerHTML = userOrders.length > 0 ? 
+                    userOrders.reverse().map(order => `
                         <div class="order-row">
                             <div class="order-info">
-                                <b>${order.productName || 'প্রোডাক্ট নাম নেই'}</b>
-                                <small>${order.date || 'তারিখ নেই'} | ${order.totalPrice || order.price}৳</small>
+                                <b>${order.productName || 'পণ্য'}</b><br>
+                                <small>${order.date || ''} | ${order.totalPrice || order.price}৳</small>
                             </div>
                             <span class="order-status" style="background:${getStatusBg(order.status)}; color:white">
                                 ${order.status}
                             </span>
                         </div>
-                    `).join('');
-                } else {
-                    historyDiv.innerHTML = "<p style='text-align:center; font-size:12px; color:#64748b;'>কোনো অর্ডারের তথ্য পাওয়া যায়নি।</p>";
-                }
+                    `).join('') : "<p style='text-align:center;'>কোনো অর্ডার পাওয়া যায়নি।</p>";
 
             } else {
                 loading.style.display = 'none';
-                alert("দুঃখিত, এই আইডিতে কোনো ইউজার পাওয়া যায়নি!");
+                alert("দুঃখিত, এই লাস্ট ৮ ডিজিটের ( " + searchTag + " ) কোনো ইউজার পাওয়া যায়নি!");
             }
-        } catch (error) {
-            console.error(error);
+        } catch (e) {
             loading.style.display = 'none';
-            alert("সার্ভার সমস্যা! আবার চেষ্টা করুন।");
+            alert("সার্ভার ত্রুটি!");
         }
     };
 
     function getStatusBg(s) {
-        if(s==='Pending') return '#f1c40f';
-        if(s==='Shipped') return '#3498db';
-        if(s==='Delivered' || s==='Completed') return '#2ecc71';
+        if(['Pending', 'Processing'].includes(s)) return '#f1c40f';
+        if(['Shipped', 'On Way'].includes(s)) return '#3498db';
+        if(['Delivered', 'Completed', 'Success'].includes(s)) return '#2ecc71';
         return '#e74c3c';
     }
 </script>
