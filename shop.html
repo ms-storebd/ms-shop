@@ -53,7 +53,6 @@
         .profile-menu { display: none; position: fixed; top: 70px; right: 15px; width: 260px; background: #1e293b; border-radius: 20px; padding: 20px; z-index: 6000; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5); }
         .profile-menu.show { display: block; }
         
-        /* ইউনিক আইডি ব্যাজ ডিজাইন - কপি অপশনসহ */
         .u-id-badge { font-size: 12px; font-weight: bold; color: #0f172a; background: var(--primary); padding: 8px 12px; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; letter-spacing: 1px; cursor: pointer; position: relative; }
         .u-id-badge:active { transform: scale(0.95); }
         
@@ -103,19 +102,13 @@
         <span id="u-uid">ID: MS-XXXXXXXX</span>
         <i class="fa fa-copy" style="font-size: 10px;"></i>
     </div>
-    
     <div class="menu-profile-card">
         <img id="u-photo" src="" alt="Profile">
         <div id="u-name" style="font-weight: bold; font-size: 15px;">User Name</div>
         <div id="u-email" style="font-size: 11px; color: #94a3b8;">email@gmail.com</div>
     </div>
-
     <div class="menu-links">
-        <a href="my_orders.html" class="m-link">
-            <i class="fa fa-shopping-cart"></i>
-            <span>My Orders</span>
-        </a>
-        
+        <a href="my_orders.html" class="m-link"><i class="fa fa-shopping-cart"></i><span>My Orders</span></a>
         <div class="m-link" id="logoutBtn" style="border: 1px solid rgba(239, 68, 68, 0.3); background: rgba(239, 68, 68, 0.05);">
             <i class="fa fa-sign-out-alt" style="color: #ef4444;"></i>
             <span style="color: #ef4444; font-weight: 600;">Logout</span>
@@ -147,13 +140,11 @@
     onAuthStateChanged(auth, (user) => {
         if (user) {
             document.getElementById('loading-screen').style.display = 'none';
-            
             const photo = user.photoURL || "https://www.w3schools.com/howto/img_avatar.png";
             const trigger = document.getElementById('profileTrigger');
             trigger.src = photo;
             trigger.style.display = 'block';
             
-            // আইডি তৈরির লজিক (UID এর শেষ ৮ সংখ্যা - যা ডুপ্লিকেট হওয়া অসম্ভব)
             const shortID = user.uid.slice(-8).toUpperCase();
             const finalID = "MS-" + shortID;
             
@@ -162,15 +153,12 @@
             document.getElementById('u-email').innerText = user.email;
             document.getElementById('u-uid').innerText = "UID: " + finalID;
 
-            // আইডি কপি করার ফাংশন
             document.getElementById('copyID').onclick = (e) => {
                 e.stopPropagation();
                 navigator.clipboard.writeText(finalID).then(() => {
                     const originalText = document.getElementById('u-uid').innerText;
                     document.getElementById('u-uid').innerText = "COPIED!";
-                    setTimeout(() => {
-                        document.getElementById('u-uid').innerText = originalText;
-                    }, 1000);
+                    setTimeout(() => { document.getElementById('u-uid').innerText = originalText; }, 1000);
                 });
             };
 
@@ -179,11 +167,22 @@
         } else { window.location.href = "index.html"; }
     });
 
+    // স্লাইডার সচল করার লজিক
+    function startSlider() {
+        const track = document.getElementById('sliderTrack');
+        let index = 0;
+        setInterval(() => {
+            index = (index + 1) % 3; // ৩টি ব্যানার থাকলে
+            track.style.transform = `translateX(-${index * 33.333}%)`;
+        }, 3000);
+    }
+
     function fetchBanners() {
         onValue(ref(db, 'banners'), (snap) => {
             if (snap.exists()) {
                 const d = snap.val();
                 document.getElementById('sliderTrack').innerHTML = ['banner1', 'banner2', 'banner3'].map(k => d[k] ? `<div class="slide"><img src="${d[k].img}"></div>` : '').join('');
+                startSlider(); // ডাটা আসার পর স্লাইডার শুরু
             }
         });
     }
@@ -262,4 +261,3 @@
 </script>
 </body>
 </html>
-
