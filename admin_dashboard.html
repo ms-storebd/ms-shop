@@ -76,6 +76,15 @@
         </button>
     </div>
 
+    <div class="card" style="background: #1e293b; color: white;">
+        <h3 style="color: var(--primary); border-color: var(--primary);">🔍 UID & Order Tracker</h3>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" id="adminSearchInput" placeholder="UID (MS-XXXXXXXX) বা অর্ডার আইডি" style="margin:0; background: rgba(255,255,255,0.1); border: 1px solid var(--primary); color: white;">
+            <button id="adminSearchBtn" style="width: 80px; background: var(--primary); border: none; border-radius: 12px; cursor: pointer; color: #0f172a; font-weight: bold;">Search</button>
+        </div>
+        <div id="searchResultDisplay" style="margin-top: 15px; display: none;"></div>
+    </div>
+
     <div class="card">
         <h3>🖼️ স্লাইডার ব্যানার সেটিংস</h3>
         <div class="banner-box">
@@ -201,6 +210,63 @@
         });
     }
 
+    // স্মার্ট সার্চ লজিক (UID এবং OrderID)
+    document.getElementById('adminSearchBtn').onclick = () => {
+        const searchValue = document.getElementById('adminSearchInput').value.trim().toUpperCase();
+        const resultDiv = document.getElementById('searchResultDisplay');
+        
+        if (!searchValue) return showToast("⚠️ আইডি লিখুন");
+
+        resultDiv.style.display = 'block';
+        resultDiv.innerHTML = '<p style="font-size:12px; color:var(--primary);">খোঁজা হচ্ছে...</p>';
+
+        if (searchValue.startsWith("MS-")) {
+            const shortID = searchValue.replace("MS-", "");
+            onValue(ref(db, 'users'), (snap) => {
+                let foundUser = null; let userUID = "";
+                snap.forEach(child => {
+                    if (child.key.slice(-8).toUpperCase() === shortID) { foundUser = child.val(); userUID = child.key; }
+                });
+
+                if (foundUser) {
+                    onValue(ref(db, 'orders'), (orderSnap) => {
+                        let total = 0, completed = 0, cancelled = 0;
+                        let historyHTML = "";
+                        orderSnap.forEach(oChild => {
+                            const o = oChild.val();
+                            if (o.userId === userUID) {
+                                total++;
+                                if (o.status === 'Completed') completed++;
+                                else if (o.status === 'Cancelled') cancelled++;
+                                historyHTML += `<div style="font-size:11px; padding:5px; border-bottom:1px solid #334155;">ID: ${oChild.key.slice(-6)} | ${o.productName} | <span style="color:${o.status === 'Completed' ? '#2ecc71' : '#ff4757'}">${o.status}</span></div>`;
+                            }
+                        });
+                        resultDiv.innerHTML = `
+                            <div style="background: rgba(255,255,255,0.05); padding: 12px; border-radius: 12px; border: 1px solid #334155;">
+                                <div style="display:flex; align-items:center; gap:10px; margin-bottom:10px;">
+                                    <img src="${foundUser.photoURL || 'https://www.w3schools.com/howto/img_avatar.png'}" style="width:40px; height:40px; border-radius:50%; border:1px solid var(--primary);">
+                                    <div><b style="font-size:14px; color:var(--primary);">${foundUser.displayName || 'User'}</b><br><small>${foundUser.email}</small></div>
+                                </div>
+                                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap:5px; text-align:center; margin-bottom:10px;">
+                                    <div style="background:#334155; padding:5px; border-radius:5px;"><small>Total</small><br><b>${total}</b></div>
+                                    <div style="background:#064e3b; padding:5px; border-radius:5px; color:#2ecc71;"><small>Success</small><br><b>${completed}</b></div>
+                                    <div style="background:#451a1a; padding:5px; border-radius:5px; color:#ff4757;"><small>Cancel</small><br><b>${cancelled}</b></div>
+                                </div>
+                                <div style="max-height:120px; overflow-y:auto; background:#0f172a; padding:5px; border-radius:8px;">${historyHTML || '<p style="font-size:10px; text-align:center;">অর্ডার পাওয়া যায়নি</p>'}</div>
+                            </div>`;
+                    });
+                } else { resultDiv.innerHTML = '<p style="color:#ff4757; font-size:12px;">❌ ইউজার পাওয়া যায়নি!</p>'; }
+            }, { onlyOnce: true });
+        } else {
+            get(ref(db, 'orders/' + searchValue)).then((s) => {
+                if(s.exists()){
+                    const o = s.val();
+                    resultDiv.innerHTML = `<div style="background:#334155; padding:10px; border-radius:10px;"><h4 style="margin:0;">${o.productName}</h4><p style="margin:0; font-size:13px;">Status: <b style="color:var(--primary)">${o.status}</b></p></div>`;
+                } else { resultDiv.innerHTML = '<p style="color:#ff4757; font-size:12px;">❌ অর্ডার আইডি ভুল!</p>'; }
+            });
+        }
+    };
+
     const subCategories = {
         'Sports': ['Jersey', 'Boots', 'Sports Equipment'],
         'Electronics': ['Mobile Accessories', 'Gadgets', 'Headphones'],
@@ -231,8 +297,7 @@
         if (mainCat && subCategories[mainCat]) {
             subCategories[mainCat].forEach(sub => {
                 const option = document.createElement('option');
-                option.value = sub;
-                option.innerText = sub;
+                option.value = sub; option.innerText = sub;
                 if(sub === selectedSub) option.selected = true;
                 subCatSelect.appendChild(option);
             });
@@ -248,12 +313,7 @@
 
     document.getElementById('uploadBtn').onclick = () => {
         const data = getFormData();
-        if(data) {
-            push(ref(db, 'products'), data).then(() => {
-                showToast("✅ সফলভাবে যোগ হয়েছে!");
-                clearForm();
-            });
-        }
+        if(data) { push(ref(db, 'products'), data).then(() => { showToast("✅ সফলভাবে যোগ হয়েছে!"); clearForm(); }); }
     };
 
     window.editProduct = (id) => {
@@ -280,12 +340,7 @@
     document.getElementById('updateBtn').onclick = () => {
         const id = document.getElementById('edit-id').value;
         const data = getFormData();
-        if(data && id) {
-            update(ref(db, 'products/' + id), data).then(() => {
-                showToast("♻️ আপডেট সফল!");
-                clearForm();
-            });
-        }
+        if(data && id) { update(ref(db, 'products/' + id), data).then(() => { showToast("♻️ আপডেট সফল!"); clearForm(); }); }
     };
 
     function getFormData() {
@@ -298,25 +353,9 @@
               desc = document.getElementById('p-desc').value,
               sizeInput = document.getElementById('p-sizes').value;
               
-        if(!name || !mainCat || !subCat || !price || !stock || !img) {
-            showToast("⚠️ সব ঘর পূরণ করুন!");
-            return null;
-        }
-        
-        let sizeList = [];
-        if(sizeInput.trim() !== "") sizeList = sizeInput.split(',').map(s => s.trim());
-
-        return { 
-            name, 
-            category: mainCat, 
-            subCategory: subCat, 
-            price: parseInt(price), 
-            stock: parseInt(stock), 
-            img, 
-            description: desc, 
-            sizes: sizeList,
-            date: new Date().toLocaleDateString('en-GB') 
-        };
+        if(!name || !mainCat || !subCat || !price || !stock || !img) { showToast("⚠️ সব ঘর পূরণ করুন!"); return null; }
+        let sizeList = []; if(sizeInput.trim() !== "") sizeList = sizeInput.split(',').map(s => s.trim());
+        return { name, category: mainCat, subCategory: subCat, price: parseInt(price), stock: parseInt(stock), img, description: desc, sizes: sizeList, date: new Date().toLocaleDateString('en-GB') };
     }
 
     window.clearForm = () => {
@@ -328,10 +367,7 @@
         document.getElementById('cancelBtn').style.display = 'none';
     };
 
-    window.deleteItem = (id) => {
-        if(confirm("ডিলিট করতে চান?")) remove(ref(db, 'products/' + id));
-    };
+    window.deleteItem = (id) => { if(confirm("ডিলিট করতে চান?")) remove(ref(db, 'products/' + id)); };
 </script>
 </body>
-                                                                         </html>
-    
+</html>
