@@ -25,6 +25,7 @@
         
         .user-info { font-size: 12px; color: #64748b; line-height: 1.6; }
         .user-info i { width: 18px; color: var(--primary); }
+        .payment-info { background: #e0f2fe; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 12px; color: #0369a1; }
 
         .actions { display: flex; gap: 10px; margin-top: 15px; }
         .btn { flex: 1; padding: 10px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 13px; transition: 0.3s; }
@@ -58,7 +59,9 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    onValue(ref(db, 'orders'), (snap) => {
+    const orderListRef = ref(db, 'orders');
+
+    onValue(orderListRef, (snap) => {
         const list = document.getElementById('order-list');
         list.innerHTML = "";
         
@@ -67,9 +70,14 @@
             return;
         }
 
+        let ordersData = [];
         snap.forEach(child => {
-            const o = child.val();
-            const id = child.key;
+            ordersData.push({ id: child.key, ...child.val() });
+        });
+
+        // নতুন অর্ডার সবার আগে দেখানোর জন্য (Descending order)
+        ordersData.reverse().forEach(o => {
+            const id = o.id;
             
             list.innerHTML += `
                 <div class="order-card">
@@ -87,9 +95,14 @@
                     </div>
 
                     <div class="user-info">
-                        <div><i class="fa fa-user"></i> ${o.userName}</div>
-                        <div><i class="fa fa-phone"></i> ${o.phone}</div>
-                        <div><i class="fa fa-location-dot"></i> ${o.address}</div>
+                        <div><i class="fa fa-user"></i> ${o.userName || 'Unknown'}</div>
+                        <div><i class="fa fa-phone"></i> ${o.phone || 'N/A'}</div>
+                        <div><i class="fa fa-location-dot"></i> ${o.address || 'N/A'}</div>
+                    </div>
+
+                    <div class="payment-info">
+                        <b>পেমেন্ট:</b> ${o.paymentType} (${o.paymentMethod})<br>
+                        <b>TrxID:</b> <span style="color: #dc2626;">${o.trxID || 'N/A'}</span>
                     </div>
 
                     <div class="actions">
@@ -102,15 +115,20 @@
         });
     });
 
+    // গ্লোবাল ফাংশন হিসেবে সেট করা
     window.markComplete = (id) => {
         if(confirm("অর্ডারটি কি ডেলিভারি হয়ে গেছে?")) {
-            update(ref(db, 'orders/' + id), { status: 'completed' });
+            update(ref(db, 'orders/' + id), { status: 'completed' })
+            .then(() => alert("Status Updated!"))
+            .catch(err => alert("Error: " + err.message));
         }
     };
 
     window.deleteOrder = (id) => {
         if(confirm("অর্ডারটি ডিলিট করতে চান?")) {
-            remove(ref(db, 'orders/' + id));
+            remove(ref(db, 'orders/' + id))
+            .then(() => alert("Order Deleted!"))
+            .catch(err => alert("Error: " + err.message));
         }
     };
 </script>
