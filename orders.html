@@ -12,12 +12,10 @@
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .back-btn { background: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* সার্চ বার */
         .search-area { display: flex; gap: 5px; background: white; padding: 5px; border-radius: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .search-area input { border: none; outline: none; padding: 5px; width: 120px; font-size: 13px; }
         .search-area button { border: none; background: var(--dark); color: white; border-radius: 8px; padding: 5px 10px; cursor: pointer; }
 
-        /* ফিল্টার ট্যাব */
         .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-top: 10px; scrollbar-width: none; }
         .tab { white-space: nowrap; padding: 8px 15px; background: white; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #64748b; }
         .tab.active { background: var(--dark); color: white; }
@@ -27,7 +25,6 @@
         .order-id { font-weight: bold; color: var(--dark); font-size: 14px; }
         .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
         
-        /* স্ট্যাটাস কালার */
         .pending { background: #fff3cd; color: #856404; }
         .shipped { background: #e0f2fe; color: #0369a1; }
         .delivered { background: #d4edda; color: #155724; }
@@ -38,7 +35,8 @@
         .item-info b { display: block; font-size: 13px; }
         
         .user-info { font-size: 12px; color: #64748b; line-height: 1.6; }
-        .payment-info { background: #f1f5f9; padding: 8px; border-radius: 8px; margin-top: 10px; font-size: 11px; }
+        .payment-info { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-top: 10px; font-size: 11px; border: 1px dashed #cbd5e1; }
+        .due-amount { font-weight: bold; margin-top: 5px; display: block; }
 
         .actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; }
         .status-select { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 12px; outline: none; background: #f8fafc; }
@@ -92,7 +90,6 @@
     let allOrders = [];
     let currentFilter = 'all';
 
-    // ডাটা লোড করা
     onValue(ref(db, 'orders'), (snap) => {
         allOrders = [];
         if(snap.exists()){
@@ -106,13 +103,24 @@
         }
     });
 
-    // অর্ডার রেন্ডার করা
     function renderOrders(data) {
         const list = document.getElementById('order-list');
         list.innerHTML = "";
         
         data.forEach(o => {
             if(currentFilter !== 'all' && o.status !== currentFilter) return;
+
+            // বকেয়া টাকার হিসাব
+            const totalPrice = parseFloat(o.price) || 0;
+            const paid = parseFloat(o.paidAmount) || 0; // ইউজার কত দিয়েছে
+            const due = totalPrice - paid;
+
+            let dueText = "";
+            if(due <= 0) {
+                dueText = `<span class="due-amount" style="color: var(--success);">বকেয়া: ০৳ (Full Paid)</span>`;
+            } else {
+                dueText = `<span class="due-amount" style="color: var(--danger);">বকেয়া: ${due}৳ (Incomplete)</span>`;
+            }
 
             list.innerHTML += `
                 <div class="order-card" id="card-${o.id}">
@@ -125,7 +133,7 @@
                         <img src="${o.productImg || 'https://via.placeholder.com/60'}">
                         <div class="item-info">
                             <b>${o.productName}</b>
-                            <span>${o.price}৳ | সাইজ: ${o.size || 'N/A'}</span>
+                            <span>দাম: ${totalPrice}৳ | সাইজ: ${o.size || 'N/A'}</span>
                         </div>
                     </div>
 
@@ -136,8 +144,9 @@
                     </div>
 
                     <div class="payment-info">
-                        <b>TrxID:</b> ${o.trxID || 'N/A'} | <b>Method:</b> ${o.paymentMethod}
-                        ${o.cancelReason ? `<br><b style="color:red">Reason:</b> ${o.cancelReason}` : ''}
+                        <b>TrxID:</b> ${o.trxID || 'N/A'} | <b>Paid:</b> ${paid}৳
+                        ${dueText}
+                        ${o.cancelReason ? `<br><b style="color:red">Cancel Reason:</b> ${o.cancelReason}` : ''}
                     </div>
 
                     <div class="actions">
@@ -161,7 +170,6 @@
         });
     }
 
-    // ফিল্টার ফাংশন
     window.filterOrders = (status, el) => {
         currentFilter = status;
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
@@ -169,7 +177,6 @@
         renderOrders(allOrders);
     };
 
-    // সার্চ ফাংশন
     window.searchOrder = () => {
         const val = document.getElementById('searchInput').value.trim().toUpperCase();
         if(!val) return renderOrders(allOrders);
@@ -177,7 +184,6 @@
         renderOrders(filtered);
     };
 
-    // স্ট্যাটাস পরিবর্তন হ্যান্ডল
     window.handleStatusChange = (id, newStatus) => {
         if(newStatus === 'cancelled') {
             document.getElementById(`reason-box-${id}`).style.display = 'block';
@@ -187,7 +193,6 @@
         }
     };
 
-    // ক্যানসেল কনফার্ম (Enter চাপলে)
     window.confirmCancel = (e, id) => {
         if(e.key === 'Enter') {
             const reason = document.getElementById(`reason-input-${id}`).value;
@@ -196,7 +201,6 @@
         }
     };
 
-    // ফায়ারবেস আপডেট
     function updateStatus(id, status, reason) {
         const data = { status: status };
         if(reason) data.cancelReason = reason;
