@@ -7,48 +7,68 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
-        :root { --primary: #00d2ff; --dark: #0f172a; --glass: rgba(255, 255, 255, 0.05); --border: rgba(255, 255, 255, 0.1); }
-        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; margin: 0; padding: 20px; box-sizing: border-box; }
+        :root { --primary: #00d2ff; --dark: #0f172a; --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text: #1e293b; }
+        
+        body { font-family: 'Poppins', sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; box-sizing: border-box; }
         .checkout-container { max-width: 500px; margin: 0 auto; }
+        
         .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; }
-        .header h2 { font-size: 20px; margin: 0; color: var(--primary); }
+        .header h2 { font-size: 20px; margin: 0; color: var(--dark); }
 
         .product-summary { 
-            background: var(--glass); border: 1px solid var(--border); border-radius: 20px; 
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; 
             padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
         }
         .product-summary img { 
-            width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: white; 
+            width: 80px; height: 80px; border-radius: 12px; object-fit: cover; background: #fff; 
             border: 2px solid var(--primary);
         }
-        .p-info-text b { font-size: 16px; color: white; display: block; margin-bottom: 3px; }
-        .size-badge { background: rgba(0, 210, 255, 0.2); padding: 2px 8px; border-radius: 5px; color: var(--primary); font-size: 12px; }
+        .p-info-text b { font-size: 16px; color: var(--dark); display: block; margin-bottom: 3px; }
+        .size-badge { background: rgba(0, 210, 255, 0.1); padding: 2px 8px; border-radius: 5px; color: #0369a1; font-size: 12px; font-weight: 600; }
 
-        .section-card { background: var(--glass); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; }
-        label { font-size: 13px; color: #94a3b8; display: block; margin: 10px 0 5px 5px; }
-        input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); background: #1e293b; color: white; box-sizing: border-box; outline: none; font-size: 14px; margin-bottom: 10px;}
-        input:focus { border-color: var(--primary); }
+        .section-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 20px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        label { font-size: 13px; color: #64748b; display: block; margin: 10px 0 5px 5px; font-weight: 500; }
         
-        .method-container { display: flex; gap: 10px; margin-top: 10px; }
-        .method-card { flex: 1; background: #1e293b; border: 1px solid var(--border); padding: 15px 10px; border-radius: 12px; text-align: center; cursor: pointer; transition: 0.3s; }
-        .method-card img { width: 45px; height: 45px; object-fit: contain; margin-bottom: 5px; }
-        .method-card.selected { border-color: var(--primary); background: rgba(0, 210, 255, 0.1); }
+        input, select { 
+            width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--border); 
+            background: #fff; color: var(--text); box-sizing: border-box; outline: none; 
+            font-size: 14px; margin-bottom: 10px; transition: 0.2s;
+        }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 210, 255, 0.1); }
+        
+        /* পেমেন্ট মেথড লোগো ফিক্স */
+        .method-container { display: flex; gap: 12px; margin-top: 10px; }
+        .method-card { 
+            flex: 1; background: #fff; border: 1.5px solid var(--border); padding: 12px 8px; 
+            border-radius: 15px; text-align: center; cursor: pointer; transition: 0.3s;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .method-card img { width: 50px; height: 35px; object-fit: contain; margin-bottom: 6px; }
+        .method-card span { font-size: 12px; font-weight: 600; color: #475569; }
+        .method-card.selected { border-color: var(--primary); background: rgba(0, 210, 255, 0.05); }
 
-        #numberDisplay { display: none; background: #0f172a; border: 1px dashed var(--primary); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
-        #payNum { font-size: 18px; color: var(--primary); letter-spacing: 1px; }
+        #numberDisplay { display: none; background: #f1f5f9; border: 1px dashed var(--primary); padding: 15px; border-radius: 12px; margin-top: 15px; text-align: center; }
+        #payNum { font-size: 18px; color: #0369a1; letter-spacing: 1px; font-weight: bold; }
 
         .price-summary { border-top: 1px dashed var(--border); margin-top: 15px; padding-top: 15px; }
-        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; }
-        .total-row { font-size: 18px; font-weight: bold; color: var(--primary); border-top: 1px solid var(--border); padding-top: 10px; }
+        .price-row { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 14px; color: #475569; }
+        .total-row { font-size: 18px; font-weight: bold; color: var(--dark); border-top: 1px solid var(--border); padding-top: 10px; }
+        .total-row span:last-child { color: var(--primary); }
 
-        .confirm-btn { width: 100%; padding: 15px; background: var(--primary); border: none; border-radius: 15px; font-weight: bold; color: var(--dark); cursor: pointer; font-size: 16px; margin-top: 20px; }
+        .confirm-btn { 
+            width: 100%; padding: 16px; background: var(--primary); border: none; border-radius: 15px; 
+            font-weight: bold; color: white; cursor: pointer; font-size: 16px; margin-top: 20px;
+            box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3); transition: 0.3s;
+        }
+        .confirm-btn:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
 <div class="checkout-container">
     <div class="header">
-        <i class="fa fa-arrow-left" onclick="history.back()" style="cursor:pointer"></i>
+        <i class="fa fa-arrow-left" onclick="history.back()" style="cursor:pointer; color: var(--dark);"></i>
         <h2>অর্ডার কনফার্ম করুন</h2>
     </div>
 
@@ -110,7 +130,7 @@
         <div id="numberDisplay">
             <span id="methodLabel">টাকা পাঠান এই নম্বরে:</span><br>
             <b id="payNum"></b><br>
-            <small>নম্বর কপি করতে ক্লিক করুন</small>
+            <small style="color: #64748b;">নম্বর কপি করতে ক্লিক করুন</small>
         </div>
 
         <input type="text" id="trxID" placeholder="Transaction ID (TrxID)" style="margin-top:15px; display:none;">
@@ -218,7 +238,6 @@
     const pSize = urlParams.get('size') || "N/A";
     document.getElementById('sumSize').innerText = pSize;
 
-    // Load Districts (Alphabetical Order)
     const distDropdown = document.getElementById('uDistrict');
     Object.keys(areaData).sort().forEach(dist => {
         let opt = document.createElement('option');
@@ -239,7 +258,6 @@
         }
     };
 
-    // Fast Load Product (Using get instead of onValue for faster single fetch)
     if(pId) {
         get(ref(db, 'products/' + pId)).then((snap) => {
             if(snap.exists()) {
@@ -255,13 +273,10 @@
         });
     }
 
-    // Calculation Logic
     function updateTotal() {
         const dCharge = Number(document.getElementById('uDeliveryArea').value) || 0;
         const payType = document.getElementById('paymentType').value;
-        
         let currentPaying = (payType === "Full Payment") ? (productPrice + dCharge) : dCharge;
-        
         document.getElementById('dChargeText').innerText = dCharge + " ৳";
         document.getElementById('totalAmount').innerText = currentPaying + " ৳";
     }
@@ -269,7 +284,6 @@
     document.getElementById('uDeliveryArea').onchange = updateTotal;
     document.getElementById('paymentType').onchange = updateTotal;
 
-    // Payment Selection
     document.getElementById('bkashBtn').onclick = () => setPayment('bKash', '01319474450');
     document.getElementById('nagadBtn').onclick = () => setPayment('Nagad', '01319474450');
 
@@ -290,7 +304,6 @@
         alert("নম্বর কপি হয়েছে!");
     };
 
-    // Submit Order
     document.getElementById('submitOrder').onclick = function() {
         const user = auth.currentUser;
         if (!user) return alert("অর্ডার করতে আগে লগইন করুন!");
@@ -308,8 +321,8 @@
             return alert("সব তথ্য এবং TrxID সঠিকভাবে দিন!");
         }
 
-        const totalProductPrice = productPrice + dCharge; // মোট মূল্য (প্রোডাক্ট + ডেলিভারি)
-        const paidAmount = (payType === "Full Payment") ? totalProductPrice : dCharge; // যা ইউজার এখন দিল
+        const totalProductPrice = productPrice + dCharge;
+        const paidAmount = (payType === "Full Payment") ? totalProductPrice : dCharge;
 
         const orderData = {
             uid: user.uid,
@@ -321,8 +334,8 @@
             productName: pName,
             productImg: pImg,
             size: pSize,
-            price: totalProductPrice, // অ্যাডমিন প্যানেলে দেখানোর জন্য মোট দাম
-            paidAmount: paidAmount,   // অ্যাডমিন প্যানেলে দেখানোর জন্য কত পেইড হয়েছে
+            price: totalProductPrice,
+            paidAmount: paidAmount,
             paymentMethod: selectedMethod,
             paymentType: payType,
             trxID: trx,
@@ -341,5 +354,4 @@
 </script>
 
 </body>
-    </html>
-    
+</html>
