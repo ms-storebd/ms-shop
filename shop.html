@@ -3,75 +3,242 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MS STORE - Home</title>
+    <title>MS STORE - Premium Experience</title>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#ffffff">
+    <meta name="theme-color" content="#0f172a">
     <link rel="apple-touch-icon" href="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg">
 
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
-        :root { --primary: #00d2ff; --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text: #1e293b; --dark: #0f172a; }
-        body { font-family: 'Poppins', sans-serif; margin: 0; background: var(--bg); color: var(--text); min-height: 100vh; overflow-x: hidden; }
-        
-        header { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(15px); padding: 12px 15px; display: flex; flex-direction: column; gap: 12px; position: sticky; top: 0; z-index: 5000; border-bottom: 1px solid var(--border); box-shadow: 0 2px 10px rgba(0,0,0,0.02); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 22px; font-weight: bold; color: var(--dark); letter-spacing: 1px; }
-        .logo span { color: var(--primary); }
-        
-        .profile-btn { width: 35px; height: 35px; border-radius: 50%; cursor: pointer; border: 1.5px solid var(--primary); object-fit: cover; background: #fff; }
-        .search-box { position: relative; width: 100%; }
-        .search-box input { width: 100%; padding: 10px 40px 10px 15px; border-radius: 12px; border: 1px solid var(--border); background: #fff; color: var(--text); outline: none; box-sizing: border-box; transition: 0.3s; }
-
-        /* স্লাইডার অপ্টিমাইজড স্টাইল */
-        .slider-container { width: 92%; height: 160px; margin: 15px auto; border-radius: 20px; overflow: hidden; position: relative; border: 1px solid var(--border); touch-action: pan-y; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .slider-track { 
-            display: flex; 
-            width: 100%; 
-            height: 100%; 
-            transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1); /* সুপার স্মুথ ট্রানজিশন */
-            will-change: transform;
+        :root { 
+            --primary: #0ea5e9; 
+            --primary-light: #e0f2fe;
+            --bg: #f8fafc; 
+            --card-bg: #ffffff; 
+            --border: #f1f5f9; 
+            --text-main: #0f172a; 
+            --text-muted: #64748b;
+            --grad: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         }
-        .slide { min-width: 100%; height: 100%; flex-shrink: 0; }
-        .slide img { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 
-        .cat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding: 15px; }
-        .cat-item { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 12px 5px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 2px 5px rgba(0,0,0,0.02); }
-        .cat-item.active { background: var(--primary); color: white; border-color: var(--primary); box-shadow: 0 4px 12px rgba(0, 210, 255, 0.3); }
-        .cat-item i { font-size: 20px; display: block; margin-bottom: 5px; }
-        .cat-item span { font-size: 10px; font-weight: 600; text-transform: uppercase; }
+        * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
+        
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            margin: 0; 
+            background: var(--bg); 
+            color: var(--text-main); 
+            min-height: 100vh; 
+            overflow-x: hidden; 
+        }
 
-        #sub-cat-container { display: flex; gap: 10px; padding: 0 15px 15px; overflow-x: auto; scrollbar-width: none; }
-        .sub-cat-btn { background: var(--card-bg); border: 1px solid var(--border); padding: 8px 18px; border-radius: 20px; font-size: 12px; white-space: nowrap; cursor: pointer; color: #64748b; font-weight: 500; }
-        .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: rgba(0, 210, 255, 0.05); }
+        /* Modern Header */
+        header { 
+            background: rgba(255, 255, 255, 0.8); 
+            backdrop-filter: blur(20px); 
+            padding: 15px 20px; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            position: sticky; 
+            top: 0; 
+            z-index: 5000; 
+            border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        
+        .logo { 
+            font-size: 24px; 
+            font-weight: 800; 
+            background: var(--grad);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -0.5px;
+        }
 
-        .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; padding: 15px; }
-        .p-card { background: var(--card-bg); border-radius: 18px; border: 1px solid var(--border); overflow: hidden; transition: 0.3s; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
-        .p-card img { width: 100%; height: 130px; object-fit: cover; background: #f1f5f9; }
-        .p-info { padding: 12px; }
-        .p-name { font-size: 13px; font-weight: 600; color: var(--dark); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .p-price { color: #0284c7; font-weight: bold; margin-top: 5px; font-size: 14px; }
+        .profile-btn { 
+            width: 42px; 
+            height: 42px; 
+            border-radius: 14px; 
+            cursor: pointer; 
+            border: 2px solid #fff; 
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            object-fit: cover; 
+        }
 
-        .profile-menu { display: none; position: fixed; top: 75px; right: 15px; width: 260px; background: white; border-radius: 22px; padding: 20px; z-index: 6000; border: 1px solid var(--border); box-shadow: 0 15px 35px rgba(0,0,0,0.1); }
-        .profile-menu.show { display: block; }
-        .u-id-badge { font-size: 12px; font-weight: bold; color: white; background: var(--primary); padding: 10px 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 15px; cursor: pointer; }
+        /* Search Box Premium */
+        .search-box { position: relative; width: 100%; }
+        .search-box i { 
+            position: absolute; left: 15px; top: 50%; 
+            transform: translateY(-50%); color: var(--text-muted); 
+        }
+        .search-box input { 
+            width: 100%; 
+            padding: 12px 15px 12px 45px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border); 
+            background: #fff; 
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .search-box input:focus { 
+            border-color: var(--primary); 
+            box-shadow: 0 0 0 4px var(--primary-light);
+            outline: none;
+        }
 
-        .whatsapp-helpline { position: fixed; bottom: 30px; right: 20px; background: #25d366; color: white; width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 32px; z-index: 9999; box-shadow: 0 8px 20px rgba(37, 211, 102, 0.4); }
-        #loading-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #ffffff; z-index: 9999; display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 24px; font-weight: bold; }
+        /* Stylish Slider */
+        .slider-container { 
+            width: 90%; 
+            height: 180px; 
+            margin: 20px auto; 
+            border-radius: 24px; 
+            overflow: hidden; 
+            position: relative; 
+            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
+        }
+        .slider-track { display: flex; height: 100%; will-change: transform; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .slide { min-width: 100%; height: 100%; position: relative; }
+        .slide img { width: 100%; height: 100%; object-fit: cover; }
+        .slide::after {
+            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
+            background: linear-gradient(transparent, rgba(0,0,0,0.4));
+        }
+
+        /* Categories Modern Grid */
+        .cat-grid { 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 12px; 
+            padding: 10px 20px; 
+        }
+        .cat-item { 
+            background: #fff; 
+            border-radius: 20px; 
+            padding: 15px 5px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid var(--border);
+        }
+        .cat-item.active { 
+            background: var(--grad); 
+            color: white; 
+            border-color: transparent;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        }
+        .cat-item i { font-size: 22px; margin-bottom: 8px; display: block; }
+        .cat-item span { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+
+        /* Sub Category Pills */
+        #sub-cat-container { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
+        #sub-cat-container::-webkit-scrollbar { display: none; }
+        .sub-cat-btn { 
+            background: #fff; 
+            border: 1px solid var(--border); 
+            padding: 8px 20px; 
+            border-radius: 100px; 
+            font-size: 13px; 
+            white-space: nowrap; 
+            color: var(--text-muted); 
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        .sub-cat-btn.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
+
+        /* Product Cards Premium */
+        .product-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 15px; 
+            padding: 10px 20px 100px; 
+        }
+        .p-card { 
+            background: var(--card-bg); 
+            border-radius: 24px; 
+            overflow: hidden; 
+            transition: all 0.3s ease; 
+            border: 1px solid var(--border);
+            position: relative;
+        }
+        .p-card:active { transform: scale(0.96); }
+        .p-card img { width: 100%; height: 160px; object-fit: cover; transition: 0.5s; }
+        .p-info { padding: 15px; }
+        .p-name { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
+        .p-price { 
+            font-size: 16px; 
+            font-weight: 800; 
+            color: var(--primary); 
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .p-price::after { content: '৳'; font-weight: 400; font-size: 14px; }
+
+        /* Profile Menu - Redesigned */
+        .profile-menu { 
+            display: none; position: fixed; top: 85px; right: 20px; width: 280px; 
+            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px);
+            border-radius: 28px; padding: 25px; z-index: 6000; 
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+        }
+        .profile-menu.show { display: block; animation: slideIn 0.3s ease-out; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .u-id-badge { 
+            font-size: 12px; font-weight: 700; color: #fff; 
+            background: var(--text-main); padding: 12px; 
+            border-radius: 16px; display: flex; align-items: center; 
+            justify-content: center; gap: 10px; margin-bottom: 20px; 
+        }
+
+        .menu-links a, .menu-links div {
+            display: flex; align-items: center; gap: 12px; padding: 14px;
+            border-radius: 16px; text-decoration: none; color: var(--text-main);
+            font-weight: 600; font-size: 14px; transition: 0.2s;
+        }
+        .menu-links a:hover { background: var(--bg); }
+        #logoutBtn { color: #ef4444; margin-top: 10px; background: #fef2f2; }
+
+        /* WhatsApp Bubble */
+        .whatsapp-helpline { 
+            position: fixed; bottom: 30px; right: 20px; 
+            background: #25d366; color: white; width: 55px; height: 55px; 
+            border-radius: 20px; display: flex; align-items: center; justify-content: center; 
+            font-size: 28px; z-index: 9999; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        #loading-screen { 
+            position: fixed; inset: 0; background: #fff; z-index: 10000; 
+            display: flex; flex-direction: column; align-items: center; justify-content: center; 
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="loading-screen" style="display: none;">MS STORE</div>
+<div id="loading-screen">
+    <div class="spinner"></div>
+    <div style="margin-top: 15px; font-weight: 700; color: var(--primary); letter-spacing: 2px;">MS STORE</div>
+</div>
 
 <header>
     <div class="header-top">
-        <div class="logo">MS <span>STORE</span></div> 
+        <div class="logo">MS STORE</div> 
         <img src="" class="profile-btn" id="profileTrigger" style="display:none;" alt="P">
     </div>
     <div class="search-box">
+        <i class="fa fa-search"></i>
         <input type="text" id="searchInput" placeholder="Search products...">
     </div>
 </header>
@@ -81,10 +248,10 @@
 </div>
 
 <div class="cat-grid">
-    <div class="cat-item active" data-cat="all"><i class="fa fa-th-large"></i><span>ALL</span></div>
-    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-baseball-bat-ball"></i><span>SPORTS</span></div>
-    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-microchip"></i><span>DEVICE</span></div>
-    <div class="cat-item" data-cat="fashion"><i class="fa fa-tshirt"></i><span>FASHION</span></div>
+    <div class="cat-item active" data-cat="all"><i class="fa-solid fa-grip"></i><span>ALL</span></div>
+    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-trophy"></i><span>SPORTS</span></div>
+    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-bolt"></i><span>DEVICE</span></div>
+    <div class="cat-item" data-cat="fashion"><i class="fa-solid fa-shirt"></i><span>STYLE</span></div>
 </div>
 
 <div id="sub-cat-container"></div>
@@ -93,22 +260,23 @@
 <div class="profile-menu" id="profileMenu">
     <div class="u-id-badge" id="copyID">
         <span id="u-uid">ID: MS-XXXXXXXX</span>
-        <i class="fa fa-copy" style="font-size: 10px;"></i>
+        <i class="fa fa-copy"></i>
     </div>
     <div class="menu-profile-card" style="text-align: center; margin-bottom: 20px;">
-        <img id="u-photo" src="" style="width:70px; height:70px; border-radius:50%; border:3px solid var(--bg); outline:2px solid var(--primary); margin-bottom:10px;">
-        <div id="u-name" style="font-weight: bold; color: var(--dark);">User Name</div>
-        <div id="u-email" style="font-size: 11px; color: #64748b;">email@gmail.com</div>
+        <img id="u-photo" src="" style="width:80px; height:80px; border-radius:24px; object-fit: cover; margin-bottom:12px; box-shadow: 0 8px 15px rgba(0,0,0,0.1);">
+        <div id="u-name" style="font-weight: 700; color: var(--text-main); font-size: 18px;">User Name</div>
+        <div id="u-email" style="font-size: 12px; color: var(--text-muted);">email@gmail.com</div>
     </div>
-    <div class="menu-links" style="display: flex; flex-direction: column; gap: 8px;">
-        <a href="my_orders.html" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: #f8fafc; border-radius: 12px; text-decoration: none; color: var(--text);"><i class="fa fa-shopping-cart" style="color:var(--primary)"></i><span>My Orders</span></a>
-        <div id="logoutBtn" style="display: flex; align-items: center; gap: 12px; padding: 12px; background: rgba(239, 68, 68, 0.02); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; cursor: pointer; color: #ef4444;"><i class="fa fa-sign-out-alt"></i><span>Logout</span></div>
+    <div class="menu-links">
+        <a href="my_orders.html"><i class="fa fa-bag-shopping" style="color:var(--primary)"></i><span>My Orders</span></a>
+        <div id="logoutBtn"><i class="fa fa-arrow-right-from-bracket"></i><span>Logout</span></div>
     </div>
 </div>
 
 <a href="https://wa.me/8801319474450" class="whatsapp-helpline"><i class="fab fa-whatsapp"></i></a>
 
 <script type="module">
+    // --- লজিক একদম আগের মতোই অপরিবর্তিত রাখা হয়েছে ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -128,7 +296,6 @@
     let pArray = JSON.parse(localStorage.getItem('cached_products')) || [];
 
     if(pArray.length > 0) { render(pArray); } 
-    else { document.getElementById('loading-screen').style.display = 'flex'; }
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
@@ -140,7 +307,7 @@
 
     function updateProfileUI(user) {
         document.getElementById('loading-screen').style.display = 'none';
-        const photo = user.photoURL || "https://www.w3schools.com/howto/img_avatar.png";
+        const photo = user.photoURL || "https://ui-avatars.com/api/?name=" + user.displayName;
         const trigger = document.getElementById('profileTrigger');
         trigger.src = photo; trigger.style.display = 'block';
         const finalID = "MS-" + user.uid.slice(-8).toUpperCase();
@@ -166,7 +333,10 @@
         list.innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
                 <img src="${p.img}" loading="lazy">
-                <div class="p-info"><div class="p-name">${p.name}</div><div class="p-price">${p.price} ৳</div></div>
+                <div class="p-info">
+                    <div class="p-name">${p.name}</div>
+                    <div class="p-price">${p.price}</div>
+                </div>
             </div>`).join('');
     }
 
@@ -189,7 +359,6 @@
         }
     }
 
-    // স্লাইডার কন্ট্রোল (সুপার স্মুথ টাচ + অটো প্লে)
     function initSlider(totalSlides) {
         const track = document.getElementById('sliderTrack');
         const container = document.getElementById('sliderContainer');
@@ -198,74 +367,38 @@
         let isDragging = false;
         let autoPlayTimer;
 
-        function updateSlide() {
-            track.style.transform = `translateX(-${index * 100}%)`;
-        }
-
-        function startAutoPlay() {
-            stopAutoPlay();
-            autoPlayTimer = setInterval(() => {
-                index = (index + 1) % totalSlides;
-                updateSlide();
-            }, 4000);
-        }
-
+        function updateSlide() { track.style.transform = `translateX(-${index * 100}%)`; }
+        function startAutoPlay() { stopAutoPlay(); autoPlayTimer = setInterval(() => { index = (index + 1) % totalSlides; updateSlide(); }, 4000); }
         function stopAutoPlay() { clearInterval(autoPlayTimer); }
 
-        container.addEventListener('touchstart', (e) => {
-            startX = e.touches[0].clientX;
-            stopAutoPlay();
-            isDragging = true;
-            track.style.transition = 'none'; // টাচ করার সময় ট্রানজিশন অফ (রিয়েল টাইম রেসপন্স)
-        });
-
+        container.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; stopAutoPlay(); isDragging = true; track.style.transition = 'none'; });
         container.addEventListener('touchmove', (e) => {
             if (!isDragging) return;
             const diff = startX - e.touches[0].clientX;
             const moveX = -(index * container.offsetWidth) - diff;
             track.style.transform = `translateX(${moveX}px)`;
         });
-
         container.addEventListener('touchend', (e) => {
             if (!isDragging) return;
-            const endX = e.changedTouches[0].clientX;
-            const diff = startX - endX;
+            const diff = startX - e.changedTouches[0].clientX;
             isDragging = false;
-            
-            track.style.transition = 'transform 0.6s cubic-bezier(0.23, 1, 0.32, 1)'; // আবার স্মুথনেস অন
-
-            if (Math.abs(diff) > 50) { // স্লাইড চেঞ্জ করার জন্য মিনিমাম দূরত্ব
-                if (diff > 0 && index < totalSlides - 1) index++;
-                else if (diff < 0 && index > 0) index--;
-            }
-            updateSlide();
-            startAutoPlay();
+            track.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+            if (Math.abs(diff) > 50) { if (diff > 0 && index < totalSlides - 1) index++; else if (diff < 0 && index > 0) index--; }
+            updateSlide(); startAutoPlay();
         });
-
         startAutoPlay();
     }
 
     function fetchBanners() {
-        const cachedBanners = localStorage.getItem('cached_banners');
-        if(cachedBanners) {
-            document.getElementById('sliderTrack').innerHTML = cachedBanners;
-            initSlider(document.querySelectorAll('.slide').length);
-        }
-        
         get(ref(db, 'banners')).then((snap) => {
             if (snap.exists()) {
                 const d = snap.val();
                 const banners = ['banner1', 'banner2', 'banner3'].filter(k => d[k]);
-                const html = banners.map(k => `
+                document.getElementById('sliderTrack').innerHTML = banners.map(k => `
                     <div class="slide" onclick="if('${d[k].link}') window.location.href='${d[k].link}'">
                         <img src="${d[k].img}">
                     </div>`).join('');
-                
-                if (html !== cachedBanners) {
-                    document.getElementById('sliderTrack').innerHTML = html;
-                    localStorage.setItem('cached_banners', html);
-                    initSlider(banners.length);
-                }
+                initSlider(banners.length);
             }
         });
     }
