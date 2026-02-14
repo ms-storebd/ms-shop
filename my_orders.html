@@ -37,26 +37,25 @@
         .Delivered { background: #d1fae5; color: var(--delivered); }
         .Cancelled { background: #fee2e2; color: var(--cancelled); }
 
-        /* প্রোডাক্ট সেকশন ডিজাইন */
         .product-box { display: flex; gap: 12px; margin-bottom: 15px; }
-        .product-img { width: 70px; height: 70px; border-radius: 12px; object-fit: cover; background: #f1f5f9; border: 1px solid var(--border); }
+        .product-img { width: 75px; height: 75px; border-radius: 12px; object-fit: cover; background: #f1f5f9; border: 1px solid var(--border); }
         .product-details { flex: 1; }
-        .product-details b { font-size: 14px; color: var(--text); display: block; margin-bottom: 4px; }
-        .product-details span { font-size: 12px; color: #64748b; font-weight: 500; }
+        .product-details b { font-size: 14px; color: var(--text); display: block; margin-bottom: 4px; line-height: 1.2; }
+        .product-details .p-meta { font-size: 12px; color: #64748b; font-weight: 500; display: block; }
+        .product-details .p-price-tag { font-size: 14px; font-weight: 600; color: var(--primary); margin-top: 5px; }
 
         .info-list { margin-bottom: 12px; }
-        .info-list small { color: #64748b; display: flex; align-items: center; gap: 8px; margin-bottom: 5px; font-size: 12px; }
-        .info-list i { width: 14px; color: var(--primary); text-align: center; }
+        .info-list small { color: #64748b; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12px; }
+        .info-list i { width: 14px; color: var(--primary); text-align: center; font-size: 13px; }
 
         .payment-box { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: #f1f5f9; padding: 12px; border-radius: 12px; margin-top: 10px; }
         .pay-item { display: flex; flex-direction: column; }
-        .pay-item span { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 600; }
-        .pay-item b { font-size: 13px; color: var(--text); }
+        .pay-item span { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 700; margin-bottom: 2px; }
+        .pay-item b { font-size: 14px; color: var(--text); }
         .pay-item.due b { color: var(--cancelled); }
         .pay-item.paid b { color: var(--delivered); }
 
         .help-text { margin-top: 12px; font-size: 11px; color: #94a3b8; padding-top: 8px; border-top: 1px dashed var(--border); }
-        #empty-msg { text-align: center; padding: 100px 20px; color: #94a3b8; }
     </style>
 </head>
 <body>
@@ -104,31 +103,36 @@
                         found = true;
                         const shortId = c.key.slice(-6).toUpperCase();
                         
-                        // তারিখ
+                        // তারিখ ফরম্যাট
                         const d = o.timestamp ? new Date(o.timestamp).toLocaleDateString('en-GB') : "N/A";
 
-                        // লজিক: 
-                        const productPrice = parseInt(o.productPrice || 0); // প্রোডাক্টের দাম
-                        const deliveryCharge = parseInt(o.deliveryCharge || 0); // ডেলিভারি চার্জ
-                        const paid = parseInt(o.paidAmount || o.payAmount || 0); // পরিশোধিত টাকা
-                        const total = productPrice + deliveryCharge; // মোট দাম
-                        const due = total - paid; // বকেয়া
+                        // লজিক ফিক্স:
+                        // মোট টাকা (টোটাল এমাউন্ট যেটা চেকআউটে ছিল)
+                        const totalFull = parseInt(o.totalAmount || o.totalPrice || 0);
+                        // ইউজার যে টাকাটা মাত্র পেমেন্ট করেছে (পেইড এমাউন্ট)
+                        const userPaid = parseInt(o.paidAmount || o.payAmount || 0);
+                        // ডেলিভারি চার্জ
+                        const dCharge = parseInt(o.deliveryCharge || 0);
+                        
+                        // বকেয়া হিসাব: যদি ইউজার শুধু ডেলিভারি চার্জ দেয়, তবে মেইন দাম বকেয়া থাকবে।
+                        // আমরা সরাসরি (Total - Paid) করছি যা সঠিক হিসাব দিবে।
+                        const dueAmount = totalFull - userPaid;
 
                         ordersData.push({ 
                             ...o, 
                             shortId, 
                             displayDate: d,
-                            productPrice,
-                            deliveryCharge,
-                            paid,
-                            due,
-                            img: o.productImg || o.img || "" // প্রোডাক্ট ছবি
+                            calcPaid: userPaid,
+                            calcDue: dueAmount,
+                            displayPrice: o.productPrice || o.price || 0,
+                            displaySize: o.productSize || o.size || o.selectedSize || 'N/A',
+                            img: o.productImg || o.img || o.image || "" 
                         });
                     }
                 });
 
                 if(!found) {
-                    list.innerHTML = `<div id="empty-msg"><i class="fa fa-shopping-bag" style="font-size:40px;"></i><p>আপনি এখনো কোনো অর্ডার করেননি।</p></div>`;
+                    list.innerHTML = `<div style="text-align:center; padding:100px 20px; color:#94a3b8;"><i class="fa fa-shopping-bag" style="font-size:40px;"></i><p>কোনো অর্ডার পাওয়া যায়নি।</p></div>`;
                     return;
                 }
 
@@ -136,33 +140,33 @@
                     list.innerHTML += `
                         <div class="order-card">
                             <div class="card-top">
-                                <div class="id-badge">#${o.shortId} <i class="fa fa-copy" style="font-size:10px; cursor:pointer;" onclick="copyToClipboard('${o.shortId}')"></i></div>
+                                <div class="id-badge">#${o.shortId} <i class="fa fa-copy" style="cursor:pointer;" onclick="copyToClipboard('${o.shortId}')"></i></div>
                                 <span class="status-tag ${o.status}">${o.status}</span>
                             </div>
 
                             <div class="product-box">
-                                <img src="${o.img}" class="product-img" alt="Product">
+                                <img src="${o.img}" class="product-img" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
                                 <div class="product-details">
                                     <b>${o.productName}</b>
-                                    <span>Size: ${o.productSize || 'N/A'}</span>
-                                    <div style="font-size: 13px; font-weight: 600; color: var(--primary); margin-top:4px;">৳ ${o.productPrice}</div>
+                                    <span class="p-meta">Size: ${o.displaySize}</span>
+                                    <div class="p-price-tag">৳ ${o.displayPrice}</div>
                                 </div>
                             </div>
 
                             <div class="info-list">
                                 <small><i class="fa fa-truck"></i> Charge: ৳ ${o.deliveryCharge}</small>
                                 <small><i class="fa fa-calendar-alt"></i> Date: ${o.displayDate}</small>
-                                <small><i class="fa fa-map-marker-alt"></i> ${o.address || 'No Address'}</small>
+                                <small><i class="fa fa-map-marker-alt"></i> ${o.address || 'ঠিকানা নেই'}</small>
                             </div>
 
                             <div class="payment-box">
                                 <div class="pay-item paid">
                                     <span>PAID (পরিশোধিত)</span>
-                                    <b>৳ ${o.paid}</b>
+                                    <b>৳ ${o.calcPaid}</b>
                                 </div>
                                 <div class="pay-item due">
                                     <span>DUE (বকেয়া)</span>
-                                    <b>৳ ${o.due}</b>
+                                    <b>৳ ${o.calcDue}</b>
                                 </div>
                             </div>
 
@@ -179,7 +183,7 @@
 
     window.copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
-            alert("Order ID copied!");
+            alert("Order ID copied: #" + text);
         });
     }
 </script>
