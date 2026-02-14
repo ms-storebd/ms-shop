@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>My Orders - MS STORE</title>
     
+    <!-- PWA Manifest Link -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#2563eb">
+    <link rel="apple-touch-icon" href="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg">
+
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -32,7 +37,6 @@
             padding-bottom: 80px; 
         }
         
-        /* Header Blue Style */
         header { 
             background: var(--primary); 
             padding: 15px 16px; 
@@ -50,7 +54,6 @@
 
         .container { padding: 12px; }
 
-        /* Professional Order Card */
         .order-card { 
             background: var(--surface); 
             border-radius: 8px; 
@@ -70,9 +73,7 @@
         }
 
         .order-id { font-size: 13px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 6px; }
-        .order-id i { color: var(--primary); font-size: 11px; }
 
-        /* Status Badges */
         .status-badge { 
             padding: 4px 10px; 
             border-radius: 4px; 
@@ -85,21 +86,13 @@
         .status-badge.Delivered { background: #ecfdf5; color: var(--delivered); }
         .status-badge.Cancelled { background: #fef2f2; color: var(--cancelled); }
 
-        /* Product Section */
         .product-info { display: flex; gap: 12px; margin-bottom: 15px; }
-        .product-img { 
-            width: 70px; height: 70px; 
-            border-radius: 6px; 
-            object-fit: cover; 
-            background: #f8fafc; 
-            border: 1px solid #f1f5f9; 
-        }
+        .product-img { width: 70px; height: 70px; border-radius: 6px; object-fit: cover; background: #f8fafc; border: 1px solid #f1f5f9; }
         .product-meta { flex: 1; }
         .product-meta b { font-size: 14px; color: var(--text-main); display: block; margin-bottom: 4px; }
         .product-meta span { font-size: 12px; color: var(--text-muted); display: block; }
         .product-meta .price { font-size: 15px; font-weight: 700; color: var(--primary); margin-top: 5px; }
 
-        /* Detail List */
         .details-grid { 
             display: grid; 
             grid-template-columns: 1fr; 
@@ -108,11 +101,10 @@
             padding: 12px; 
             border-radius: 6px; 
             margin-bottom: 12px;
+            font-size: 12px;
+            color: var(--text-muted);
         }
-        .detail-item { display: flex; align-items: center; gap: 10px; font-size: 12px; color: var(--text-muted); }
-        .detail-item i { width: 14px; color: var(--primary); }
 
-        /* Payment Summary */
         .payment-summary { 
             display: flex; 
             justify-content: space-between; 
@@ -122,11 +114,7 @@
         .pay-col { display: flex; flex-direction: column; }
         .pay-col label { font-size: 10px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; }
         .pay-col b { font-size: 14px; }
-        .paid-txt { color: var(--delivered); }
-        .due-txt { color: var(--cancelled); }
-        .completed-txt { color: var(--primary); }
 
-        /* Bottom Nav */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0;
             background: white; border-top: 1px solid var(--border);
@@ -147,12 +135,11 @@
 <div id="loading-screen"><div class="loader"></div></div>
 
 <header>
-    <i class="fa fa-arrow-left" onclick="location.href='shop.html'"></i>
+    <i class="fa fa-arrow-left" onclick="window.history.back()"></i>
     <h2>My Orders</h2>
 </header>
 
 <div class="container" id="order-list">
-    <!-- Orders will load here -->
     <div style="text-align: center; padding: 50px; color: var(--text-muted);">লোড হচ্ছে...</div>
 </div>
 
@@ -161,7 +148,7 @@
         <i class="fa fa-home"></i>
         <span>Home</span>
     </a>
-    <a href="shop.html" class="nav-item"> <!-- triggers profile in shop.html -->
+    <a href="shop.html" class="nav-item">
         <i class="fa fa-user"></i>
         <span>Account</span>
     </a>
@@ -212,71 +199,63 @@
                 document.getElementById('loading-screen').style.display = 'none';
 
                 if(!hasOrders) {
-                    list.innerHTML = `<div style="text-align:center; padding:100px 20px; color:#94a3b8;">
-                        <i class="fa fa-shopping-basket" style="font-size:50px; margin-bottom:15px; opacity:0.3;"></i>
-                        <p>আপনি এখনো কোনো অর্ডার করেননি!</p>
-                        <button onclick="location.href='shop.html'" style="background:var(--primary); color:white; border:none; padding:10px 20px; border-radius:5px; margin-top:10px;">কেনাকাটা করুন</button>
-                    </div>`;
+                    list.innerHTML = `<div style="text-align:center; padding-top:100px; color:#94a3b8;">কোনো অর্ডার নেই</div>`;
                     return;
                 }
 
                 data.reverse().forEach(o => {
                     const shortId = o.key.slice(-6).toUpperCase();
-                    const date = o.timestamp ? new Date(o.timestamp).toLocaleDateString('en-GB') : "N/A";
-                    const productPrice = parseInt(o.productPrice || o.price || 0);
-                    const delivery = parseInt(o.deliveryCharge || 0);
-                    const total = productPrice + delivery;
-                    const paid = parseInt(o.paidAmount || o.payAmount || 0);
+                    const productPrice = parseInt(o.productPrice || 0);
+                    const total = productPrice + parseInt(o.deliveryCharge || 0);
+                    const paid = parseInt(o.paidAmount || 0);
                     const due = total - paid;
 
                     list.innerHTML += `
                         <div class="order-card">
                             <div class="card-header">
-                                <div class="order-id" onclick="copyId('${shortId}')">#${shortId} <i class="fa fa-copy"></i></div>
+                                <div class="order-id" onclick="copyId('${shortId}')">#${shortId} <i class="fa fa-copy" style="font-size:10px;"></i></div>
                                 <div class="status-badge ${o.status}">${o.status}</div>
                             </div>
-
                             <div class="product-info">
-                                <img src="${o.productImg || o.img || 'https://via.placeholder.com/100'}" class="product-img" onerror="this.src='https://placehold.co/100x100?text=No+Image'">
+                                <img src="${o.productImg || o.img}" class="product-img" onerror="this.src='https://placehold.co/100x100?text=MS+Store'">
                                 <div class="product-meta">
                                     <b>${o.productName}</b>
                                     <span>Size: ${o.productSize || o.size || 'N/A'}</span>
                                     <div class="price">৳ ${productPrice}</div>
                                 </div>
                             </div>
-
                             <div class="details-grid">
-                                <div class="detail-item"><i class="fa fa-calendar"></i> Order Date: ${date}</div>
-                                <div class="detail-item"><i class="fa fa-map-marker-alt"></i> ${o.address || 'Address not found'}</div>
-                                <div class="detail-item"><i class="fa fa-wallet"></i> Method: ${o.paymentMethod || 'COD'} | Trx: ${o.trxID || 'N/A'}</div>
+                                <div><i class="fa fa-calendar"></i> &nbsp; Date: ${o.timestamp ? new Date(o.timestamp).toLocaleDateString() : 'N/A'}</div>
+                                <div><i class="fa fa-map-marker-alt"></i> &nbsp; ${o.address || 'Address missing'}</div>
                             </div>
-
                             <div class="payment-summary">
-                                <div class="pay-col">
-                                    <label>Total</label>
-                                    <b>৳ ${total}</b>
-                                </div>
-                                <div class="pay-col">
-                                    <label>Paid</label>
-                                    <b class="paid-txt">৳ ${paid}</b>
-                                </div>
-                                <div class="pay-col">
-                                    <label>Due</label>
-                                    <b class="${due <= 0 ? 'completed-txt' : 'due-txt'}">${due <= 0 ? 'PAID' : '৳ '+due}</b>
-                                </div>
+                                <div class="pay-col"><label>Total</label><b>৳ ${total}</b></div>
+                                <div class="pay-col"><label>Paid</label><b style="color:green;">৳ ${paid}</b></div>
+                                <div class="pay-col"><label>Due</label><b style="${due > 0 ? 'color:red;' : 'color:green;'}">${due > 0 ? '৳ '+due : 'PAID'}</b></div>
                             </div>
                         </div>`;
                 });
             });
         } else {
-            location.href = 'index.html';
+            // রিডাইরেক্ট করার সময় replace ব্যবহার করা ভালো যাতে লুপ না হয়
+            window.location.replace("index.html");
         }
     });
 
     window.copyId = (id) => {
         navigator.clipboard.writeText(id);
-        alert("Order ID Copied: #" + id);
+        alert("ID Copied: #" + id);
     };
+
+    // Service Worker Registration with Cleanup
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                for(let registration of registrations) { registration.unregister(); }
+                navigator.serviceWorker.register('sw.js').then(res => console.log("SW Active"));
+            });
+        });
+    }
 </script>
 </body>
-</html>
+    </html>
