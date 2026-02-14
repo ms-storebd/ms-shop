@@ -182,80 +182,64 @@
 
     onAuthStateChanged(auth, (user) => {
         if (user) {
-            onValue(ref(db, 'orders'), (snap) => {
-                const list = document.getElementById('order-list');
-                list.innerHTML = "";
-                let hasOrders = false;
-                const data = [];
-
-                snap.forEach(c => {
-                    const o = c.val();
-                    if((o.uid || o.userId) === user.uid) {
-                        hasOrders = true;
-                        data.push({...o, key: c.key});
-                    }
-                });
-
-                document.getElementById('loading-screen').style.display = 'none';
-
-                if(!hasOrders) {
-                    list.innerHTML = `<div style="text-align:center; padding-top:100px; color:#94a3b8;">কোনো অর্ডার নেই</div>`;
-                    return;
-                }
-
-                data.reverse().forEach(o => {
-                    const shortId = o.key.slice(-6).toUpperCase();
-                    const productPrice = parseInt(o.productPrice || 0);
-                    const total = productPrice + parseInt(o.deliveryCharge || 0);
-                    const paid = parseInt(o.paidAmount || 0);
-                    const due = total - paid;
-
-                    list.innerHTML += `
-                        <div class="order-card">
-                            <div class="card-header">
-                                <div class="order-id" onclick="copyId('${shortId}')">#${shortId} <i class="fa fa-copy" style="font-size:10px;"></i></div>
-                                <div class="status-badge ${o.status}">${o.status}</div>
-                            </div>
-                            <div class="product-info">
-                                <img src="${o.productImg || o.img}" class="product-img" onerror="this.src='https://placehold.co/100x100?text=MS+Store'">
-                                <div class="product-meta">
-                                    <b>${o.productName}</b>
-                                    <span>Size: ${o.productSize || o.size || 'N/A'}</span>
-                                    <div class="price">৳ ${productPrice}</div>
-                                </div>
-                            </div>
-                            <div class="details-grid">
-                                <div><i class="fa fa-calendar"></i> &nbsp; Date: ${o.timestamp ? new Date(o.timestamp).toLocaleDateString() : 'N/A'}</div>
-                                <div><i class="fa fa-map-marker-alt"></i> &nbsp; ${o.address || 'Address missing'}</div>
-                            </div>
-                            <div class="payment-summary">
-                                <div class="pay-col"><label>Total</label><b>৳ ${total}</b></div>
-                                <div class="pay-col"><label>Paid</label><b style="color:green;">৳ ${paid}</b></div>
-                                <div class="pay-col"><label>Due</label><b style="${due > 0 ? 'color:red;' : 'color:green;'}">${due > 0 ? '৳ '+due : 'PAID'}</b></div>
-                            </div>
-                        </div>`;
-                });
-            });
+            console.log("Logged in as:", user.uid);
+            fetchOrders(user.uid);
         } else {
-            // রিডাইরেক্ট করার সময় replace ব্যবহার করা ভালো যাতে লুপ না হয়
+            // যদি ইউজার লগইন না থাকে, তবে ইনডেক্সে পাঠিয়ে দাও
             window.location.replace("index.html");
         }
     });
 
-    window.copyId = (id) => {
-        navigator.clipboard.writeText(id);
-        alert("ID Copied: #" + id);
-    };
-
-    // Service Worker Registration with Cleanup
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.getRegistrations().then(registrations => {
-                for(let registration of registrations) { registration.unregister(); }
-                navigator.serviceWorker.register('sw.js').then(res => console.log("SW Active"));
+    function fetchOrders(uid) {
+        onValue(ref(db, 'orders'), (snap) => {
+            const list = document.getElementById('order-list');
+            list.innerHTML = "";
+            let found = false;
+            
+            snap.forEach(c => {
+                const o = c.val();
+                if((o.uid || o.userId) === uid) {
+                    found = true;
+                    // ... এখানে আপনার আগের অর্ডারের ডিজাইন কোডটি থাকবে ...
+                    renderOrderCard(list, o, c.key);
+                }
             });
+
+            document.getElementById('loading-screen').style.display = 'none';
+            if(!found) {
+                list.innerHTML = "<p style='text-align:center; padding-top:50px;'>কোনো অর্ডার পাওয়া যায়নি।</p>";
+            }
         });
     }
-</script>
+
+    // অর্ডার রেন্ডার করার জন্য আলাদা ফাংশন (যাতে কোড পরিষ্কার থাকে)
+    function renderOrderCard(list, o, key) {
+        const shortId = key.slice(-6).toUpperCase();
+        list.innerHTML += `
+            <div class="order-card">
+                <div class="card-header">
+                    <div class="order-id">#${shortId}</div>
+                    <div class="status-badge ${o.status}">${o.status}</div>
+                </div>
+                <div class="product-info">
+                    <img src="${o.productImg || o.img}" class="product-img">
+                    <div class="product-meta">
+                        <b>${o.productName}</b>
+                        <div class="price">৳ ${o.productPrice || 0}</div>
+                    </div>
+                </div>
+            </div>`;
+    }
+
+    // পুরোনো সব সার্ভিস ওয়ার্কার ডিলিট করার এবং নতুনটি রেজিস্টার করার নিয়ম
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.getRegistrations().then(registrations => {
+            for(let registration of registrations) {
+                registration.unregister(); // পুরোনোটি ডিলিট করবে
+            }
+            navigator.serviceWorker.register('sw.js?v=' + Date.now()); // নতুন ভার্সন লোড করবে
+        });
+    }
+        </script>
 </body>
     </html>
