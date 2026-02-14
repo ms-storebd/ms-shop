@@ -3,243 +3,195 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MS STORE - Premium Experience</title>
+    <title>MS STORE | Professional E-commerce</title>
 
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
-    <link rel="apple-touch-icon" href="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg">
-
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <meta name="theme-color" content="#2563eb">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { 
-            --primary: #0ea5e9; 
-            --primary-light: #e0f2fe;
-            --bg: #f8fafc; 
-            --card-bg: #ffffff; 
-            --border: #f1f5f9; 
-            --text-main: #0f172a; 
+            --primary: #2563eb; 
+            --accent: #f59e0b;
+            --bg: #f4f7fa; 
+            --surface: #ffffff; 
+            --border: #e2e8f0; 
+            --text-main: #1e293b; 
             --text-muted: #64748b;
-            --grad: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
         body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
+            font-family: 'Roboto', sans-serif; 
             margin: 0; 
             background: var(--bg); 
             color: var(--text-main); 
-            min-height: 100vh; 
-            overflow-x: hidden; 
+            padding-bottom: 70px; /* Space for bottom nav */
         }
 
-        /* Modern Header */
+        /* Top Bar */
         header { 
-            background: rgba(255, 255, 255, 0.8); 
-            backdrop-filter: blur(20px); 
-            padding: 15px 20px; 
-            display: flex; 
-            flex-direction: column; 
-            gap: 15px; 
+            background: var(--primary); 
+            padding: 12px 16px; 
             position: sticky; 
             top: 0; 
-            z-index: 5000; 
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            z-index: 1000;
         }
         
-        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         
         .logo { 
-            font-size: 24px; 
-            font-weight: 800; 
-            background: var(--grad);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            letter-spacing: -0.5px;
+            font-size: 20px; 
+            font-weight: 700; 
+            color: white;
+            letter-spacing: 0.5px;
         }
 
-        .profile-btn { 
-            width: 42px; 
-            height: 42px; 
-            border-radius: 14px; 
-            cursor: pointer; 
-            border: 2px solid #fff; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            object-fit: cover; 
-        }
-
-        /* Search Box Premium */
+        /* Search Bar Classic */
         .search-box { position: relative; width: 100%; }
         .search-box i { 
-            position: absolute; left: 15px; top: 50%; 
+            position: absolute; left: 12px; top: 50%; 
             transform: translateY(-50%); color: var(--text-muted); 
         }
         .search-box input { 
             width: 100%; 
-            padding: 12px 15px 12px 45px; 
-            border-radius: 16px; 
-            border: 1px solid var(--border); 
+            padding: 10px 15px 10px 40px; 
+            border-radius: 6px; 
+            border: none; 
             background: #fff; 
             font-size: 14px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-        }
-        .search-box input:focus { 
-            border-color: var(--primary); 
-            box-shadow: 0 0 0 4px var(--primary-light);
             outline: none;
         }
 
-        /* Stylish Slider */
+        /* Slider - Edge to Edge */
         .slider-container { 
-            width: 90%; 
-            height: 180px; 
-            margin: 20px auto; 
-            border-radius: 24px; 
+            width: 100%; 
+            height: 190px; 
             overflow: hidden; 
             position: relative; 
-            box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); 
+            background: #ddd;
         }
-        .slider-track { display: flex; height: 100%; will-change: transform; transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .slide { min-width: 100%; height: 100%; position: relative; }
+        .slider-track { display: flex; height: 100%; will-change: transform; transition: transform 0.5s ease-out; }
+        .slide { min-width: 100%; height: 100%; }
         .slide img { width: 100%; height: 100%; object-fit: cover; }
-        .slide::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 40%;
-            background: linear-gradient(transparent, rgba(0,0,0,0.4));
-        }
 
-        /* Categories Modern Grid */
+        /* Categories - Circle Style (Professional) */
+        .section-title { padding: 15px 16px 5px; font-size: 16px; font-weight: 700; }
+        
         .cat-grid { 
-            display: grid; 
-            grid-template-columns: repeat(4, 1fr); 
-            gap: 12px; 
-            padding: 10px 20px; 
+            display: flex; 
+            justify-content: space-between; 
+            padding: 15px 16px; 
+            background: white;
+            overflow-x: auto;
+            gap: 15px;
         }
         .cat-item { 
-            background: #fff; 
-            border-radius: 20px; 
-            padding: 15px 5px; 
+            min-width: 70px;
             text-align: center; 
             cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid var(--border);
         }
-        .cat-item.active { 
-            background: var(--grad); 
-            color: white; 
-            border-color: transparent;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3);
+        .cat-icon-box {
+            width: 50px;
+            height: 50px;
+            background: #eff6ff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 8px;
+            color: var(--primary);
+            font-size: 20px;
+            transition: 0.3s;
+            border: 1px solid transparent;
         }
-        .cat-item i { font-size: 22px; margin-bottom: 8px; display: block; }
-        .cat-item span { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+        .cat-item.active .cat-icon-box {
+            background: var(--primary);
+            color: white;
+        }
+        .cat-item span { font-size: 11px; font-weight: 500; color: var(--text-main); display: block; }
 
-        /* Sub Category Pills */
-        #sub-cat-container { display: flex; gap: 10px; padding: 15px 20px; overflow-x: auto; scrollbar-width: none; }
-        #sub-cat-container::-webkit-scrollbar { display: none; }
+        /* Sub Categories Pills */
+        #sub-cat-container { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; scrollbar-width: none; }
         .sub-cat-btn { 
             background: #fff; 
             border: 1px solid var(--border); 
-            padding: 8px 20px; 
-            border-radius: 100px; 
-            font-size: 13px; 
+            padding: 6px 16px; 
+            border-radius: 4px; 
+            font-size: 12px; 
             white-space: nowrap; 
-            color: var(--text-muted); 
-            font-weight: 600;
-            transition: 0.3s;
+            color: var(--text-main);
         }
-        .sub-cat-btn.active { background: var(--text-main); color: #fff; border-color: var(--text-main); }
+        .sub-cat-btn.active { border-color: var(--primary); color: var(--primary); background: #eff6ff; }
 
-        /* Product Cards Premium */
+        /* Product Grid Classic */
         .product-grid { 
             display: grid; 
             grid-template-columns: repeat(2, 1fr); 
-            gap: 15px; 
-            padding: 10px 20px 100px; 
+            gap: 10px; 
+            padding: 10px; 
         }
         .p-card { 
-            background: var(--card-bg); 
-            border-radius: 24px; 
+            background: white; 
+            border-radius: 4px; 
             overflow: hidden; 
-            transition: all 0.3s ease; 
-            border: 1px solid var(--border);
-            position: relative;
+            border: 1px solid #eee;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .p-card:active { transform: scale(0.96); }
-        .p-card img { width: 100%; height: 160px; object-fit: cover; transition: 0.5s; }
-        .p-info { padding: 15px; }
-        .p-name { font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 6px; }
-        .p-price { 
-            font-size: 16px; 
-            font-weight: 800; 
-            color: var(--primary); 
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-        .p-price::after { content: '৳'; font-weight: 400; font-size: 14px; }
+        .p-card img { width: 100%; height: 150px; object-fit: contain; background: #fff; padding: 10px; }
+        .p-info { padding: 10px; border-top: 1px solid #f8f8f8; }
+        .p-name { font-size: 13px; font-weight: 400; color: var(--text-main); height: 36px; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .p-price { font-size: 15px; font-weight: 700; color: #e11d48; margin-top: 5px; }
 
-        /* Profile Menu - Redesigned */
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: white; border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; padding: 8px 0;
+            z-index: 2000;
+        }
+        .nav-item { text-align: center; color: var(--text-muted); font-size: 20px; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item span { display: block; font-size: 10px; margin-top: 3px; font-weight: 500; }
+
+        /* Profile Side Menu */
         .profile-menu { 
-            display: none; position: fixed; top: 85px; right: 20px; width: 280px; 
-            background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(25px);
-            border-radius: 28px; padding: 25px; z-index: 6000; 
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15); 
+            display: none; position: fixed; inset: 0; 
+            background: rgba(0,0,0,0.5); z-index: 9999; 
         }
-        .profile-menu.show { display: block; animation: slideIn 0.3s ease-out; }
-        @keyframes slideIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        .profile-content {
+            position: absolute; right: 0; top: 0; bottom: 0; width: 280px;
+            background: white; animation: slideR 0.3s ease-out; padding: 20px;
+        }
+        @keyframes slideR { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
-        .u-id-badge { 
-            font-size: 12px; font-weight: 700; color: #fff; 
-            background: var(--text-main); padding: 12px; 
-            border-radius: 16px; display: flex; align-items: center; 
-            justify-content: center; gap: 10px; margin-bottom: 20px; 
+        .u-id-badge { background: #f1f5f9; padding: 10px; border-radius: 8px; margin-bottom: 20px; font-size: 12px; font-weight: bold; text-align: center; }
+        
+        .menu-links div, .menu-links a {
+            padding: 12px 0; border-bottom: 1px solid #f1f5f9; display: block;
+            text-decoration: none; color: var(--text-main); font-weight: 500;
         }
 
-        .menu-links a, .menu-links div {
-            display: flex; align-items: center; gap: 12px; padding: 14px;
-            border-radius: 16px; text-decoration: none; color: var(--text-main);
-            font-weight: 600; font-size: 14px; transition: 0.2s;
-        }
-        .menu-links a:hover { background: var(--bg); }
-        #logoutBtn { color: #ef4444; margin-top: 10px; background: #fef2f2; }
-
-        /* WhatsApp Bubble */
-        .whatsapp-helpline { 
-            position: fixed; bottom: 30px; right: 20px; 
-            background: #25d366; color: white; width: 55px; height: 55px; 
-            border-radius: 20px; display: flex; align-items: center; justify-content: center; 
-            font-size: 28px; z-index: 9999; box-shadow: 0 10px 20px rgba(37, 211, 102, 0.3);
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        #loading-screen { 
-            position: fixed; inset: 0; background: #fff; z-index: 10000; 
-            display: flex; flex-direction: column; align-items: center; justify-content: center; 
-        }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--primary-light); border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        #loading-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; }
+        .loader { width: 30px; height: 30px; border: 3px solid #eee; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="loading-screen">
-    <div class="spinner"></div>
-    <div style="margin-top: 15px; font-weight: 700; color: var(--primary); letter-spacing: 2px;">MS STORE</div>
-</div>
+<div id="loading-screen"><div class="loader"></div></div>
 
 <header>
     <div class="header-top">
         <div class="logo">MS STORE</div> 
-        <img src="" class="profile-btn" id="profileTrigger" style="display:none;" alt="P">
+        <div style="color: white; font-size: 20px;"><i class="fa fa-bell"></i></div>
     </div>
     <div class="search-box">
         <i class="fa fa-search"></i>
-        <input type="text" id="searchInput" placeholder="Search products...">
+        <input type="text" id="searchInput" placeholder="Search for products, brands and more">
     </div>
 </header>
 
@@ -247,36 +199,70 @@
     <div class="slider-track" id="sliderTrack"></div>
 </div>
 
+<div class="section-title">Categories</div>
 <div class="cat-grid">
-    <div class="cat-item active" data-cat="all"><i class="fa-solid fa-grip"></i><span>ALL</span></div>
-    <div class="cat-item" data-cat="sports"><i class="fa-solid fa-trophy"></i><span>SPORTS</span></div>
-    <div class="cat-item" data-cat="electronics"><i class="fa-solid fa-bolt"></i><span>DEVICE</span></div>
-    <div class="cat-item" data-cat="fashion"><i class="fa-solid fa-shirt"></i><span>STYLE</span></div>
+    <div class="cat-item active" data-cat="all">
+        <div class="cat-icon-box"><i class="fa fa-th-large"></i></div>
+        <span>All</span>
+    </div>
+    <div class="cat-item" data-cat="sports">
+        <div class="cat-icon-box"><i class="fa fa-baseball-bat-ball"></i></div>
+        <span>Sports</span>
+    </div>
+    <div class="cat-item" data-cat="electronics">
+        <div class="cat-icon-box"><i class="fa fa-mobile-screen"></i></div>
+        <span>Gadgets</span>
+    </div>
+    <div class="cat-item" data-cat="fashion">
+        <div class="cat-icon-box"><i class="fa fa-shirt"></i></div>
+        <span>Fashion</span>
+    </div>
 </div>
 
 <div id="sub-cat-container"></div>
+<div class="section-title">Flash Sale</div>
 <div class="product-grid" id="p-list"></div>
 
-<div class="profile-menu" id="profileMenu">
-    <div class="u-id-badge" id="copyID">
-        <span id="u-uid">ID: MS-XXXXXXXX</span>
-        <i class="fa fa-copy"></i>
+<!-- Bottom Navigation Bar -->
+<div class="bottom-nav">
+    <div class="nav-item active" onclick="location.reload()">
+        <i class="fa fa-home"></i>
+        <span>Home</span>
     </div>
-    <div class="menu-profile-card" style="text-align: center; margin-bottom: 20px;">
-        <img id="u-photo" src="" style="width:80px; height:80px; border-radius:24px; object-fit: cover; margin-bottom:12px; box-shadow: 0 8px 15px rgba(0,0,0,0.1);">
-        <div id="u-name" style="font-weight: 700; color: var(--text-main); font-size: 18px;">User Name</div>
-        <div id="u-email" style="font-size: 12px; color: var(--text-muted);">email@gmail.com</div>
+    <div class="nav-item" onclick="document.getElementById('profileTrigger').click()">
+        <i class="fa fa-user"></i>
+        <span>Account</span>
     </div>
-    <div class="menu-links">
-        <a href="my_orders.html"><i class="fa fa-bag-shopping" style="color:var(--primary)"></i><span>My Orders</span></a>
-        <div id="logoutBtn"><i class="fa fa-arrow-right-from-bracket"></i><span>Logout</span></div>
+    <div class="nav-item" onclick="location.href='my_orders.html'">
+        <i class="fa fa-box"></i>
+        <span>Orders</span>
+    </div>
+    <div class="nav-item" onclick="location.href='https://wa.me/8801319474450'">
+        <i class="fab fa-whatsapp"></i>
+        <span>Support</span>
     </div>
 </div>
 
-<a href="https://wa.me/8801319474450" class="whatsapp-helpline"><i class="fab fa-whatsapp"></i></a>
+<!-- Hidden Profile Button for logic compatibility -->
+<img src="" id="profileTrigger" style="display:none;">
+
+<div class="profile-menu" id="profileMenu">
+    <div class="profile-content">
+        <div style="text-align: right; margin-bottom: 10px;"><i class="fa fa-times" id="closeMenu" style="font-size: 20px;"></i></div>
+        <div class="menu-profile-card" style="text-align: center; margin-bottom: 20px;">
+            <img id="u-photo" src="" style="width:70px; height:70px; border-radius:50%; margin-bottom:10px; border: 2px solid var(--primary);">
+            <div id="u-name" style="font-weight: bold;">User Name</div>
+            <div id="u-email" style="font-size: 12px; color: var(--text-muted);">email@gmail.com</div>
+        </div>
+        <div class="u-id-badge" id="u-uid">UID: MS-XXXXXXXX</div>
+        <div class="menu-links">
+            <a href="my_orders.html"><i class="fa fa-shopping-bag"></i> &nbsp; My Orders</a>
+            <div id="logoutBtn" style="color: #e11d48;"><i class="fa fa-sign-out-alt"></i> &nbsp; Logout</div>
+        </div>
+    </div>
+</div>
 
 <script type="module">
-    // --- লজিক একদম আগের মতোই অপরিবর্তিত রাখা হয়েছে ---
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
     import { getDatabase, ref, onValue, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
@@ -307,14 +293,11 @@
 
     function updateProfileUI(user) {
         document.getElementById('loading-screen').style.display = 'none';
-        const photo = user.photoURL || "https://ui-avatars.com/api/?name=" + user.displayName;
-        const trigger = document.getElementById('profileTrigger');
-        trigger.src = photo; trigger.style.display = 'block';
-        const finalID = "MS-" + user.uid.slice(-8).toUpperCase();
+        const photo = user.photoURL || "https://www.w3schools.com/howto/img_avatar.png";
         document.getElementById('u-photo').src = photo;
-        document.getElementById('u-name').innerText = user.displayName || "User";
+        document.getElementById('u-name').innerText = user.displayName || "Customer";
         document.getElementById('u-email').innerText = user.email;
-        document.getElementById('u-uid').innerText = "UID: " + finalID;
+        document.getElementById('u-uid').innerText = "UID: MS-" + user.uid.slice(-8).toUpperCase();
     }
 
     function fetchProducts() {
@@ -323,19 +306,17 @@
             snap.forEach(child => { freshData.push({...child.val(), id: child.key}); });
             pArray = freshData;
             localStorage.setItem('cached_products', JSON.stringify(pArray));
-            const activeCat = document.querySelector('.cat-item.active').getAttribute('data-cat');
-            applyFilter(activeCat);
+            applyFilter(document.querySelector('.cat-item.active').getAttribute('data-cat'));
         });
     }
 
     function render(data) {
-        const list = document.getElementById('p-list');
-        list.innerHTML = data.map(p => `
+        document.getElementById('p-list').innerHTML = data.map(p => `
             <div class="p-card" onclick="location.href='product_details.html?id=${p.id}'">
                 <img src="${p.img}" loading="lazy">
                 <div class="p-info">
                     <div class="p-name">${p.name}</div>
-                    <div class="p-price">${p.price}</div>
+                    <div class="p-price">৳ ${p.price}</div>
                 </div>
             </div>`).join('');
     }
@@ -361,32 +342,11 @@
 
     function initSlider(totalSlides) {
         const track = document.getElementById('sliderTrack');
-        const container = document.getElementById('sliderContainer');
         let index = 0;
-        let startX = 0;
-        let isDragging = false;
-        let autoPlayTimer;
-
-        function updateSlide() { track.style.transform = `translateX(-${index * 100}%)`; }
-        function startAutoPlay() { stopAutoPlay(); autoPlayTimer = setInterval(() => { index = (index + 1) % totalSlides; updateSlide(); }, 4000); }
-        function stopAutoPlay() { clearInterval(autoPlayTimer); }
-
-        container.addEventListener('touchstart', (e) => { startX = e.touches[0].clientX; stopAutoPlay(); isDragging = true; track.style.transition = 'none'; });
-        container.addEventListener('touchmove', (e) => {
-            if (!isDragging) return;
-            const diff = startX - e.touches[0].clientX;
-            const moveX = -(index * container.offsetWidth) - diff;
-            track.style.transform = `translateX(${moveX}px)`;
-        });
-        container.addEventListener('touchend', (e) => {
-            if (!isDragging) return;
-            const diff = startX - e.changedTouches[0].clientX;
-            isDragging = false;
-            track.style.transition = 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
-            if (Math.abs(diff) > 50) { if (diff > 0 && index < totalSlides - 1) index++; else if (diff < 0 && index > 0) index--; }
-            updateSlide(); startAutoPlay();
-        });
-        startAutoPlay();
+        setInterval(() => {
+            index = (index + 1) % totalSlides;
+            track.style.transform = `translateX(-${index * 100}%)`;
+        }, 4000);
     }
 
     function fetchBanners() {
@@ -395,9 +355,7 @@
                 const d = snap.val();
                 const banners = ['banner1', 'banner2', 'banner3'].filter(k => d[k]);
                 document.getElementById('sliderTrack').innerHTML = banners.map(k => `
-                    <div class="slide" onclick="if('${d[k].link}') window.location.href='${d[k].link}'">
-                        <img src="${d[k].img}">
-                    </div>`).join('');
+                    <div class="slide"><img src="${d[k].img}"></div>`).join('');
                 initSlider(banners.length);
             }
         });
@@ -417,8 +375,9 @@
     };
 
     const menu = document.getElementById('profileMenu');
-    document.getElementById('profileTrigger').onclick = (e) => { e.stopPropagation(); menu.classList.toggle('show'); };
-    document.onclick = () => menu.classList.remove('show');
+    document.getElementById('profileTrigger').onclick = () => menu.style.display = 'block';
+    document.getElementById('closeMenu').onclick = () => menu.style.display = 'none';
+    window.onclick = (e) => { if(e.target == menu) menu.style.display = 'none'; };
     document.getElementById('logoutBtn').onclick = () => { localStorage.clear(); signOut(auth); };
 </script>
 </body>
