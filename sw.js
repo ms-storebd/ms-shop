@@ -1,20 +1,19 @@
-const CACHE_NAME = 'ms-store-final-v1';
-
+// sw.js ফাইলটি এই কোড দিয়ে রিপ্লেস করুন
 self.addEventListener('install', (event) => {
-    self.skipWaiting();
+    self.skipWaiting(); // পুরোনো সার্ভিস ওয়ার্কারকে সাথে সাথে সরিয়ে দেবে
 });
 
 self.addEventListener('activate', (event) => {
-    event.waitUntil(clients.claim());
+    event.waitUntil(
+        caches.keys().then((cacheNames) => {
+            return Promise.all(
+                cacheNames.map((cache) => caches.delete(cache)) // সব পুরোনো ক্যাশ ডিলিট করে দেবে
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
 self.addEventListener('fetch', (event) => {
-    // শুধুমাত্র নেভিগেশন রিকোয়েস্ট (পেজ পরিবর্তন) হ্যান্ডেল করবে
-    if (event.request.mode === 'navigate') {
-        event.respondWith(
-            fetch(event.request).catch(() => {
-                return caches.match(event.request);
-            })
-        );
-    }
+    // কোনো রিকোয়েস্ট আটকে রাখবে না, সরাসরি নেটওয়ার্ক থেকে আনবে
+    return; 
 });
