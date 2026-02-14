@@ -118,7 +118,7 @@
         <div class="price-summary">
             <div class="price-row"><span>প্রোডাক্ট প্রাইস:</span> <span id="pPriceText">0 ৳</span></div>
             <div class="price-row"><span>ডেলিভারি চার্জ:</span> <span id="dChargeText">70 ৳</span></div>
-            <div class="price-row total-row"><span>সর্বমোট:</span> <span id="totalAmount">0 ৳</span></div>
+            <div class="price-row total-row"><span>আপনি এখন পে করবেন:</span> <span id="totalAmount">0 ৳</span></div>
         </div>
     </div>
 
@@ -128,7 +128,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-    import { getDatabase, ref, onValue, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getDatabase, ref, get, push, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
@@ -210,17 +210,15 @@
         "Thakurgaon": ["Thakurgaon Sadar", "Pirganj", "Baliadangi", "Ranisankail"]
     };
 
-    let currentUser = null;
     let productPrice = 0;
-    let pName = "";
-    let pImg = "";
-    let selectedMethod = "";
+    let pName = "", pImg = "", selectedMethod = "";
 
     const urlParams = new URLSearchParams(window.location.search);
     const pId = urlParams.get('id');
     const pSize = urlParams.get('size') || "N/A";
     document.getElementById('sumSize').innerText = pSize;
 
+    // Load Districts (Alphabetical Order)
     const distDropdown = document.getElementById('uDistrict');
     Object.keys(areaData).sort().forEach(dist => {
         let opt = document.createElement('option');
@@ -232,24 +230,23 @@
     distDropdown.onchange = function() {
         const areaDropdown = document.getElementById('uAreaSelect');
         areaDropdown.innerHTML = '<option value="">এলাকা সিলেক্ট করুন</option>';
-        const selectedDist = this.value;
-        if(selectedDist && areaData[selectedDist]) {
-            areaData[selectedDist].forEach(area => {
+        if(this.value) {
+            areaData[this.value].forEach(area => {
                 let opt = document.createElement('option');
-                opt.value = area;
-                opt.innerText = area;
+                opt.value = area; opt.innerText = area;
                 areaDropdown.appendChild(opt);
             });
         }
     };
 
+    // Fast Load Product (Using get instead of onValue for faster single fetch)
     if(pId) {
-        onValue(ref(db, 'products/' + pId), (snap) => {
+        get(ref(db, 'products/' + pId)).then((snap) => {
             if(snap.exists()) {
                 const data = snap.val();
-                productPrice = parseInt(data.price);
+                productPrice = Number(data.price) || 0;
                 pName = data.name;
-                pImg = data.img || data.image || "https://via.placeholder.com/100";
+                pImg = data.img || data.image || "";
                 document.getElementById('sumTitle').innerText = pName;
                 document.getElementById('pPriceText').innerText = productPrice + " ৳";
                 document.getElementById('sumImg').src = pImg;
@@ -258,20 +255,21 @@
         });
     }
 
+    // Calculation Logic
+    function updateTotal() {
+        const dCharge = Number(document.getElementById('uDeliveryArea').value) || 0;
+        const payType = document.getElementById('paymentType').value;
+        
+        let currentPaying = (payType === "Full Payment") ? (productPrice + dCharge) : dCharge;
+        
+        document.getElementById('dChargeText').innerText = dCharge + " ৳";
+        document.getElementById('totalAmount').innerText = currentPaying + " ৳";
+    }
+
     document.getElementById('uDeliveryArea').onchange = updateTotal;
     document.getElementById('paymentType').onchange = updateTotal;
 
-    function updateTotal() {
-        const charge = parseInt(document.getElementById('uDeliveryArea').value) || 0;
-        const payType = document.getElementById('paymentType').value;
-        
-        document.getElementById('pPriceText').innerText = productPrice + " ৳";
-        document.getElementById('dChargeText').innerText = charge + " ৳";
-
-        let finalAmount = (payType === "Full Payment") ? (productPrice + charge) : charge;
-        document.getElementById('totalAmount').innerText = finalAmount + " ৳";
-    }
-
+    // Payment Selection
     document.getElementById('bkashBtn').onclick = () => setPayment('bKash', '01319474450');
     document.getElementById('nagadBtn').onclick = () => setPayment('Nagad', '01319474450');
 
@@ -292,51 +290,56 @@
         alert("নম্বর কপি হয়েছে!");
     };
 
+    // Submit Order
     document.getElementById('submitOrder').onclick = function() {
-        if (!auth.currentUser) {
-            alert("অর্ডার করতে আগে লগইন করুন!");
-            return;
-        }
+        const user = auth.currentUser;
+        if (!user) return alert("অর্ডার করতে আগে লগইন করুন!");
 
-        const name = document.getElementById('uName').value;
-        const phone = document.getElementById('uPhone').value;
+        const name = document.getElementById('uName').value.trim();
+        const phone = document.getElementById('uPhone').value.trim();
         const dist = document.getElementById('uDistrict').value;
         const area = document.getElementById('uAreaSelect').value;
-        const trx = document.getElementById('trxID').value;
-        const fullAddr = document.getElementById('uFullAddress').value;
+        const trx = document.getElementById('trxID').value.trim();
+        const fullAddr = document.getElementById('uFullAddress').value.trim();
         const payType = document.getElementById('paymentType').value;
+        const dCharge = Number(document.getElementById('uDeliveryArea').value);
 
         if(!name || !phone || !dist || !area || !selectedMethod || !trx) {
-            alert("অনুগ্রহ করে সব তথ্য এবং পেমেন্ট ট্রানজেকশন আইডি দিন!");
-            return;
+            return alert("সব তথ্য এবং TrxID সঠিকভাবে দিন!");
         }
 
-        const orderRef = push(ref(db, 'orders'));
-        set(orderRef, {
-            userId: auth.currentUser.uid,
+        const totalProductPrice = productPrice + dCharge; // মোট মূল্য (প্রোডাক্ট + ডেলিভারি)
+        const paidAmount = (payType === "Full Payment") ? totalProductPrice : dCharge; // যা ইউজার এখন দিল
+
+        const orderData = {
+            uid: user.uid,
             userName: name,
             phone: phone, 
-            address: `${fullAddr}, ${area}, ${dist}`,
+            district: dist,
+            upazila: area,
+            address: fullAddr,
             productName: pName,
             productImg: pImg,
             size: pSize,
-            price: document.getElementById('totalAmount').innerText.replace(' ৳', ''),
+            price: totalProductPrice, // অ্যাডমিন প্যানেলে দেখানোর জন্য মোট দাম
+            paidAmount: paidAmount,   // অ্যাডমিন প্যানেলে দেখানোর জন্য কত পেইড হয়েছে
             paymentMethod: selectedMethod,
             paymentType: payType,
             trxID: trx,
             status: "pending",
             timestamp: Date.now()
-        }).then(() => {
+        };
+
+        const newOrderRef = push(ref(db, 'orders'));
+        set(newOrderRef, orderData).then(() => {
             alert("অর্ডার সফলভাবে গ্রহণ করা হয়েছে!");
             window.location.href = "my_orders.html"; 
-        }).catch((error) => {
-            alert("অর্ডার দিতে সমস্যা হয়েছে: " + error.message);
-        });
+        }).catch(e => alert("Error: " + e.message));
     };
 
-    onAuthStateChanged(auth, (user) => { if(user) currentUser = user; });
+    onAuthStateChanged(auth, (user) => { if(!user) console.log("User not logged in"); });
 </script>
 
 </body>
-</html>
-
+    </html>
+    
