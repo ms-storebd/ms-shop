@@ -2,82 +2,131 @@
 <html lang="bn">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Orders - SportX</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>My Orders - MS STORE</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --pending: #f1c40f;
-            --shipped: #3498db;
-            --delivered: #2ecc71;
-            --cancelled: #e74c3c;
             --primary: #00d2ff;
+            --bg: #f8fafc;
+            --card-bg: #ffffff;
+            --border: #e2e8f0;
+            --text: #1e293b;
+            --pending: #f59e0b;
+            --shipped: #3b82f6;
+            --delivered: #10b981;
+            --cancelled: #ef4444;
         }
-        body { font-family: 'Poppins', sans-serif; background: #0f172a; color: white; padding: 20px; margin: 0; }
+
+        body { 
+            font-family: 'Poppins', sans-serif; 
+            background: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            padding: 15px; 
+            min-height: 100vh;
+        }
         
-        .header { display: flex; align-items: center; gap: 15px; margin-bottom: 25px; cursor: pointer; }
-        .header h2 { margin: 0; font-size: 20px; color: var(--primary); }
+        .header { 
+            display: flex; 
+            align-items: center; 
+            gap: 15px; 
+            margin-bottom: 20px; 
+            padding: 10px 5px;
+            position: sticky;
+            top: 0;
+            background: var(--bg);
+            z-index: 100;
+        }
+        .header i { font-size: 20px; color: var(--text); cursor: pointer; }
+        .header h2 { margin: 0; font-size: 18px; font-weight: 600; }
 
         .order-card { 
-            background: rgba(255, 255, 255, 0.05); 
-            border-radius: 20px; 
-            padding: 18px; 
-            margin-bottom: 20px; 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            position: relative;
+            background: var(--card-bg); 
+            border-radius: 18px; 
+            padding: 16px; 
+            margin-bottom: 15px; 
+            border: 1px solid var(--border); 
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border);
         }
 
         .id-badge {
-            background: rgba(0, 210, 255, 0.1);
-            padding: 5px 12px;
+            background: rgba(0, 210, 255, 0.08);
+            padding: 4px 10px;
             border-radius: 8px;
-            font-size: 11px;
-            font-weight: bold;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
+            font-size: 12px;
+            font-weight: 600;
             color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 6px;
         }
-        .copy-icon { cursor: pointer; color: #fff; opacity: 0.6; }
 
         .status-tag { 
-            float: right; 
-            padding: 4px 12px; 
+            padding: 4px 10px; 
             border-radius: 8px; 
             font-size: 11px; 
             font-weight: bold; 
+            text-transform: uppercase;
         }
 
-        .Pending { background: var(--pending); color: #000; }
-        .Shipped { background: var(--shipped); color: #fff; }
-        .Delivered { background: var(--delivered); color: #fff; }
-        .Cancelled { background: var(--cancelled); color: #fff; }
+        .Pending { background: #fef3c7; color: var(--pending); }
+        .Shipped { background: #dbeafe; color: var(--shipped); }
+        .Delivered { background: #d1fae5; color: var(--delivered); }
+        .Cancelled { background: #fee2e2; color: var(--cancelled); }
 
-        .p-info b { font-size: 16px; display: block; margin-bottom: 8px; color: #f8fafc; }
-        .p-info small { color: #94a3b8; display: block; margin-bottom: 5px; font-size: 13px; }
-        .p-info i { width: 20px; color: var(--primary); }
+        .p-info b { font-size: 15px; display: block; margin-bottom: 10px; color: var(--dark); line-height: 1.4; }
+        .p-info small { color: #64748b; display: flex; align-items: center; gap: 8px; margin-bottom: 6px; font-size: 12.5px; }
+        .p-info i { width: 16px; color: var(--primary); font-size: 14px; }
+
+        .payment-box {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            background: #f1f5f9;
+            padding: 12px;
+            border-radius: 12px;
+            margin-top: 12px;
+        }
+
+        .pay-item { display: flex; flex-direction: column; }
+        .pay-item span { font-size: 10px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+        .pay-item b { font-size: 14px; color: var(--text); }
+        .pay-item.due b { color: var(--cancelled); }
+        .pay-item.paid b { color: var(--delivered); }
 
         .help-text {
-            margin-top: 15px;
+            margin-top: 12px;
             font-size: 11px;
             color: #94a3b8;
-            padding-top: 10px;
-            border-top: 1px dashed rgba(255,255,255,0.1);
+            padding-top: 8px;
+            border-top: 1px dashed var(--border);
         }
 
-        #empty-msg { text-align: center; padding: 50px 20px; color: #64748b; }
+        #empty-msg { text-align: center; padding: 100px 20px; color: #94a3b8; }
+        #empty-msg i { font-size: 50px; margin-bottom: 15px; opacity: 0.5; }
     </style>
 </head>
 <body>
 
     <div class="header" onclick="location.href='shop.html'">
-        <i class="fa fa-arrow-left"></i>
-        <h2>My All orders</h2></h2>
+        <i class="fa fa-chevron-left"></i>
+        <h2>My Orders</h2>
     </div>
 
-    <div id="order-list">loading...</div>
+    <div id="order-list">
+        <div style="text-align: center; padding-top: 50px; color: #64748b;">অর্ডার লোড হচ্ছে...</div>
+    </div>
 
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -107,61 +156,79 @@
 
                 snap.forEach(c => {
                     const o = c.val();
-                    // চেকআউট পেজ থেকে 'uid' বা 'userId' যে নামেই সেভ হোক তা চেক করছে
                     const orderUID = o.uid || o.userId; 
                     
                     if(orderUID === user.uid) {
                         found = true;
                         const shortId = c.key.slice(-6).toUpperCase();
-                        
-                        // তারিখ ফরম্যাট করা (অর্ডারের সময় থেকে)
-                        const d = o.timestamp ? new Date(o.timestamp).toLocaleDateString('bn-BD') : "N/A";
+                        const d = o.timestamp ? new Date(o.timestamp).toLocaleDateString('en-GB') : "N/A";
+
+                        // লজিক: Total, Paid, and Due calculation
+                        const total = parseInt(o.totalAmount || o.totalPrice || 0);
+                        const paid = parseInt(o.paidAmount || o.payAmount || 0);
+                        const due = total - paid;
 
                         ordersData.push({ 
                             ...o, 
                             shortId, 
                             displayDate: d,
-                            // কি-নেমগুলো চেকআউটের সাথে মিলিয়ে নেওয়া হলো
-                            displayPrice: o.totalAmount || o.totalPrice || "0",
+                            total,
+                            paid,
+                            due,
                             displayAddress: o.address || "ঠিকানা পাওয়া যায়নি"
                         });
                     }
                 });
 
+                if(!found) {
+                    list.innerHTML = `<div id="empty-msg"><i class="fa fa-shopping-bag"></i><p>আপনি এখনো কোনো অর্ডার করেননি।</p></div>`;
+                    return;
+                }
+
                 ordersData.reverse().forEach(o => {
                     list.innerHTML += `
                         <div class="order-card">
-                            <span class="status-tag ${o.status}">${o.status}</span>
-                            <div class="id-badge">
-                                ID: #${o.shortId} 
-                                <i class="fa fa-copy copy-icon" onclick="copyToClipboard('${o.shortId}')"></i>
+                            <div class="card-top">
+                                <div class="id-badge">
+                                    #${o.shortId} 
+                                    <i class="fa fa-copy" style="cursor:pointer; font-size:10px;" onclick="copyToClipboard('${o.shortId}')"></i>
+                                </div>
+                                <span class="status-tag ${o.status}">${o.status}</span>
                             </div>
+
                             <div class="p-info">
-                                <b>${o.productName} (সাইজ: ${o.productSize || 'N/A'})</b>
-                                <small><i class="fa fa-calendar-alt"></i> তারিখ: ${o.displayDate}</small>
-                                <small><i class="fa fa-map-marker-alt"></i> ${o.displayAddress}</small>
-                                <small><i class="fa fa-money-bill-wave"></i> মোট পেমেন্ট: ${o.displayPrice}</small>
-                                <small><i class="fa fa-credit-card"></i> মাধ্যম: ${o.paymentMethod} (${o.paymentType})</small>
+                                <b>${o.productName} (Size: ${o.productSize || 'N/A'})</b>
+                                <small><i class="fa fa-calendar-check"></i> ${o.displayDate}</small>
+                                <small><i class="fa fa-location-dot"></i> ${o.displayAddress}</small>
+                                <small><i class="fa fa-wallet"></i> Method: ${o.paymentMethod}</small>
                             </div>
+
+                            <div class="payment-box">
+                                <div class="pay-item paid">
+                                    <span>PAID (পরিশোধিত)</span>
+                                    <b>৳ ${o.paid}</b>
+                                </div>
+                                <div class="pay-item due">
+                                    <span>DUE (বকেয়া)</span>
+                                    <b>৳ ${o.due}</b>
+                                </div>
+                            </div>
+
                             <div class="help-text">
-                                <i class="fa fa-info-circle"></i> TrxID: ${o.trxID}
+                                <i class="fa fa-fingerprint"></i> Transaction ID: ${o.trxID || 'N/A'}
                             </div>
                         </div>`;
                 });
-
-                if(!found) {
-                    list.innerHTML = `<div id="empty-msg"><i class="fa fa-shopping-bag" style="font-size:40px; margin-bottom:10px;"></i><p>আপনি এখনো কোনো অর্ডার করেননি।</p></div>`;
-                }
             });
         } else {
-            // ইউজার লগইন না থাকলে লগইন পেজে পাঠিয়ে দিবে
-            location.href = 'login.html';
+            location.href = 'index.html';
         }
     });
 
     window.copyToClipboard = (text) => {
         navigator.clipboard.writeText(text).then(() => {
-            alert("অর্ডার আইডি কপি হয়েছে: #" + text);
+            // সিম্পল ব্রাউজার এলার্ট অথবা টোস্ট
+            alert("ID copied: #" + text);
         });
     }
 </script>
