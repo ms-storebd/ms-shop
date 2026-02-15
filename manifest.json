@@ -10,6 +10,12 @@
       "src": "https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg",
       "sizes": "512x512",
       "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
       "purpose": "maskable"
     }
   ]
