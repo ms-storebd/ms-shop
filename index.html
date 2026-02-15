@@ -10,65 +10,65 @@
     
     <style>
         :root {
-            --deep-sky: #001a2c; /* Deep Sky Blue Dark base */
+            --deep-sky: #001a2c; 
             --accent: #00d2ff;
             --glass: rgba(255, 255, 255, 0.03);
             --border: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- Custom Splash Screen Styles --- */
+        /* --- ইউটিউব স্টাইল প্রফেশনাল স্প্ল্যাশ স্ক্রিন --- */
         #splash-screen {
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: radial-gradient(circle at top right, #003d5b, #001a2c, #000a12);
+            /* ম্যানিফেস্টের ব্যাকগ্রাউন্ডের সাথে হুবহু মিল */
+            background: #001a2c; 
             display: flex; justify-content: center; align-items: center;
-            z-index: 99999;
-            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+            z-index: 100000;
+            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .splash-content { text-align: center; }
+        .splash-content { text-align: center; position: relative; }
 
         .splash-logo {
-            width: 120px; /* লোগোর সাইজ এখান থেকে ছোট-বড় করতে পারবেন */
-            height: auto;
-            margin-bottom: 25px;
-            filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.5));
-            animation: zoomPulse 2s infinite ease-in-out;
+            /* লোগো সাইজ এবং ক্রপিং প্রোটেকশন */
+            width: 140px; 
+            height: 140px;
+            object-fit: contain; 
+            border-radius: 20px;
+            filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
+            /* ইউটিউব অ্যারাইভাল এনিমেশন */
+            animation: ytArrival 1.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            opacity: 0;
         }
 
-        .splash-loader {
-            width: 150px; height: 3px;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px; margin: 0 auto;
-            overflow: hidden; position: relative;
+        .splash-loader-line {
+            width: 50px; height: 2px;
+            background: rgba(255,255,255,0.05);
+            margin: 20px auto 0;
+            overflow: hidden; border-radius: 10px;
         }
 
         .splash-loader-fill {
-            width: 0%; height: 100%;
+            width: 100%; height: 100%;
             background: var(--accent);
-            box-shadow: 0 0 15px var(--accent);
-            animation: progressFill 2.5s infinite ease-in-out;
+            animation: lineMove 1.5s infinite ease-in-out;
+            transform: translateX(-100%);
         }
 
-        .splash-text {
-            margin-top: 15px; font-size: 12px;
-            letter-spacing: 3px; color: var(--accent);
-            text-transform: uppercase; font-weight: 300;
-            opacity: 0.8;
+        /* লোগো বড় থেকে স্মুথলি ছোট হয়ে আসা */
+        @keyframes ytArrival {
+            0% { transform: scale(1.6); opacity: 0; }
+            30% { opacity: 1; }
+            100% { transform: scale(1); opacity: 1; }
         }
 
-        @keyframes zoomPulse {
-            0%, 100% { transform: scale(0.95); opacity: 0.8; }
-            50% { transform: scale(1.05); opacity: 1; }
+        @keyframes lineMove {
+            0% { transform: translateX(-100%); }
+            50% { transform: translateX(0); }
+            100% { transform: translateX(100%); }
         }
 
-        @keyframes progressFill {
-            0% { width: 0%; left: 0; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-
-        .hide-splash { opacity: 0; visibility: hidden; }
+        .hide-splash { opacity: 0; pointer-events: none; }
 
         /* --- Original Styles (Unchanged) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -81,7 +81,6 @@
             overflow-x: hidden;
         }
 
-        /* --- Header --- */
         nav {
             padding: 25px 5%;
             display: flex;
@@ -222,11 +221,10 @@
 
     <div id="splash-screen">
         <div class="splash-content">
-            <img src="logo.png" class="splash-logo" alt="MS STORE">
-            <div class="splash-loader">
+            <img src="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg" class="splash-logo" alt="MS STORE">
+            <div class="splash-loader-line">
                 <div class="splash-loader-fill"></div>
             </div>
-            <div class="splash-text">Premium Experience</div>
         </div>
     </div>
 
@@ -283,12 +281,13 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
+        // স্প্ল্যাশ স্ক্রিন রিমুভাল লজিক
         window.addEventListener('load', function() {
             const splash = document.getElementById('splash-screen');
             setTimeout(() => {
                 splash.classList.add('hide-splash');
-                setTimeout(() => splash.remove(), 800);
-            }, 2500); // ২.৫ সেকেন্ড লোডিং হবে
+                setTimeout(() => splash.remove(), 600);
+            }, 2200); // ২.২ সেকেন্ড পর হাইড হবে (ইউটিউব এর মতো ফাস্ট)
         });
     </script>
 
