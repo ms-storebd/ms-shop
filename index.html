@@ -3,6 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <meta name="theme-color" content="#001a2c">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <title>MS STORE - Premium Lifestyle</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;600;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
@@ -19,66 +23,68 @@
         /* --- ইউটিউব স্টাইল প্রফেশনাল স্প্ল্যাশ স্ক্রিন --- */
         #splash-screen {
             position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            /* ম্যানিফেস্টের ব্যাকগ্রাউন্ডের সাথে হুবহু মিল */
-            background: #001a2c; 
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #001a2c; /* হুবহু ম্যানিফেস্টের কালার */
             display: flex; justify-content: center; align-items: center;
-            z-index: 100000;
-            transition: opacity 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2147483647; /* সর্বোচ্চ লেভেলের জিল-ইন্ডেক্স */
+            opacity: 1;
+            visibility: visible;
+            transition: opacity 0.5s ease-out;
         }
 
-        .splash-content { text-align: center; position: relative; }
+        .splash-content { text-align: center; }
 
         .splash-logo {
-            /* লোগো সাইজ এবং ক্রপিং প্রোটেকশন */
             width: 140px; 
             height: 140px;
             object-fit: contain; 
             border-radius: 20px;
             filter: drop-shadow(0 10px 30px rgba(0,0,0,0.5));
-            /* ইউটিউব অ্যারাইভাল এনিমেশন */
-            animation: ytArrival 1.8s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+            animation: ytArrival 1.6s cubic-bezier(0.19, 1, 0.22, 1) forwards;
             opacity: 0;
         }
 
         .splash-loader-line {
-            width: 50px; height: 2px;
+            width: 40px; height: 2px;
             background: rgba(255,255,255,0.05);
-            margin: 20px auto 0;
+            margin: 25px auto 0;
             overflow: hidden; border-radius: 10px;
         }
 
         .splash-loader-fill {
             width: 100%; height: 100%;
             background: var(--accent);
-            animation: lineMove 1.5s infinite ease-in-out;
+            animation: lineMove 1.2s infinite ease-in-out;
             transform: translateX(-100%);
         }
 
-        /* লোগো বড় থেকে স্মুথলি ছোট হয়ে আসা */
         @keyframes ytArrival {
             0% { transform: scale(1.6); opacity: 0; }
-            30% { opacity: 1; }
+            40% { opacity: 1; }
             100% { transform: scale(1); opacity: 1; }
         }
 
         @keyframes lineMove {
             0% { transform: translateX(-100%); }
-            50% { transform: translateX(0); }
             100% { transform: translateX(100%); }
         }
 
-        .hide-splash { opacity: 0; pointer-events: none; }
+        .hide-splash { opacity: 0 !important; visibility: hidden !important; }
 
         /* --- Original Styles (Unchanged) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Outfit', sans-serif;
-            background: radial-gradient(circle at top right, #003d5b, #001a2c, #000a12);
+            background: #001a2c; /* ডিফল্ট কালার সরাসরি সেট করা */
             color: white;
             min-height: 100vh;
             overflow-x: hidden;
+        }
+
+        /* গ্রেডিয়েন্টটি আলাদা ক্লাসে রাখা হয়েছে যাতে লোডিং-এ সমস্যা না হয় */
+        .gradient-bg {
+            background: radial-gradient(circle at top right, #003d5b, #001a2c, #000a12);
         }
 
         nav {
@@ -217,7 +223,7 @@
         }
     </style>
 </head>
-<body>
+<body style="background-color: #001a2c;">
 
     <div id="splash-screen">
         <div class="splash-content">
@@ -228,66 +234,69 @@
         </div>
     </div>
 
-    <nav>
-        <div class="logo">MS STORE</div>
-        <div class="admin-nav">
-            <div class="three-dots-btn" id="menuToggle"><i class="fa fa-ellipsis-v"></i></div>
-            <div class="admin-dropdown" id="dropdownMenu">
-                <a href="#"><i class="fa fa-headset"></i> Get Help</a>
-                <a href="#"><i class="fa fa-info-circle"></i> About Us</a>
+    <div class="gradient-bg">
+        <nav>
+            <div class="logo">MS STORE</div>
+            <div class="admin-nav">
+                <div class="three-dots-btn" id="menuToggle"><i class="fa fa-ellipsis-v"></i></div>
+                <div class="admin-dropdown" id="dropdownMenu">
+                    <a href="#"><i class="fa fa-headset"></i> Get Help</a>
+                    <a href="#"><i class="fa fa-info-circle"></i> About Us</a>
+                </div>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <section class="hero">
-        <div class="slider-window">
-            <div class="swiper mySwiper">
-                <div class="swiper-wrapper">
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070">
-                        <div class="slide-overlay"><h2>Nike Air Max</h2></div>
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=2070">
-                        <div class="slide-overlay"><h2>Premium Sports</h2></div>
-                    </div>
-                    <div class="swiper-slide">
-                        <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070">
-                        <div class="slide-overlay"><h2>Luxury Fashion</h2></div>
+        <section class="hero">
+            <div class="slider-window">
+                <div class="swiper mySwiper">
+                    <div class="swiper-wrapper">
+                        <div class="swiper-slide">
+                            <img src="https://images.unsplash.com/photo-1542291026-7eec264c27ff?q=80&w=2070">
+                            <div class="slide-overlay"><h2>Nike Air Max</h2></div>
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=2070">
+                            <div class="slide-overlay"><h2>Premium Sports</h2></div>
+                        </div>
+                        <div class="swiper-slide">
+                            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070">
+                            <div class="slide-overlay"><h2>Luxury Fashion</h2></div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <div class="hero-text">
-            <h1>UNLIMITED <br> <span style="color: var(--accent);">FASHION</span></h1>
-            <p>আপনার প্রিয় ফ্যাশন এবং স্পোর্টস আইটেমের একমাত্র প্রিমিয়াম কালেকশন। আমাদের সাথে শুরু করুন একটি নতুন এক্সপেরিয়েন্স।</p>
-        </div>
+            <div class="hero-text">
+                <h1>UNLIMITED <br> <span style="color: var(--accent);">FASHION</span></h1>
+                <p>আপনার প্রিয় ফ্যাশন এবং স্পোর্টস আইটেমের একমাত্র প্রিমিয়াম কালেকশন। আমাদের সাথে শুরু করুন একটি নতুন এক্সপেরিয়েন্স।</p>
+            </div>
 
-        <div class="login-section">
-            <button class="google-btn" id="googleLoginBtn">
-                <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28">
-                Google দিয়ে লগইন
-            </button>
-        </div>
+            <div class="login-section">
+                <button class="google-btn" id="googleLoginBtn">
+                    <img src="https://img.icons8.com/color/48/000000/google-logo.png" width="28">
+                    Google দিয়ে লগইন
+                </button>
+            </div>
 
-        <div class="features-grid">
-            <div class="f-card"><i class="fa fa-gem"></i><h3>PREMIUM QUALITY</h3></div>
-            <div class="f-card"><i class="fa fa-bolt"></i><h3>FASTEST SHIP</h3></div>
-            <div class="f-card"><i class="fa fa-shield-alt"></i><h3>SECURE PAY</h3></div>
-        </div>
-    </section>
+            <div class="features-grid">
+                <div class="f-card"><i class="fa fa-gem"></i><h3>PREMIUM QUALITY</h3></div>
+                <div class="f-card"><i class="fa fa-bolt"></i><h3>FASTEST SHIP</h3></div>
+                <div class="f-card"><i class="fa fa-shield-alt"></i><h3>SECURE PAY</h3></div>
+            </div>
+        </section>
+    </div>
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // স্প্ল্যাশ স্ক্রিন রিমুভাল লজিক
+        // সাদা ঝলক এড়াতে এই স্ক্রিপ্টটি দ্রুত কাজ করবে
         window.addEventListener('load', function() {
             const splash = document.getElementById('splash-screen');
             setTimeout(() => {
                 splash.classList.add('hide-splash');
-                setTimeout(() => splash.remove(), 600);
-            }, 2200); // ২.২ সেকেন্ড পর হাইড হবে (ইউটিউব এর মতো ফাস্ট)
+                // অ্যানিমেশন শেষে পুরোপুরি সরিয়ে ফেলা
+                setTimeout(() => splash.style.display = 'none', 600);
+            }, 2000); 
         });
     </script>
 
