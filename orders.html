@@ -6,49 +6,39 @@
     <title>Admin - Order Management</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
+        /* আপনার দেওয়া স্টাইলগুলো এখানে অপরিবর্তিত থাকবে */
         :root { --primary: #00d2ff; --dark: #0f172a; --bg: #f1f5f9; --success: #2ecc71; --danger: #e74c3c; }
         body { font-family: 'Poppins', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
-        
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .back-btn { background: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        
         .search-container { margin: 10px 0; position: relative; }
         .search-container input { width: 100%; padding: 12px 40px 12px 15px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; box-sizing: border-box; font-size: 14px; }
         .search-container i { position: absolute; right: 15px; top: 15px; color: #64748b; }
-
         .order-card { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); position: relative; }
         .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .order-id { font-weight: bold; color: var(--dark); font-size: 13px; }
         .order-time { font-size: 10px; color: #64748b; display: block; margin-top: 2px; }
         .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
-        
         .pending { background: #fff3cd; color: #856404; }
         .shipped { background: #e0f2fe; color: #0369a1; }
         .delivered { background: #d4edda; color: #155724; }
         .cancelled { background: #fee2e2; color: #dc2626; }
-
         .main-info-grid { display: grid; grid-template-columns: 1fr 1.2fr; gap: 10px; margin: 10px 0; }
         .item-details { display: flex; flex-direction: column; gap: 5px; background: #f8fafc; padding: 10px; border-radius: 12px; border: 1px solid #edf2f7; }
         .item-details img { width: 100%; height: 70px; border-radius: 8px; object-fit: cover; }
-        
         .user-profile-box { background: #fff; border: 1.5px dashed var(--primary); padding: 8px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; text-align: center; cursor: pointer; }
         .user-profile-box img { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--primary); background: #eee; }
         .user-profile-box b { font-size: 10px; color: var(--dark); margin-top: 4px; }
-
         .info-box { background: #f8fafc; padding: 12px; border-radius: 12px; margin-top: 10px; border: 1px solid #edf2f7; cursor: pointer; }
         .info-row { display: block; margin-bottom: 4px; font-size: 12px; color: var(--dark); }
         .info-row i { color: var(--primary); width: 18px; }
-
         .payment-summary-card { background: #f8fafc; padding: 15px; border-radius: 15px; margin-top: 10px; border: 1px solid #e2e8f0; }
         .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
         .pay-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding: 3px 0; }
         .pay-item b { color: var(--dark); }
-        
         .method-badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; font-size: 10px; }
         .type-badge { background: #64748b; color: white; padding: 2px 8px; border-radius: 5px; font-size: 10px; }
-
         .trx-id-box { background: #fff; padding: 8px; border-radius: 8px; margin-top: 8px; border: 1px solid #0369a1; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; }
-
         .actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; }
         .status-select { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 12px; outline: none; background: #f8fafc; }
         .btn-call { background: #e0f2fe; color: #0369a1; padding: 10px; border-radius: 10px; text-decoration: none; }
@@ -59,11 +49,11 @@
 
 <header>
     <button class="back-btn" onclick="history.back()"><i class="fa fa-arrow-left"></i></button>
-    <h3 style="margin:0; font-size: 16px;">অর্ডার লিস্ট</h3>
+    <h3 style="margin:0; font-size: 16px;">অর্ডার ম্যানেজমেন্ট</h3>
 </header>
 
 <div class="search-container">
-    <input type="text" id="searchInput" placeholder="অর্ডার আইডি বা মোবাইল নম্বর দিয়ে সার্চ করুন..." onkeyup="searchOrders()">
+    <input type="text" id="searchInput" placeholder="সার্চ করুন..." onkeyup="searchOrders()">
     <i class="fa fa-search"></i>
 </div>
 
@@ -87,23 +77,17 @@
 
     let allOrders = [];
 
-    onValue(ref(db, 'orders'), async (snap) => {
-        allOrders = [];
-        if(snap.exists()){
-            const tempOrders = [];
-            snap.forEach(child => { tempOrders.push({ id: child.key, ...child.val() }); });
-            allOrders = tempOrders.reverse();
-            renderOrders();
-        } else {
-            document.getElementById('order-list').innerHTML = "কোনো অর্ডার নেই।";
-        }
-    });
-
+    // ডাটা রেন্ডার করার ফাংশন
     async function renderOrders(filteredData = null) {
         const list = document.getElementById('order-list');
         list.innerHTML = "";
         const dataToRender = filteredData || allOrders;
         
+        if (dataToRender.length === 0) {
+            list.innerHTML = "কোনো অর্ডার পাওয়া যায়নি।";
+            return;
+        }
+
         for (let o of dataToRender) {
             const uSnap = await get(ref(db, 'users/' + o.uid));
             const u = uSnap.exists() ? uSnap.val() : {};
@@ -113,9 +97,7 @@
             const total = pPrice + dCharge;
             const paid = parseFloat(o.paidAmount) || 0;
             const due = total - paid;
-            const date = o.timestamp ? new Date(o.timestamp).toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
-
-            // এখানে ইউজার আইডি ফরম্যাট তৈরি করা হয়েছে: MS + Last 8 characters of Original UID
+            const date = o.timestamp ? new Date(o.timestamp).toLocaleString('bn-BD') : 'N/A';
             const formattedUID = o.uid ? `MS-${o.uid.slice(-8).toUpperCase()}` : 'N/A';
 
             list.innerHTML += `
@@ -127,81 +109,69 @@
                         </div>
                         <span class="status-badge ${o.status || 'pending'}">${o.status || 'pending'}</span>
                     </div>
-                    
                     <div class="main-info-grid">
                         <div class="item-details">
                             <img src="${o.productImg || ''}">
                             <b>${o.productName}</b>
                             <small>সাইজ: ${o.size || 'N/A'}</small>
                         </div>
-                        
                         <div class="user-profile-box" onclick="copyTxt('${formattedUID}', 'Customer ID')">
                             <img src="${u.photoURL || u.profilePic || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}">
                             <b>${u.displayName || u.name || 'User'}</b>
-                            <small style="font-size:9px; color:var(--primary); font-weight:bold; margin-top:3px;">
-                                ${formattedUID} <i class="fa fa-copy"></i>
-                            </small>
+                            <small>${formattedUID} <i class="fa fa-copy"></i></small>
                         </div>
                     </div>
-
                     <div class="info-box" onclick="copyFullAddr('${o.userName}', '${o.phone}', '${o.address}')">
                         <div class="info-row"><i class="fa fa-user"></i> ${o.userName}</div>
                         <div class="info-row"><i class="fa fa-phone"></i> ${o.phone}</div>
-                        <div class="info-row" style="font-size:10px; color:gray;"><i class="fa fa-map-marker-alt"></i> ${o.address}</div>
+                        <div class="info-row"><i class="fa fa-map-marker-alt"></i> ${o.address}</div>
                     </div>
-
                     <div class="payment-summary-card">
-                        <div style="display:flex; gap:5px; margin-bottom:10px;">
-                            <span class="method-badge">${o.paymentMethod || 'N/A'}</span>
-                            <span class="type-badge">${o.paymentType || 'N/A'}</span>
-                        </div>
                         <div class="pay-grid">
-                            <div class="pay-item">প্রোডাক্ট দাম: <b>${pPrice}৳</b></div>
-                            <div class="pay-item">ডেলিভারি চার্জ: <b>${dCharge}৳</b></div>
                             <div class="pay-item">মোট বিল: <b>${total}৳</b></div>
                             <div class="pay-item">পেইড: <b style="color:var(--success)">${paid}৳</b></div>
                         </div>
-                        <div style="margin-top:8px; text-align:right; font-size:13px; font-weight:bold; color:${due > 0 ? 'var(--danger)' : 'var(--success)'}">
-                            বকেয়া (Due): ${due}৳
-                        </div>
-                        <div class="trx-id-box" onclick="copyTxt('${o.trxID}', 'TrxID')">
+                        <div class="trx-id-box">
                             <span>TrxID: <b>${o.trxID || 'N/A'}</b></span>
-                            <i class="fa fa-copy" style="color:var(--primary)"></i>
                         </div>
                     </div>
-
                     <div class="actions">
                         <a href="tel:${o.phone}" class="btn-call"><i class="fa fa-phone"></i></a>
-                        <select class="status-select" onchange="handleStatus('${o.id}', this.value)">
+                        <select class="status-select" onchange="window.handleStatus('${o.id}', this.value)">
                             <option value="pending" ${o.status === 'pending' ? 'selected' : ''}>Pending</option>
                             <option value="shipped" ${o.status === 'shipped' ? 'selected' : ''}>Shipped</option>
                             <option value="delivered" ${o.status === 'delivered' ? 'selected' : ''}>Delivered</option>
                             <option value="cancelled" ${o.status === 'cancelled' ? 'selected' : ''}>Cancelled</option>
                         </select>
-                        <button class="btn-delete" onclick="deleteOrder('${o.id}')"><i class="fa fa-trash"></i></button>
+                        <button class="btn-delete" onclick="window.deleteOrder('${o.id}')"><i class="fa fa-trash"></i></button>
                     </div>
-                </div>
-            `;
+                </div>`;
         }
     }
 
-    window.copyTxt = (txt, label) => {
-        navigator.clipboard.writeText(txt).then(() => {
-            alert(label + " copied: " + txt);
-        });
-    };
+    // অর্ডার ডেটা লোড করা
+    onValue(ref(db, 'orders'), (snap) => {
+        allOrders = [];
+        if(snap.exists()){
+            snap.forEach(child => { allOrders.push({ id: child.key, ...child.val() }); });
+            allOrders.reverse();
+            renderOrders();
+        }
+    });
 
-    window.copyFullAddr = (name, phone, addr) => {
-        const full = `Name: ${name}\nPhone: ${phone}\nAddress: ${addr}`;
-        navigator.clipboard.writeText(full).then(() => alert("Address copied!"));
+    // গ্লোবাল ফাংশন হিসেবে সেট করা (যাতে onclick কাজ করে)
+    window.handleStatus = (id, val) => {
+        update(ref(db, 'orders/' + id), { status: val })
+        .then(() => alert("Status updated to: " + val))
+        .catch(err => alert("Error: " + err.message));
     };
 
     window.deleteOrder = (id) => {
-        if(confirm("Delete this order?")) remove(ref(db, 'orders/' + id));
-    };
-    
-    window.handleStatus = (id, val) => {
-        update(ref(db, 'orders/' + id), { status: val });
+        if(confirm("আপনি কি নিশ্চিতভাবে এই অর্ডারটি ডিলিট করতে চান?")){
+            remove(ref(db, 'orders/' + id))
+            .then(() => alert("Order deleted successfully!"))
+            .catch(err => alert("Error: " + err.message));
+        }
     };
 
     window.searchOrders = () => {
@@ -213,7 +183,15 @@
         );
         renderOrders(filtered);
     };
-</script>
 
+    window.copyTxt = (txt, label) => {
+        navigator.clipboard.writeText(txt).then(() => alert(label + " copied!"));
+    };
+    
+    window.copyFullAddr = (name, phone, addr) => {
+        navigator.clipboard.writeText(`Name: ${name}\nPhone: ${phone}\nAddress: ${addr}`).then(() => alert("Address copied!"));
+    };
+
+</script>
 </body>
 </html>
