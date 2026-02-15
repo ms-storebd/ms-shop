@@ -12,7 +12,6 @@
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .back-btn { background: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* সার্চ বক্স ডিজাইন */
         .search-container { margin: 10px 0; position: relative; }
         .search-container input { width: 100%; padding: 12px 40px 12px 15px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; box-sizing: border-box; font-size: 14px; }
         .search-container i { position: absolute; right: 15px; top: 15px; color: #64748b; }
@@ -45,8 +44,16 @@
         .info-row { display: block; margin-bottom: 4px; font-size: 12px; color: var(--dark); }
         .info-row i { color: var(--primary); width: 18px; }
 
-        .payment-info { background: #f0f9ff; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 11px; border: 1px solid #bae6fd; }
-        .trx-id-box { background: #fff; padding: 8px; border-radius: 8px; margin-top: 8px; border: 1px solid #0369a1; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
+        /* পেমেন্ট ইনফো নতুন ডিজাইন */
+        .payment-summary-card { background: #f8fafc; padding: 15px; border-radius: 15px; margin-top: 10px; border: 1px solid #e2e8f0; }
+        .pay-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 11px; }
+        .pay-item { display: flex; justify-content: space-between; border-bottom: 1px dashed #cbd5e1; padding: 3px 0; }
+        .pay-item b { color: var(--dark); }
+        
+        .method-badge { background: var(--primary); color: white; padding: 2px 8px; border-radius: 5px; font-size: 10px; }
+        .type-badge { background: #64748b; color: white; padding: 2px 8px; border-radius: 5px; font-size: 10px; }
+
+        .trx-id-box { background: #fff; padding: 8px; border-radius: 8px; margin-top: 8px; border: 1px solid #0369a1; display: flex; justify-content: space-between; align-items: center; cursor: pointer; font-size: 12px; }
 
         .actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; }
         .status-select { flex: 1; padding: 10px; border-radius: 10px; border: 1.5px solid #e2e8f0; font-size: 12px; outline: none; background: #f8fafc; }
@@ -121,18 +128,16 @@
             const uSnap = await get(ref(db, 'users/' + o.uid));
             const u = uSnap.exists() ? uSnap.val() : {};
 
-            // ক্যালকুলেশন ফিক্স (নতুন এবং পুরনো উভয় ডাটায় কাজ করবে)
             const pPrice = parseFloat(o.productPrice) || parseFloat(o.price) || 0;
             const dCharge = parseFloat(o.deliveryCharge) || 0;
             const total = pPrice + dCharge;
             const paid = parseFloat(o.paidAmount) || 0;
             const due = total - paid;
 
-            // টাইম ফরম্যাট
             const date = o.timestamp ? new Date(o.timestamp).toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 
             list.innerHTML += `
-                <div class="order-card" data-id="${o.id}" data-phone="${o.phone}">
+                <div class="order-card">
                     <div class="order-header">
                         <div>
                             <span class="order-id">ID: #${o.id.slice(-6).toUpperCase()}</span>
@@ -145,35 +150,41 @@
                         <div class="item-details">
                             <img src="${o.productImg || ''}">
                             <b>${o.productName}</b>
-                            <small>${pPrice}৳ + ${dCharge}৳ | Size: ${o.size || 'N/A'}</small>
+                            <small>সাইজ: ${o.size || 'N/A'}</small>
                         </div>
                         
                         <div class="user-profile-box" onclick="copyTxt('${o.uid}', 'UID')">
                             <img src="${u.photoURL || u.profilePic || 'https://cdn-icons-png.flaticon.com/512/149/149071.png'}">
                             <b>${u.displayName || u.name || 'User'}</b>
-                            <span>${u.email || ''}</span>
-                            <small style="font-size:8px; color:var(--primary)">UID: ${o.uid ? o.uid.slice(0,8) : 'N/A'}... <i class="fa fa-copy"></i></small>
+                            <small style="font-size:8px; color:var(--primary)">UID Copy <i class="fa fa-copy"></i></small>
                         </div>
                     </div>
 
                     <div class="info-box" onclick="copyFullAddr('${o.userName}', '${o.phone}', '${o.district}', '${o.upazila}', '${o.address}')">
                         <div class="info-row"><i class="fa fa-user"></i> ${o.userName}</div>
                         <div class="info-row"><i class="fa fa-phone"></i> ${o.phone}</div>
-                        <div class="info-row"><i class="fa fa-map-marker-alt"></i> ${o.district}, ${o.upazila}</div>
-                        <div class="info-row" style="font-size:10px; color:gray;">${o.address}</div>
+                        <div class="info-row" style="font-size:10px; color:gray;"><i class="fa fa-map-marker-alt"></i> ${o.address}</div>
                     </div>
 
-                    <div class="payment-info">
-                        <div style="display:flex; justify-content:space-between">
-                            <span>মোট: ${total}৳</span>
-                            <span>পেইড: <b style="color:var(--success)">${paid}৳</b></span>
-                            <span style="color:${due > 0 ? 'var(--danger)' : 'var(--success)'}">বকেয়া: <b>${due}৳</b></span>
+                    <div class="payment-summary-card">
+                        <div style="display:flex; gap:5px; margin-bottom:10px;">
+                            <span class="method-badge">${o.paymentMethod || 'N/A'}</span>
+                            <span class="type-badge">${o.paymentType || 'N/A'}</span>
+                        </div>
+                        <div class="pay-grid">
+                            <div class="pay-item">প্রোডাক্ট দাম: <b>${pPrice}৳</b></div>
+                            <div class="pay-item">ডেলিভারি চার্জ: <b>${dCharge}৳</b></div>
+                            <div class="pay-item">মোট বিল: <b>${total}৳</b></div>
+                            <div class="pay-item">পেইড: <b style="color:var(--success)">${paid}৳</b></div>
+                        </div>
+                        <div style="margin-top:8px; text-align:right; font-size:13px; font-weight:bold; color:${due > 0 ? 'var(--danger)' : 'var(--success)'}">
+                            বকেয়া (Due): ${due}৳
                         </div>
                         <div class="trx-id-box" onclick="copyTxt('${o.trxID}', 'TrxID')">
                             <span>TrxID: <b>${o.trxID || 'N/A'}</b></span>
                             <i class="fa fa-copy" style="color:var(--primary)"></i>
                         </div>
-                        ${o.cancelReason ? `<div style="color:red; margin-top:5px;">Reason: ${o.cancelReason}</div>` : ''}
+                        ${o.cancelReason ? `<div style="color:red; margin-top:5px; font-size:11px;">বাতিলের কারণ: ${o.cancelReason}</div>` : ''}
                     </div>
 
                     <div class="actions">
@@ -195,7 +206,6 @@
         }
     }
 
-    // সার্চ ফাংশন
     window.searchOrders = () => {
         const val = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allOrders.filter(o => 
@@ -208,7 +218,7 @@
 
     window.filterOrders = (status, el) => {
         currentFilter = status;
-        document.getElementById('searchInput').value = ""; // ফিল্টার করলে সার্চ ক্লিয়ার হবে
+        document.getElementById('searchInput').value = "";
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         renderOrders();
@@ -234,7 +244,7 @@
     };
 
     window.copyFullAddr = (name, phone, dist, upa, addr) => {
-        const full = `Name: ${name}\nPhone: ${phone}\nAddress: ${dist}, ${upa}, ${addr}`;
+        const full = `Name: ${name}\nPhone: ${phone}\nAddress: ${addr}`;
         navigator.clipboard.writeText(full).then(() => alert("Address copied!"));
     };
 
