@@ -11,24 +11,20 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 15px; padding-bottom: 50px; }
         .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { font-size: 20px; color: var(--dark); cursor: pointer; text-decoration: none; }
-        
         .card { background: var(--surface); padding: 20px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         h3 { margin-top: 0; font-size: 18px; color: var(--dark); }
-        
-        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid var(--border); border-radius: 12px; outline: none; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 8px 0; border: 1.5px solid var(--border); border-radius: 12px; outline: none; box-sizing: border-box; }
         input:focus { border-color: var(--primary); }
-        
-        .btn-main { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 14px; font-weight: 700; cursor: pointer; }
-        
+        .btn-main { background: var(--dark); color: white; border: none; padding: 15px; width: 100%; border-radius: 14px; font-weight: 700; cursor: pointer; margin-top: 10px; }
         .p-item { display: flex; align-items: center; gap: 12px; padding: 10px; border-bottom: 1px solid #f1f5f9; }
         .p-item img { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; }
         .p-info { flex: 1; }
         .p-info b { font-size: 14px; display: block; }
         .action-btns { display: flex; gap: 5px; }
-        .action-btn { border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; }
+        .action-btn { border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .btn-edit { background: #e0f2fe; color: #0ea5e9; }
         .btn-del { background: #fee2e2; color: #ef4444; }
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 10px 20px; border-radius: 30px; display: none; }
+        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 10px 20px; border-radius: 30px; display: none; z-index: 1000; }
     </style>
 </head>
 <body>
@@ -44,7 +40,7 @@
         <input type="hidden" id="edit-id"> 
         <input type="text" id="p-name" placeholder="Product Name">
         <div style="display: flex; gap: 10px;">
-            <select id="p-main-category" onchange="updateSubCats()">
+            <select id="p-main-category" onchange="window.updateSubCats()">
                 <option value="" disabled selected>Category</option>
                 <option value="Sports">Sports</option>
                 <option value="Electronics">Electronics</option>
@@ -83,7 +79,28 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // প্রোডাক্ট লোড
+    // ১. টোস্ট মেসেজ ফাংশন
+    function showToast(m) { 
+        const t = document.getElementById('toast'); 
+        t.innerText = m; 
+        t.style.display='block'; 
+        setTimeout(()=>t.style.display='none', 3000); 
+    }
+
+    // ২. সাব-ক্যাটেগরি আপডেট ফাংশন (Global করা হয়েছে)
+    window.updateSubCats = () => {
+        const main = document.getElementById('p-main-category').value;
+        const sub = document.getElementById('p-category');
+        const opt = { 
+            'Sports':['Jersey','Boots', 'Equipment'], 
+            'Electronics':['Gadget','Mobile', 'Accessories'], 
+            'Fashion':['Men','Women', 'Shoes'] 
+        };
+        sub.innerHTML = '<option value="" disabled selected>Sub-Cat</option>';
+        if(opt[main]) opt[main].forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
+    };
+
+    // ৩. প্রোডাক্ট রেন্ডার করা
     onValue(ref(db, 'products'), (snap) => {
         const list = document.getElementById('admin-product-list');
         list.innerHTML = "";
@@ -91,7 +108,7 @@
             snap.forEach(c => {
                 const p = c.val();
                 list.innerHTML += `<div class="p-item">
-                    <img src="${p.img}">
+                    <img src="${p.img}" onerror="this.src='https://via.placeholder.com/50'">
                     <div class="p-info"><b>${p.name}</b><small>${p.price} ৳</small></div>
                     <div class="action-btns">
                         <button class="action-btn btn-edit" onclick="window.editProduct('${c.key}')"><i class="fa fa-pen"></i></button>
@@ -102,47 +119,87 @@
         } else { list.innerHTML = "No products found."; }
     });
 
-    window.updateSubCats = () => {
-        const main = document.getElementById('p-main-category').value;
-        const sub = document.getElementById('p-category');
-        const opt = { 'Sports':['Jersey','Boots', 'Equipment'], 'Electronics':['Gadget','Mobile', 'Accessories'], 'Fashion':['Men','Women', 'Shoes'] };
-        sub.innerHTML = '<option value="" disabled selected>Sub-Cat</option>';
-        if(opt[main]) opt[main].forEach(s => sub.innerHTML += `<option value="${s}">${s}</option>`);
-    };
-
-    function showToast(m) { const t = document.getElementById('toast'); t.innerText = m; t.style.display='block'; setTimeout(()=>t.style.display='none', 3000); }
-
+    // ৪. নতুন প্রোডাক্ট অ্যাড করা
     document.getElementById('uploadBtn').onclick = () => {
-        const d = { name: document.getElementById('p-name').value, category: document.getElementById('p-main-category').value, subCategory: document.getElementById('p-category').value, price: parseInt(document.getElementById('p-price').value), stock: parseInt(document.getElementById('p-stock').value), img: document.getElementById('p-img').value, description: document.getElementById('p-desc').value };
-        if(!d.name || !d.price) return alert("Fill Name and Price!");
-        push(ref(db, 'products'), d).then(() => { showToast("Published!"); location.reload(); });
+        const d = { 
+            name: document.getElementById('p-name').value, 
+            category: document.getElementById('p-main-category').value, 
+            subCategory: document.getElementById('p-category').value, 
+            price: parseInt(document.getElementById('p-price').value) || 0, 
+            stock: parseInt(document.getElementById('p-stock').value) || 0, 
+            img: document.getElementById('p-img').value, 
+            description: document.getElementById('p-desc').value 
+        };
+
+        if(!d.name || !d.price || !d.category) return alert("দয়া করে নাম, দাম এবং ক্যাটেগরি সিলেক্ট করুন!");
+
+        push(ref(db, 'products'), d).then(() => { 
+            showToast("Product Published!"); 
+            resetForm();
+        }).catch(e => alert(e.message));
     };
 
+    // ৫. এডিট মোডে নেওয়া (Global করা হয়েছে)
     window.editProduct = (id) => {
         get(ref(db, 'products/' + id)).then(s => {
-            const p = s.val();
-            document.getElementById('edit-id').value = id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-main-category').value = p.category;
-            window.updateSubCats();
-            document.getElementById('p-category').value = p.subCategory;
-            document.getElementById('p-price').value = p.price;
-            document.getElementById('p-stock').value = p.stock || 0;
-            document.getElementById('p-img').value = p.img;
-            document.getElementById('p-desc').value = p.description || "";
-            document.getElementById('uploadBtn').style.display = 'none';
-            document.getElementById('updateBtn').style.display = 'block';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            if(s.exists()){
+                const p = s.val();
+                document.getElementById('edit-id').value = id;
+                document.getElementById('p-name').value = p.name;
+                document.getElementById('p-main-category').value = p.category;
+                window.updateSubCats(); // সাব ক্যাটেগরি লোড করা
+                document.getElementById('p-category').value = p.subCategory;
+                document.getElementById('p-price').value = p.price;
+                document.getElementById('p-stock').value = p.stock || 0;
+                document.getElementById('p-img').value = p.img;
+                document.getElementById('p-desc').value = p.description || "";
+                
+                document.getElementById('form-title').innerText = "📝 Edit Product";
+                document.getElementById('uploadBtn').style.display = 'none';
+                document.getElementById('updateBtn').style.display = 'block';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
         });
     };
 
+    // ৬. আপডেট সেভ করা
     document.getElementById('updateBtn').onclick = () => {
         const id = document.getElementById('edit-id').value;
-        const d = { name: document.getElementById('p-name').value, category: document.getElementById('p-main-category').value, subCategory: document.getElementById('p-category').value, price: parseInt(document.getElementById('p-price').value), stock: parseInt(document.getElementById('p-stock').value), img: document.getElementById('p-img').value, description: document.getElementById('p-desc').value };
-        update(ref(db, 'products/' + id), d).then(() => { showToast("Updated!"); location.reload(); });
+        const d = { 
+            name: document.getElementById('p-name').value, 
+            category: document.getElementById('p-main-category').value, 
+            subCategory: document.getElementById('p-category').value, 
+            price: parseInt(document.getElementById('p-price').value) || 0, 
+            stock: parseInt(document.getElementById('p-stock').value) || 0, 
+            img: document.getElementById('p-img').value, 
+            description: document.getElementById('p-desc').value 
+        };
+
+        update(ref(db, 'products/' + id), d).then(() => { 
+            showToast("Product Updated!"); 
+            resetForm();
+        }).catch(e => alert(e.message));
     };
 
-    window.deleteItem = (id) => { if(confirm("Delete this?")) remove(ref(db, 'products/'+id)); };
+    // ৭. ডিলিট করা (Global করা হয়েছে)
+    window.deleteItem = (id) => { 
+        if(confirm("আপনি কি নিশ্চিতভাবে এটি ডিলিট করতে চান?")) {
+            remove(ref(db, 'products/'+id)).then(() => showToast("Deleted!"));
+        }
+    };
+
+    // ফরম খালি করার ফাংশন
+    function resetForm() {
+        document.getElementById('edit-id').value = "";
+        document.getElementById('p-name').value = "";
+        document.getElementById('p-price').value = "";
+        document.getElementById('p-stock').value = "";
+        document.getElementById('p-img').value = "";
+        document.getElementById('p-desc').value = "";
+        document.getElementById('form-title').innerText = "🚀 Add New Product";
+        document.getElementById('uploadBtn').style.display = 'block';
+        document.getElementById('updateBtn').style.display = 'none';
+    }
 </script>
 </body>
 </html>
