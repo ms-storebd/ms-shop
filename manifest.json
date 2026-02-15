@@ -1,15 +1,16 @@
 {
   "name": "MS STORE",
   "short_name": "MS Store",
-  "start_url": "/shop.html",
+  "start_url": "/index.html",
   "display": "standalone",
-  "background_color": "#f4f7fa",
-  "theme_color": "#2563eb",
+  "background_color": "#001a2c",
+  "theme_color": "#001a2c",
   "icons": [
     {
       "src": "https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/jpeg",
+      "purpose": "maskable"
     }
   ]
 }
