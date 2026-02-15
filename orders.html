@@ -12,17 +12,21 @@
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
         .back-btn { background: white; border: none; padding: 10px; border-radius: 12px; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
         
-        /* ফিল্টার ট্যাব */
+        /* সার্চ বক্স ডিজাইন */
+        .search-container { margin: 10px 0; position: relative; }
+        .search-container input { width: 100%; padding: 12px 40px 12px 15px; border-radius: 12px; border: 1.5px solid #e2e8f0; outline: none; box-sizing: border-box; font-size: 14px; }
+        .search-container i { position: absolute; right: 15px; top: 15px; color: #64748b; }
+
         .filter-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 15px; margin-top: 10px; scrollbar-width: none; }
         .tab { white-space: nowrap; padding: 8px 15px; background: white; border-radius: 20px; font-size: 12px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: #64748b; }
         .tab.active { background: var(--dark); color: white; }
 
-        .order-card { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); }
+        .order-card { background: white; border-radius: 20px; padding: 15px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--primary); position: relative; }
         .order-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
         .order-id { font-weight: bold; color: var(--dark); font-size: 13px; }
+        .order-time { font-size: 10px; color: #64748b; display: block; margin-top: 2px; }
         .status-badge { font-size: 10px; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; }
         
-        /* স্ট্যাটাস কালার */
         .pending { background: #fff3cd; color: #856404; }
         .shipped { background: #e0f2fe; color: #0369a1; }
         .delivered { background: #d4edda; color: #155724; }
@@ -41,7 +45,7 @@
         .info-row { display: block; margin-bottom: 4px; font-size: 12px; color: var(--dark); }
         .info-row i { color: var(--primary); width: 18px; }
 
-        .payment-info { background: #e0f2fe; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 11px; border: 1px solid #bae6fd; }
+        .payment-info { background: #f0f9ff; padding: 12px; border-radius: 12px; margin-top: 10px; font-size: 11px; border: 1px solid #bae6fd; }
         .trx-id-box { background: #fff; padding: 8px; border-radius: 8px; margin-top: 8px; border: 1px solid #0369a1; display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
 
         .actions { display: flex; gap: 8px; margin-top: 15px; align-items: center; }
@@ -59,6 +63,11 @@
     <button class="back-btn" onclick="history.back()"><i class="fa fa-arrow-left"></i></button>
     <h3 style="margin:0; font-size: 16px;">অর্ডার লিস্ট</h3>
 </header>
+
+<div class="search-container">
+    <input type="text" id="searchInput" placeholder="অর্ডার আইডি বা মোবাইল নম্বর দিয়ে সার্চ করুন..." onkeyup="searchOrders()">
+    <i class="fa fa-search"></i>
+</div>
 
 <div class="filter-tabs" id="tabs">
     <div class="tab active" onclick="filterOrders('all', this)">All</div>
@@ -89,7 +98,6 @@
     let allOrders = [];
     let currentFilter = 'all';
 
-    // ডেটা লোড
     onValue(ref(db, 'orders'), async (snap) => {
         allOrders = [];
         if(snap.exists()){
@@ -102,23 +110,34 @@
         }
     });
 
-    async function renderOrders() {
+    async function renderOrders(filteredData = null) {
         const list = document.getElementById('order-list');
         list.innerHTML = "";
+        const dataToRender = filteredData || allOrders;
         
-        for (let o of allOrders) {
-            if(currentFilter !== 'all' && o.status !== currentFilter) continue;
+        for (let o of dataToRender) {
+            if(!filteredData && currentFilter !== 'all' && o.status !== currentFilter) continue;
 
-            // ইউজারের অরিজিনাল ডাটা ফেচ
             const uSnap = await get(ref(db, 'users/' + o.uid));
             const u = uSnap.exists() ? uSnap.val() : {};
 
-            const due = (parseFloat(o.price) || 0) - (parseFloat(o.paidAmount) || 0);
+            // ক্যালকুলেশন ফিক্স (নতুন এবং পুরনো উভয় ডাটায় কাজ করবে)
+            const pPrice = parseFloat(o.productPrice) || parseFloat(o.price) || 0;
+            const dCharge = parseFloat(o.deliveryCharge) || 0;
+            const total = pPrice + dCharge;
+            const paid = parseFloat(o.paidAmount) || 0;
+            const due = total - paid;
+
+            // টাইম ফরম্যাট
+            const date = o.timestamp ? new Date(o.timestamp).toLocaleString('bn-BD', { hour: '2-digit', minute: '2-digit', day: '2-digit', month: 'short', year: 'numeric' }) : 'N/A';
 
             list.innerHTML += `
-                <div class="order-card">
+                <div class="order-card" data-id="${o.id}" data-phone="${o.phone}">
                     <div class="order-header">
-                        <span class="order-id">ID: #${o.id.slice(-6).toUpperCase()}</span>
+                        <div>
+                            <span class="order-id">ID: #${o.id.slice(-6).toUpperCase()}</span>
+                            <span class="order-time"><i class="fa fa-clock"></i> ${date}</span>
+                        </div>
                         <span class="status-badge ${o.status || 'pending'}">${o.status || 'pending'}</span>
                     </div>
                     
@@ -126,7 +145,7 @@
                         <div class="item-details">
                             <img src="${o.productImg || ''}">
                             <b>${o.productName}</b>
-                            <small>${o.price}৳ | Size: ${o.size || 'N/A'}</small>
+                            <small>${pPrice}৳ + ${dCharge}৳ | Size: ${o.size || 'N/A'}</small>
                         </div>
                         
                         <div class="user-profile-box" onclick="copyTxt('${o.uid}', 'UID')">
@@ -146,7 +165,8 @@
 
                     <div class="payment-info">
                         <div style="display:flex; justify-content:space-between">
-                            <span>পেইড: <b>${o.paidAmount || 0}৳</b></span>
+                            <span>মোট: ${total}৳</span>
+                            <span>পেইড: <b style="color:var(--success)">${paid}৳</b></span>
                             <span style="color:${due > 0 ? 'var(--danger)' : 'var(--success)'}">বকেয়া: <b>${due}৳</b></span>
                         </div>
                         <div class="trx-id-box" onclick="copyTxt('${o.trxID}', 'TrxID')">
@@ -175,8 +195,20 @@
         }
     }
 
+    // সার্চ ফাংশন
+    window.searchOrders = () => {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const filtered = allOrders.filter(o => 
+            o.id.toLowerCase().includes(val) || 
+            o.phone.includes(val) || 
+            o.userName.toLowerCase().includes(val)
+        );
+        renderOrders(filtered);
+    };
+
     window.filterOrders = (status, el) => {
         currentFilter = status;
+        document.getElementById('searchInput').value = ""; // ফিল্টার করলে সার্চ ক্লিয়ার হবে
         document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
         el.classList.add('active');
         renderOrders();
