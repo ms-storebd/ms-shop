@@ -16,6 +16,61 @@
             --border: rgba(255, 255, 255, 0.1);
         }
 
+        /* --- Custom Splash Screen Styles --- */
+        #splash-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at top right, #003d5b, #001a2c, #000a12);
+            display: flex; justify-content: center; align-items: center;
+            z-index: 99999;
+            transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1), visibility 0.8s;
+        }
+
+        .splash-content { text-align: center; }
+
+        .splash-logo {
+            width: 120px; /* লোগোর সাইজ এখান থেকে ছোট-বড় করতে পারবেন */
+            height: auto;
+            margin-bottom: 25px;
+            filter: drop-shadow(0 0 20px rgba(0, 210, 255, 0.5));
+            animation: zoomPulse 2s infinite ease-in-out;
+        }
+
+        .splash-loader {
+            width: 150px; height: 3px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px; margin: 0 auto;
+            overflow: hidden; position: relative;
+        }
+
+        .splash-loader-fill {
+            width: 0%; height: 100%;
+            background: var(--accent);
+            box-shadow: 0 0 15px var(--accent);
+            animation: progressFill 2.5s infinite ease-in-out;
+        }
+
+        .splash-text {
+            margin-top: 15px; font-size: 12px;
+            letter-spacing: 3px; color: var(--accent);
+            text-transform: uppercase; font-weight: 300;
+            opacity: 0.8;
+        }
+
+        @keyframes zoomPulse {
+            0%, 100% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+        }
+
+        @keyframes progressFill {
+            0% { width: 0%; left: 0; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
+        .hide-splash { opacity: 0; visibility: hidden; }
+
+        /* --- Original Styles (Unchanged) --- */
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
@@ -46,7 +101,6 @@
             text-shadow: 0 0 20px rgba(0, 210, 255, 0.5);
         }
 
-        /* --- Hero Container --- */
         .hero {
             padding-top: 120px;
             display: flex;
@@ -55,7 +109,6 @@
             text-align: center;
         }
 
-        /* --- ইউনিক স্লাইডার উইন্ডো (Floating Style) --- */
         .slider-window {
             width: 90%;
             max-width: 800px;
@@ -86,7 +139,6 @@
 
         .slide-overlay h2 { font-size: 24px; color: var(--accent); }
 
-        /* --- Content Styling --- */
         .hero-text h1 {
             font-size: clamp(2rem, 10vw, 4.5rem);
             font-weight: 900;
@@ -105,7 +157,6 @@
             font-weight: 300;
         }
 
-        /* --- লগইন বাটন --- */
         .login-section { margin-bottom: 60px; }
         .google-btn {
             background: white;
@@ -119,7 +170,7 @@
             display: flex; align-items: center; gap: 15px;
             transition: 0.5s cubic-bezier(0.2, 1, 0.3, 1);
             box-shadow: 0 15px 30px rgba(0, 210, 255, 0.2);
-            user-select: none; /* Long press এর সময় টেক্সট সিলেক্ট হবে না */
+            user-select: none;
             -webkit-user-select: none;
         }
 
@@ -128,7 +179,6 @@
             box-shadow: 0 20px 40px rgba(0, 210, 255, 0.4);
         }
 
-        /* --- Features Grid --- */
         .features-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
@@ -150,7 +200,6 @@
         .f-card i { font-size: 1.8rem; color: var(--accent); margin-bottom: 15px; display: block; }
         .f-card h3 { font-size: 0.85rem; letter-spacing: 1px; font-weight: 600; }
 
-        /* --- Admin UI --- */
         .three-dots-btn { width: 45px; height: 45px; background: var(--glass); display: grid; place-items: center; border-radius: 15px; cursor: pointer; border: 1px solid var(--border); }
         .admin-dropdown {
             display: none; position: absolute; right: 5%; top: 90px;
@@ -170,6 +219,16 @@
     </style>
 </head>
 <body>
+
+    <div id="splash-screen">
+        <div class="splash-content">
+            <img src="logo.png" class="splash-logo" alt="MS STORE">
+            <div class="splash-loader">
+                <div class="splash-loader-fill"></div>
+            </div>
+            <div class="splash-text">Premium Experience</div>
+        </div>
+    </div>
 
     <nav>
         <div class="logo">MS STORE</div>
@@ -223,6 +282,16 @@
 
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
+    <script>
+        window.addEventListener('load', function() {
+            const splash = document.getElementById('splash-screen');
+            setTimeout(() => {
+                splash.classList.add('hide-splash');
+                setTimeout(() => splash.remove(), 800);
+            }, 2500); // ২.৫ সেকেন্ড লোডিং হবে
+        });
+    </script>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -242,27 +311,20 @@
 
         const loginBtn = document.getElementById('googleLoginBtn');
 
-        // লগইন লজিক (সাধারণ ক্লিক)
         loginBtn.onclick = () => {
             signInWithPopup(auth, provider)
             .then(() => window.location.href = "shop.html")
             .catch((e) => console.log(e.message));
         };
 
-        // --- সিক্রেট এডমিন এক্সেস (Long Press Logic) ---
         let pressTimer;
-        
         const startPress = () => {
             pressTimer = setTimeout(() => {
                 window.location.href = "admin_login.html";
-            }, 3000); // ৩ সেকেন্ড চেপে ধরে রাখলে এডমিন পেজ আসবে
+            }, 3000);
         };
+        const endPress = () => clearTimeout(pressTimer);
 
-        const endPress = () => {
-            clearTimeout(pressTimer);
-        };
-
-        // মাউস এবং টাচ ইভেন্ট
         loginBtn.addEventListener('mousedown', startPress);
         loginBtn.addEventListener('touchstart', startPress);
         loginBtn.addEventListener('mouseup', endPress);
@@ -273,7 +335,6 @@
             if (user) window.location.href = "shop.html";
         });
 
-        // স্লাইডার কন্ট্রোল (Swiper)
         var swiper = new Swiper(".mySwiper", {
             effect: "coverflow",
             grabCursor: true,
@@ -283,7 +344,6 @@
             autoplay: { delay: 3000, disableOnInteraction: false },
         });
 
-        // ড্রপডাউন
         const menuToggle = document.getElementById('menuToggle');
         const dropdown = document.getElementById('dropdownMenu');
         menuToggle.onclick = (e) => {
