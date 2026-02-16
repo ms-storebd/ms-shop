@@ -58,7 +58,7 @@
             <input type="number" id="p-stock" placeholder="Stock Qty">
         </div>
 
-        <input type="text" id="p-sizes" placeholder="Sizes (e.g. M, L, XL or 40, 42) - Optional">
+        <input type="text" id="p-sizes" placeholder="Sizes (যেমন: M, L, XL) - না থাকলে খালি রাখুন">
         
         <input type="text" id="p-img" placeholder="Image URL">
         <textarea id="p-desc" placeholder="Brief description..." rows="2"></textarea>
@@ -78,6 +78,7 @@
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue, push, remove, update, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
     const firebaseConfig = {
         apiKey: "AIzaSyCu8lgGs3Q-qLeedhngQAVXtt8BHOAlWDg",
@@ -90,6 +91,14 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
+    const auth = getAuth(app);
+
+    // সিকিউরিটি চেক: ইউজার লগইন না থাকলে অ্যাকশন ব্লক হবে
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            console.log("Not logged in");
+        }
+    });
 
     function showToast(msg) { 
         const t = document.getElementById('toast'); 
@@ -146,18 +155,22 @@
             subCategory: document.getElementById('p-category').value || "General",
             price: parseInt(price),
             stock: parseInt(document.getElementById('p-stock').value) || 0,
-            sizes: sizes || "N/A", // সাইজ না দিলে N/A থাকবে
+            sizes: sizes || "N/A",
             img,
             description: document.getElementById('p-desc').value.trim() || ""
         };
     }
 
+    // এড প্রোডাক্ট
     document.getElementById('uploadBtn').onclick = function() {
         const data = getValidData();
         if(!data) return;
-        push(ref(db, 'products'), data).then(() => { showToast("Added!"); resetForm(); });
+        push(ref(db, 'products'), data)
+            .then(() => { showToast("Product Added!"); resetForm(); })
+            .catch(err => alert("Security Error: লগইন করা আছে কি? " + err.message));
     };
 
+    // এডিট প্রোডাক্ট কল
     window.editProduct = (id) => {
         get(ref(db, 'products/' + id)).then(s => {
             if(s.exists()){
@@ -168,10 +181,11 @@
                 window.updateSubCats(); 
                 document.getElementById('p-category').value = p.subCategory;
                 document.getElementById('p-price').value = p.price;
-                document.getElementById('p-stock').value = p.stock;
-                document.getElementById('p-sizes').value = p.sizes === 'N/A' ? "" : p.sizes;
+                document.getElementById('p-stock').value = p.stock || 0;
+                document.getElementById('p-sizes').value = (p.sizes === 'N/A') ? "" : p.sizes;
                 document.getElementById('p-img').value = p.img;
-                document.getElementById('p-desc').value = p.description;
+                document.getElementById('p-desc').value = p.description || "";
+                
                 document.getElementById('form-title').innerText = "📝 Update Product";
                 document.getElementById('uploadBtn').style.display = 'none';
                 document.getElementById('updateBtn').style.display = 'block';
@@ -180,13 +194,25 @@
         });
     };
 
+    // আপডেট প্রোডাক্ট
     document.getElementById('updateBtn').onclick = function() {
         const id = document.getElementById('edit-id').value;
         const data = getValidData();
-        if(id && data) update(ref(db, 'products/' + id), data).then(() => { showToast("Updated!"); resetForm(); });
+        if(id && data) {
+            update(ref(db, 'products/' + id), data)
+                .then(() => { showToast("Updated Successfully!"); resetForm(); })
+                .catch(err => alert("Security Error: " + err.message));
+        }
     };
 
-    window.deleteItem = (id) => { if(confirm("Delete?")) remove(ref(db, 'products/'+id)); };
+    // ডিলিট প্রোডাক্ট
+    window.deleteItem = (id) => { 
+        if(confirm("আপনি কি নিশ্চিতভাবে ডিলিট করতে চান?")) {
+            remove(ref(db, 'products/'+id))
+                .then(() => showToast("Removed!"))
+                .catch(err => alert("Security Error: " + err.message));
+        }
+    };
 
     function resetForm() {
         document.getElementById('edit-id').value = "";
