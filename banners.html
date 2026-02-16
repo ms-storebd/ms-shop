@@ -1,7 +1,7 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="bn">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Banners | Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;700&display=swap" rel="stylesheet">
@@ -10,37 +10,39 @@
         :root { --primary: #0ea5e9; --dark: #0f172a; --bg: #f8fafc; --surface: #ffffff; --border: #e2e8f0; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
         .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
-        .back-btn { font-size: 20px; color: var(--dark); cursor: pointer; text-decoration: none; }
+        .back-btn { font-size: 20px; color: var(--dark); cursor: pointer; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         
         .banner-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .prev-img { width: 100%; height: 120px; border-radius: 12px; object-fit: cover; background: #eee; margin-bottom: 12px; }
-        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px; outline: none; }
-        .save-btn { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; }
+        input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px; outline: none; box-sizing: border-box; }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15); }
+        .save-btn { background: #10b981; color: white; border: none; padding: 12px; width: 100%; border-radius: 10px; font-weight: 700; cursor: pointer; transition: background-color 0.3s; }
+        .save-btn:hover { background: #0c9c6f; }
     </style>
 </head>
 <body>
     <div class="top-bar">
         <a href="admin.html" class="back-btn"><i class="fa fa-arrow-left"></i></a>
-        <h2 style="margin:0; font-size: 18px;">Slider Management</h2>
+        <h2 style="margin:0; font-size: 18px; font-weight: 700;">Slider Management</h2>
     </div>
 
     <div id="banner-controls">
         <div class="banner-card">
-            <img id="prev-banner1" class="prev-img" src="">
+            <img id="prev-banner1" class="prev-img" src="https://via.placeholder.com/120/E2E8F0/94A3B8?text=No+Image">
             <input type="text" id="img-banner1" placeholder="Image URL 1">
-            <input type="text" id="link-banner1" placeholder="Click Link (Optional)">
+            <input type="text" id="link-banner1" placeholder="Click Link (optional)">
             <button class="save-btn" onclick="saveBanner('banner1')">Update Banner 1</button>
         </div>
         <div class="banner-card">
-            <img id="prev-banner2" class="prev-img" src="">
+            <img id="prev-banner2" class="prev-img" src="https://via.placeholder.com/120/E2E8F0/94A3B8?text=No+Image">
             <input type="text" id="img-banner2" placeholder="Image URL 2">
-            <input type="text" id="link-banner2" placeholder="Click Link (Optional)">
+            <input type="text" id="link-banner2" placeholder="Click Link (optional)">
             <button class="save-btn" onclick="saveBanner('banner2')">Update Banner 2</button>
         </div>
         <div class="banner-card">
-            <img id="prev-banner3" class="prev-img" src="">
+            <img id="prev-banner3" class="prev-img" src="https://via.placeholder.com/120/E2E8F0/94A3B8?text=No+Image">
             <input type="text" id="img-banner3" placeholder="Image URL 3">
-            <input type="text" id="link-banner3" placeholder="Click Link (Optional)">
+            <input type="text" id="link-banner3" placeholder="Click Link (optional)">
             <button class="save-btn" onclick="saveBanner('banner3')">Update Banner 3</button>
         </div>
     </div>
@@ -61,6 +63,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
+    // ব্যানার লোড করার ফাংশন
     function loadBanners() {
         get(ref(db, 'banners')).then(s => {
             if(s.exists()){
@@ -69,20 +72,32 @@
                     if(d[k]) {
                         document.getElementById('img-'+k).value = d[k].img || "";
                         document.getElementById('link-'+k).value = d[k].link || "";
-                        document.getElementById('prev-'+k).src = d[k].img;
+                        document.getElementById('prev-'+k).src = d[k].img || "https://via.placeholder.com/120/E2E8F0/94A3B8?text=No+Image";
                     }
                 });
             }
-        });
+        }).catch(err => console.error("Error loading banners:", err));
     }
 
+    // সেভ করার ফাংশনটি উইন্ডো গ্লোবাল স্কোপে এক্সপোর্ট করা হয়েছে
     window.saveBanner = (id) => {
-        const img = document.getElementById('img-'+id).value;
-        const link = document.getElementById('link-'+id).value;
-        update(ref(db, 'banners/'+id), { img, link }).then(() => { alert("Banner Updated!"); location.reload(); });
+        const img = document.getElementById('img-'+id).value.trim();
+        const link = document.getElementById('link-'+id).value.trim();
+        
+        if(!img) {
+            alert("Please enter an image URL for " + id.replace('banner', 'Banner ') + ".");
+            return;
+        }
+
+        update(ref(db, 'banners/'+id), { img, link })
+        .then(() => { 
+            alert(id.replace('banner', 'Banner ') + " Updated Successfully!"); 
+            document.getElementById('prev-'+id).src = img; // সাথে সাথে প্রিভিউ আপডেট
+        })
+        .catch(err => alert("Error updating banner: " + err.message));
     };
 
-    loadBanners();
+    loadBanners(); // পেজ লোড হওয়ার সাথে সাথে ব্যানারগুলো লোড করুন
 </script>
 </body>
 </html>
