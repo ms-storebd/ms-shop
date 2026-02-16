@@ -11,7 +11,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); margin: 0; padding: 15px; }
         .top-bar { display: flex; align-items: center; gap: 15px; margin-bottom: 20px; }
         .back-btn { font-size: 20px; color: var(--dark); cursor: pointer; text-decoration: none; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; background: white; border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
         .banner-card { background: var(--surface); padding: 15px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .prev-img { width: 100%; height: 120px; border-radius: 12px; object-fit: cover; background: #eee; margin-bottom: 12px; }
         input { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid var(--border); border-radius: 10px; outline: none; box-sizing: border-box; }
@@ -63,14 +62,7 @@
     const db = getDatabase(app);
     const auth = getAuth(app);
 
-    // ১. ব্রাউজার সেশন চেক করা (পারমিশন এরর বন্ধ করতে)
-    onAuthStateChanged(auth, (user) => {
-        if (!user) {
-            alert("Session expired! Please login again from the Dashboard.");
-            window.location.href = "login.html"; // লগইন না থাকলে রিডাইরেক্ট করবে
-        }
-    });
-
+    // ১. ব্যানার লোড করার ফাংশন
     function loadBanners() {
         get(ref(db, 'banners')).then(s => {
             if(s.exists()){
@@ -86,26 +78,54 @@
         });
     }
 
-    // ২. আপডেট ফাংশনকে গ্লোবাল করা যাতে বাটনে ক্লিক করলে কাজ করে
+    // ২. সেভ করার ফাংশন (লগইন ভেরিফিকেশন সহ)
     window.saveBanner = (id) => {
+        const user = auth.currentUser; // বর্তমানে লগইন করা ইউজার চেক করা
+
+        if (!user) {
+            alert("আপনি লগইন করা নেই! অনুগ্রহ করে ড্যাশবোর্ড থেকে আবার লগইন করুন।");
+            return;
+        }
+
         const img = document.getElementById('img-'+id).value.trim();
         const link = document.getElementById('link-'+id).value.trim();
 
-        if(!img) { alert("Please enter Image URL"); return; }
+        if(!img) {
+            alert("দয়া করে ইমেজের লিংক দিন।");
+            return;
+        }
 
-        // ৩. আপডেট রিকোয়েস্ট (লগইন করা থাকলে পারমিশন দিনে আসবে না)
-        update(ref(db, 'banners/'+id), { img, link })
+        // ফায়ারবেসে ডাটা আপডেট
+        update(ref(db, 'banners/'+id), { 
+            img: img, 
+            link: link 
+        })
         .then(() => { 
-            alert("Banner Updated Successfully!"); 
+            alert("সফলভাবে আপডেট হয়েছে!"); 
             document.getElementById('prev-'+id).src = img;
         })
         .catch(err => {
             console.error(err);
-            alert("Permission Error: Please make sure you are logged in as Admin.");
+            if(err.message.includes("permission_denied")) {
+                alert("পারমিশন নেই! আপনার ফায়ারবেস রুলস চেক করুন অথবা ড্যাশবোর্ড থেকে লগইন করুন।");
+            } else {
+                alert("Error: " + err.message);
+            }
         });
     };
 
+    // পেজ লোড হলে ব্যানার দেখাবে
     loadBanners();
+
+    // অথেন্টিকেশন স্টেট লগ ইন আছে কিনা চেক রাখা
+    onAuthStateChanged(auth, (user) => {
+        if (!user) {
+            console.log("No user logged in.");
+        } else {
+            console.log("Logged in as: " + user.email);
+        }
+    });
+
 </script>
 </body>
 </html>
