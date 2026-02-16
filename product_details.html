@@ -1,37 +1,37 @@
 <!DOCTYPE html>
-<html lang="bn">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Product Details - MS STORE</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root { 
-            --primary: #2563eb; 
-            --bg: #f4f7fa; 
+            --primary: #0f172a; 
+            --accent: #2563eb;
+            --bg: #f8fafc; 
             --surface: #ffffff; 
             --border: #e2e8f0; 
             --text-main: #1e293b; 
             --text-muted: #64748b;
-            --price-color: #e11d48;
+            --price-color: #ef4444;
         }
 
         * { -webkit-tap-highlight-color: transparent; box-sizing: border-box; }
         
         body { 
-            font-family: 'Roboto', sans-serif; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
             margin: 0; 
             background: var(--bg); 
             color: var(--text-main); 
             padding-bottom: 90px; 
         }
 
-        /* Professional Header */
         header { 
-            background: var(--primary); 
+            background: var(--surface); 
             padding: 15px 16px; 
             display: flex; 
             justify-content: space-between; 
@@ -39,88 +39,82 @@
             position: sticky; 
             top: 0; 
             z-index: 1000;
-            color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            color: var(--text-main);
+            border-bottom: 1px solid var(--border);
         }
-        header i { font-size: 18px; cursor: pointer; }
-        header h2 { margin: 0; font-size: 18px; font-weight: 500; flex: 1; margin-left: 15px; }
+        header i { font-size: 20px; cursor: pointer; }
+        header h2 { margin: 0; font-size: 16px; font-weight: 700; flex: 1; margin-left: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* Product Image Section */
         .p-img-wrapper {
             background: white;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            border-bottom: 1px solid var(--border);
         }
         .p-img {
             max-width: 100%;
             height: auto;
-            max-height: 350px;
+            max-height: 400px;
             object-fit: contain;
         }
 
-        /* Product Details Card */
         .main-card {
             background: var(--surface);
             padding: 20px;
-            margin: 12px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
+            margin-top: -10px;
+            border-radius: 24px 24px 0 0;
+            box-shadow: 0 -10px 20px rgba(0,0,0,0.02);
         }
 
-        .p-name { font-size: 20px; font-weight: 700; color: var(--text-main); line-height: 1.4; margin-bottom: 10px; }
-        .p-price { font-size: 24px; font-weight: 700; color: var(--price-color); margin-bottom: 20px; }
+        .p-name { font-size: 22px; font-weight: 700; color: var(--text-main); line-height: 1.3; margin-bottom: 8px; }
+        .p-price { font-size: 24px; font-weight: 800; color: var(--price-color); margin-bottom: 20px; }
 
-        /* Size Selection Style */
-        .size-section { margin-bottom: 25px; display: none; }
-        .section-label { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: block; }
-        .size-list { display: flex; gap: 10px; flex-wrap: wrap; }
-        .size-btn { 
-            padding: 8px 20px; border: 1px solid var(--border); border-radius: 4px; 
-            background: #fff; color: var(--text-main); cursor: pointer; font-size: 14px; font-weight: 500;
+        /* Classic Selection Style */
+        .variant-section { margin-bottom: 20px; display: none; }
+        .section-label { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 12px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .variant-list { display: flex; gap: 10px; flex-wrap: wrap; }
+        .variant-btn { 
+            padding: 10px 18px; border: 1.5px solid var(--border); border-radius: 12px; 
+            background: #fff; color: var(--text-main); cursor: pointer; font-size: 14px; font-weight: 600;
+            transition: 0.2s ease;
         }
-        .size-btn.selected { border-color: var(--primary); background: #eff6ff; color: var(--primary); }
+        .variant-btn.selected { border-color: var(--accent); background: #eff6ff; color: var(--accent); }
 
-        /* Description Style */
         .desc-box {
             font-size: 14px;
             color: var(--text-muted);
-            line-height: 1.6;
+            line-height: 1.7;
             white-space: pre-wrap;
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 6px;
-            border: 1px solid var(--border);
+            margin-top: 10px;
         }
 
-        /* Reviews Professional Style */
-        .review-section { margin: 12px; }
-        .rev-card { background: white; padding: 12px; border-radius: 6px; margin-bottom: 10px; border: 1px solid var(--border); }
-        .rev-user { font-size: 13px; font-weight: 700; color: var(--primary); }
-        .rev-text { font-size: 14px; color: var(--text-main); margin-top: 5px; }
+        .review-section { padding: 20px; background: white; margin-top: 10px; }
+        .rev-card { padding: 15px 0; border-bottom: 1px solid var(--border); }
+        .rev-user { font-size: 14px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .rev-text { font-size: 14px; color: var(--text-muted); margin-top: 6px; }
 
-        .rev-input-box { display: flex; gap: 8px; margin-top: 15px; }
-        .rev-input-box input { flex: 1; padding: 12px; border: 1px solid var(--border); border-radius: 4px; outline: none; }
-        .rev-input-box button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 4px; font-weight: 600; }
+        .rev-input-box { display: flex; gap: 10px; margin-top: 20px; background: #f1f5f9; padding: 8px; border-radius: 14px; }
+        .rev-input-box input { flex: 1; padding: 12px; border: none; background: transparent; outline: none; font-family: inherit; }
+        .rev-input-box button { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 10px; font-weight: 600; }
 
-        /* Bottom Footer */
         .buy-footer { 
             position: fixed; bottom: 0; left: 0; width: 100%; 
-            background: white; padding: 15px; 
-            display: flex; gap: 10px; 
+            background: white; padding: 15px 20px; 
+            display: flex; gap: 12px; 
             border-top: 1px solid var(--border); 
             z-index: 2000;
         }
         .order-btn { 
             flex: 1; background: var(--primary); color: white; 
-            text-align: center; padding: 14px; border-radius: 6px; 
-            font-weight: 700; font-size: 16px; border: none; cursor: pointer;
+            text-align: center; padding: 16px; border-radius: 14px; 
+            font-weight: 700; font-size: 15px; border: none; cursor: pointer;
+            box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
         }
 
         #loading-screen { position: fixed; inset: 0; background: #fff; z-index: 10000; display: flex; align-items: center; justify-content: center; }
-        .loader { width: 30px; height: 30px; border: 3px solid #eee; border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        .loader { width: 35px; height: 35px; border: 3px solid #f3f3f3; border-top-color: var(--accent); border-radius: 50%; animation: spin 0.8s linear infinite; }
         @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
@@ -129,11 +123,11 @@
 <div id="loading-screen"><div class="loader"></div></div>
 
 <header>
-    <i class="fa fa-arrow-left" onclick="history.back()"></i>
+    <i class="fa fa-chevron-left" onclick="history.back()"></i>
     <h2>Product Details</h2>
-    <div style="display: flex; gap: 20px;">
+    <div style="display: flex; gap: 18px;">
         <i class="fa-regular fa-heart" id="favIcon" onclick="toggleFav()"></i>
-        <i class="fa fa-share-nodes" onclick="shareProduct()"></i>
+        <i class="fa-solid fa-share-nodes" onclick="shareProduct()"></i>
     </div>
 </header>
 
@@ -142,29 +136,34 @@
 </div>
 
 <div class="main-card">
-    <div class="p-name" id="pName">লোড হচ্ছে...</div>
-    <div class="p-price" id="pPrice">0 ৳</div>
+    <div class="p-name" id="pName">Loading...</div>
+    <div class="p-price" id="pPrice">$ 0.00</div>
 
-    <div class="size-section" id="sizeContainer">
-        <span class="section-label">সাইজ সিলেক্ট করুন:</span>
-        <div class="size-list" id="sizeList"></div>
+    <div class="variant-section" id="sizeContainer">
+        <span class="section-label">Select Size:</span>
+        <div class="variant-list" id="sizeList"></div>
+    </div>
+
+    <div class="variant-section" id="colorContainer">
+        <span class="section-label">Select Color:</span>
+        <div class="variant-list" id="colorList"></div>
     </div>
     
-    <span class="section-label">বিস্তারিত বিবরণ:</span>
-    <div class="desc-box" id="pDesc">লোড হচ্ছে...</div>
+    <span class="section-label" style="margin-top: 25px;">Description:</span>
+    <div class="desc-box" id="pDesc">Loading product details...</div>
 </div>
 
 <div class="review-section">
-    <span class="section-label">ইউজার রিভিউ</span>
-    <div id="revList">লোড হচ্ছে...</div>
+    <span class="section-label">Customer Reviews</span>
+    <div id="revList">Loading reviews...</div>
     <div class="rev-input-box">
-        <input type="text" id="revInput" placeholder="আপনার মন্তব্য লিখুন...">
-        <button onclick="postReview()">পোস্ট</button>
+        <input type="text" id="revInput" placeholder="Write a review...">
+        <button onclick="postReview()">Send</button>
     </div>
 </div>
 
 <div class="buy-footer">
-    <button class="order-btn" onclick="goToOrderPage()">অর্ডার করুন</button>
+    <button class="order-btn" onclick="goToOrderPage()">ORDER NOW</button>
 </div>
 
 <script type="module">
@@ -189,6 +188,7 @@
     const productId = urlParams.get('id');
     let currentUser = null;
     let selectedSize = "";
+    let selectedColor = "";
 
     onAuthStateChanged(auth, (user) => { if(user) currentUser = user; });
 
@@ -199,28 +199,43 @@
             if(p) {
                 document.getElementById('pName').innerText = p.name;
                 document.getElementById('pPrice').innerText = "৳ " + p.price;
-                document.getElementById('pImg').src = p.img || p.imageURL || p.image;
-                document.getElementById('pDesc').innerText = p.description || p.desc || "বিবরণ নেই।";
+                document.getElementById('pImg').src = p.img;
+                document.getElementById('pDesc').innerText = p.description || "No description available.";
 
-                if(p.sizes && p.sizes.length > 0 && p.sizes[0] !== "") {
-                    const sizeContainer = document.getElementById('sizeContainer');
-                    const sizeListDiv = document.getElementById('sizeList');
-                    sizeContainer.style.display = 'block';
-                    sizeListDiv.innerHTML = "";
-                    p.sizes.forEach(size => {
-                        const btn = document.createElement('button');
-                        btn.className = 'size-btn';
-                        btn.innerText = size.trim();
-                        btn.onclick = () => {
-                            document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('selected'));
-                            btn.classList.add('selected');
-                            selectedSize = size.trim();
-                        };
-                        sizeListDiv.appendChild(btn);
-                    });
+                // Handle Sizes
+                if(p.sizes) {
+                    const sizeArr = p.sizes.split(',').map(s => s.trim());
+                    renderVariants('sizeContainer', 'sizeList', sizeArr, 'size');
+                }
+
+                // Handle Colors
+                if(p.colors) {
+                    const colorArr = p.colors.split(',').map(c => c.trim());
+                    renderVariants('colorContainer', 'colorList', colorArr, 'color');
                 }
             }
         });
+
+        function renderVariants(containerId, listId, items, type) {
+            const container = document.getElementById(containerId);
+            const list = document.getElementById(listId);
+            if(items.length > 0 && items[0] !== "") {
+                container.style.display = 'block';
+                list.innerHTML = "";
+                items.forEach(item => {
+                    const btn = document.createElement('button');
+                    btn.className = 'variant-btn';
+                    btn.innerText = item;
+                    btn.onclick = () => {
+                        list.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('selected'));
+                        btn.classList.add('selected');
+                        if(type === 'size') selectedSize = item;
+                        if(type === 'color') selectedColor = item;
+                    };
+                    list.appendChild(btn);
+                });
+            }
+        }
 
         onValue(ref(db, 'reviews/' + productId), (snap) => {
             const list = document.getElementById('revList');
@@ -228,39 +243,46 @@
             if(snap.exists()){
                 snap.forEach(child => {
                     const r = child.val();
-                    html += `<div class="rev-card"><div class="rev-user">${r.userName} <span style="font-weight:400; color:#94a3b8; font-size:11px;">#${r.userId}</span></div><div class="rev-text">${r.text}</div></div>`;
+                    html += `<div class="rev-card"><div class="rev-user">${r.userName} <span style="font-weight:400; color:#94a3b8; font-size:11px; margin-left:auto;">#${r.userId}</span></div><div class="rev-text">${r.text}</div></div>`;
                 });
                 list.innerHTML = html;
-            } else { list.innerHTML = "<p style='font-size:12px; color:#94a3b8;'>এখনো কোনো রিভিউ নেই।</p>"; }
+            } else { list.innerHTML = "<p style='font-size:13px; color:#94a3b8;'>No reviews yet.</p>"; }
         });
     }
 
     window.goToOrderPage = () => {
-        if(!currentUser) { alert("লগইন করুন!"); return; }
+        if(!currentUser) { alert("Please login first!"); return; }
+        
         const sizeVisible = document.getElementById('sizeContainer').style.display === 'block';
-        if(sizeVisible && selectedSize === "") { alert("সাইজ সিলেক্ট করুন!"); return; }
-        window.location.href = `order_form.html?id=${productId}&size=${selectedSize}`;
+        const colorVisible = document.getElementById('colorContainer').style.display === 'block';
+
+        if(sizeVisible && !selectedSize) { alert("Please select a size!"); return; }
+        if(colorVisible && !selectedColor) { alert("Please select a color!"); return; }
+
+        window.location.href = `order_form.html?id=${productId}&size=${selectedSize}&color=${selectedColor}`;
     };
 
     window.postReview = () => {
         const text = document.getElementById('revInput').value;
-        if(!currentUser) { alert("লগইন করুন!"); return; }
+        if(!currentUser) { alert("Please login to post a review!"); return; }
         if(!text.trim()) return;
         const newRevRef = push(ref(db, 'reviews/' + productId));
         set(newRevRef, { 
-            userName: currentUser.displayName || "User", 
+            userName: currentUser.displayName || "Anonymous", 
             userId: currentUser.uid.slice(-6).toUpperCase(), 
             text: text 
         }).then(() => { document.getElementById('revInput').value = ""; });
     };
 
     window.shareProduct = () => { navigator.share({ title: document.getElementById('pName').innerText, url: window.location.href }); };
+    
     window.toggleFav = () => { 
         const icon = document.getElementById('favIcon'); 
         icon.classList.toggle('fa-regular'); 
         icon.classList.toggle('fa-solid'); 
-        icon.style.color = icon.classList.contains('fa-solid') ? '#e11d48' : 'white'; 
+        icon.style.color = icon.classList.contains('fa-solid') ? '#ef4444' : 'inherit'; 
     };
 </script>
 </body>
-</html>
+    </html>
+    
