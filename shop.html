@@ -3,7 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MS STORE | Premium Experience</title>
+    
+    <title>MS Store BD | Premium Shopping Experience</title>
+    <meta name="description" content="বেস্ট প্রাইসে ইলেকট্রনিক্স, গ্যাজেট এবং লেটেস্ট ফ্যাশন আইটেম কিনুন MS Store BD থেকে। দ্রুত ডেলিভারি এবং ১০০% কোয়ালিটি নিশ্চিত।">
+    <meta name="keywords" content="MS Store BD, Online Shop BD, Gadgets, Fashion, Premium Experience">
+    
+    <meta property="og:title" content="MS Store BD - Your Trusted Online Shop">
+    <meta property="og:description" content="প্রিমিয়াম কোয়ালিটির পণ্য নিয়ে আপনার বিশ্বস্ত অনলাইন শপ। আজই ভিজিট করুন!">
+    <meta property="og:image" content="https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg">
+    <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
 
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#2563eb">
@@ -164,7 +173,6 @@
     <div class="nav-item" onclick="location.href='https://wa.me/8801319474450'"><i class="fa-brands fa-whatsapp"></i><span>Support</span></div>
 </div>
 
-<!-- Account Sidebar -->
 <div class="profile-menu" id="profileMenu">
     <div class="profile-content">
         <div style="text-align: right; margin-bottom: 10px;"><i class="fa fa-xmark" id="closeMenu" style="font-size: 24px; cursor:pointer; color: var(--text-muted);"></i></div>
@@ -222,7 +230,6 @@
 
     function updateProfileUI(user) {
         document.getElementById('loading-screen').style.display = 'none';
-        // এখানে জিমেইল থেকে প্রোফাইল ছবি এবং নাম লোড হচ্ছে
         document.getElementById('u-photo').src = user.photoURL || "https://i.postimg.cc/cCkXGkPH/FB-IMG-1770094555781.jpg";
         document.getElementById('u-name').innerText = user.displayName || "User Name";
         document.getElementById('u-email').innerText = user.email;
@@ -230,7 +237,6 @@
         document.getElementById('nameInput').value = user.displayName || "";
     }
 
-    // Copy UID
     window.copyUID = () => {
         const uid = document.getElementById('u-uid').innerText.split(' ')[1];
         navigator.clipboard.writeText(uid).then(() => {
@@ -238,7 +244,6 @@
         });
     };
 
-    // Edit Name Logic
     const editBtn = document.getElementById('editNameBtn');
     const nameDisplay = document.getElementById('u-name');
     const nameInput = document.getElementById('nameInput');
@@ -287,13 +292,11 @@
             </div>`).join('') : '<p style="grid-column: 1/-1; text-align:center; padding:20px; color:#64748b;">No products found</p>';
     }
 
-    // Category Logic Fired
     function applyFilter(mainCat) {
         const subBox = document.getElementById('sub-cat-container');
         const displayTitle = document.getElementById('display-title');
         subBox.innerHTML = ""; 
         
-        // Case-insensitive filtering
         let filtered = mainCat === 'all' ? pArray : pArray.filter(p => 
             (p.category || "").toString().toLowerCase() === mainCat.toLowerCase()
         );
@@ -385,9 +388,8 @@
 
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-            navigator.serviceWorker.register('sw.js').catch(err => console.log(err));
-        });
+            navigator.serviceWorker.register('sw.j        }).catch(err => console.log('SW registration failed:', err));
     }
 </script>
 </body>
-    </html>
+</html>
